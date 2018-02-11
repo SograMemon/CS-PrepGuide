@@ -45,7 +45,11 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signIn(txtEmail.getText().toString(), txtPassword.getText().toString());
+                if(!txtEmail.getText().toString().equals("") && !txtPassword.getText().toString().equals("")){
+                    signIn(txtEmail.getText().toString(), txtPassword.getText().toString());
+                }else{
+                    Toast.makeText(getApplicationContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -83,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-//                    updateUI(user);
+//                            updateUI(user);
                             isRegisterFirstTime = true;
                             btnLogin.setVisibility(View.VISIBLE);
                         } else {
@@ -91,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(getApplicationContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-//                    updateUI(null);
+//                            updateUI(null);
                         }
 
                     }
@@ -109,11 +113,6 @@ public class MainActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
                             intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
-
-                            FirebaseDatabase database = FirebaseDatabase.getInstance();
-                            DatabaseReference myRef = database.getReference("message");
-                            myRef.setValue("Hello, World!");
-
                             txtEmail.setText("");
                             txtPassword.setText("");
 
@@ -130,21 +129,28 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    private void addUserToFireBaseDB(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // Name, email address, and profile photo Url
+            String name = user.getDisplayName();
+            String email = user.getEmail();
+//            Uri photoUrl = user.getPhotoUrl();
+
+            // Check if user's email is verified
+            boolean emailVerified = user.isEmailVerified();
+
+            // The user's ID, unique to the Firebase project. Do NOT use this value to
+            // authenticate with your backend server, if you have one. Use
+            // FirebaseUser.getToken() instead.
+            String uid = user.getUid();
 
 
-//    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//    if (user != null) {
-//        // Name, email address, and profile photo Url
-//        String name = user.getDisplayName();
-//        String email = user.getEmail();
-//        Uri photoUrl = user.getPhotoUrl();
-//
-//        // Check if user's email is verified
-//        boolean emailVerified = user.isEmailVerified();
-//
-//        // The user's ID, unique to the Firebase project. Do NOT use this value to
-//        // authenticate with your backend server, if you have one. Use
-//        // FirebaseUser.getToken() instead.
-//        String uid = user.getUid();
-//    }
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference();
+            myRef.child("users").child(uid).child("email").setValue(email);
+        }
+    }
+
 }
+

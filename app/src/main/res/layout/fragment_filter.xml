@@ -1,0 +1,43 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ca.dal.cs.web.cs_prepguide.filterFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/filterFrag"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="ca.dal.cs.web.cs_prepguide.filter">
+
+        <Spinner
+            android:id="@+id/spinner_stream"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp">
+        </Spinner>
+
+        <Spinner
+            android:id="@+id/spinner_company"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp">
+        </Spinner>
+        <Spinner
+            android:id="@+id/spinner_type"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp">
+        </Spinner>
+        <Button
+            android:id="@+id/btnApplyFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginTop="20dp"
+            android:text="@string/btnapplyFilter" />
+    </LinearLayout>
+
+
+</FrameLayout>
