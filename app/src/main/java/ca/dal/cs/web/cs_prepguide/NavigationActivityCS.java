@@ -24,7 +24,9 @@ import java.util.List;
 
 
 public class NavigationActivityCS extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, filterFragment.OnFragmentInteractionListener, guideFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        filterFragment.OnFragmentInteractionListener,
+        guideFragment.OnFragmentInteractionListener,profileFragment.OnFragmentInteractionListener {
 
     FragmentManager fmg = null;
 
@@ -110,6 +112,7 @@ public class NavigationActivityCS extends AppCompatActivity
         Fragment fragment = null;
         switch(id){
             case R.id.nav_profile:
+                fragment = new profileFragment(this);
                 break;
             case R.id.nav_filter_jobs:
                 fragment = new filterFragment(this);
@@ -127,7 +130,7 @@ public class NavigationActivityCS extends AppCompatActivity
 
             // Add the fragment to the 'fragment_container' FrameLayout
             fmg.beginTransaction()
-                    .add(R.id.fragment_container, fragment)
+                    .replace(R.id.fragment_container, fragment)
                     .commit();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

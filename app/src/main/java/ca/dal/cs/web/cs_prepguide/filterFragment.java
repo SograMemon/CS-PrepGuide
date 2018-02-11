@@ -14,6 +14,8 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.support.v4.app.Fragment;
 
+import java.util.ArrayList;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -37,6 +39,13 @@ public class filterFragment extends Fragment {
     private Button btnApplyFilter;
     private Spinner spinnerCompany, spinnerType, spinnerStream;
 //    ListView jobList;
+
+//    //to store skills in arraylist variable
+//    ArrayList<String> jobList = new ArrayList<String>();
+//
+//    //setting up the listview
+//    ArrayAdapter<String> jobListAdapter;
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
