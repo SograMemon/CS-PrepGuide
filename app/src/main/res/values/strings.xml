@@ -11,4 +11,33 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="btnapplyFilter">Apply Filter</string>
+    <string-array name="stream_array">
+        <item>Select Stream</item>
+        <item>All</item>
+        <item>Network Security</item>
+        <item>Artificial Intelligence</item>
+        <item>Computer Architecture</item>
+        <item>Computer Graphics</item>
+        <item>Database</item>
+        <item>Software Engineering</item>
+        <item>Data Structures</item>
+        <item>Algorithms</item>
+    </string-array>
+    <string-array name="company_array">
+        <item>Company</item>
+        <item>All</item>
+        <item>Google</item>
+        <item>Facebook</item>
+        <item>Amazon</item>
+        <item>Microsoft</item>
+        <item>Dell</item>
+    </string-array>
+    <string-array name="type_array">
+        <item>Position Type</item>
+        <item>All</item>
+        <item>Developer</item>
+        <item>Project Manager</item>
+        <item>Testing</item>
+    </string-array>
 </resources>
