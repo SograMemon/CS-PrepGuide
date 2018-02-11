@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.support.v4.app.Fragment;
 
@@ -35,6 +36,7 @@ public class filterFragment extends Fragment {
 
     private Button btnApplyFilter;
     private Spinner spinnerCompany, spinnerType, spinnerStream;
+//    ListView jobList;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -113,6 +115,8 @@ public class filterFragment extends Fragment {
         spinnerStream= parent.findViewById(R.id.spinner_stream);
         spinnerCompany= parent.findViewById(R.id.spinner_company);
         spinnerType= parent.findViewById(R.id.spinner_type);
+//        jobList = parent.findViewById(R.id.jobList);
+
 
         ArrayAdapter<CharSequence> streamAdapter= ArrayAdapter.createFromResource(getActivity(),
                 R.array.stream_array, R.layout.spinner_dropdown_item);
@@ -125,6 +129,11 @@ public class filterFragment extends Fragment {
         ArrayAdapter<CharSequence> typeAdapter= ArrayAdapter.createFromResource(getActivity(),
                 R.array.type_array, R.layout.spinner_dropdown_item);
         spinnerType.setAdapter(typeAdapter);
+
+//        ArrayAdapter<CharSequence> jobListAdapter= ArrayAdapter.createFromResource(getActivity(),
+//                R.array.jobList, R.layout.activity_filter);
+//        jobList.setAdapter(jobListAdapter);
+
     }
 
     @Override
