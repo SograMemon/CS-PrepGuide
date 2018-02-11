@@ -1,0 +1,63 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ca.dal.cs.web.cs_prepguide.profileFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="ca.dal.cs.web.cs_prepguide.NavigationActivityCS">
+        <TextView
+            android:id="@+id/skills"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" Enter Your Technical Skills"
+            android:layout_marginTop="15dp"
+            />
+        <EditText
+            android:id="@+id/skillsEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ems="15" >
+        </EditText>
+
+        <Button
+            android:id="@+id/addSkill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="ADD Skill" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SKILLS ADDED :"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:textStyle="bold"/>
+        <ListView
+            android:id="@+id/skillsList1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
+
+
+        <!--<Button-->
+            <!--android:id="@+id/btnProfileSend"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="15dp"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:text="Done" />-->
+
+
+
+
+    </LinearLayout>
+
+</FrameLayout>
