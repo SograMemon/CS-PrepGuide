@@ -19,6 +19,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.Fragment;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,6 +123,8 @@ public class NavigationActivityCS extends AppCompatActivity
                 fragment = new guideFragment(this, fmg);
                 break;
             case R.id.nav_logout:
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                mAuth.signOut();
                 finish();
                 break;
 

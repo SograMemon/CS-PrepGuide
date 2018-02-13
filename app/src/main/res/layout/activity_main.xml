@@ -31,9 +31,9 @@
         android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
 
+        android:layout_alignStart="@+id/txtPassword"
+        android:layout_centerVertical="true"
         android:text="@string/login"
         android:textAllCaps="false" />
 
@@ -41,11 +41,29 @@
         android:id="@+id/btnRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:layout_alignStart="@+id/btnLogin"
-        android:layout_below="@+id/btnLogin"
+        android:layout_alignTop="@+id/login_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="38dp"
         android:text="@string/register"
         android:textAllCaps="false" />
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/txtPassword"
+        android:layout_below="@+id/txtPassword" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_below="@+id/sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignStart="@+id/txtPassword"
+        android:layout_alignEnd="@+id/txtPassword"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="30dp" />
 
 
 </RelativeLayout>
