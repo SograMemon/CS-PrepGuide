@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.Fragment;
 import android.view.ViewGroup;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -125,6 +126,10 @@ public class NavigationActivityCS extends AppCompatActivity
             case R.id.nav_logout:
                 FirebaseAuth mAuth = FirebaseAuth.getInstance();
                 mAuth.signOut();
+
+                // This line will logout user from facebook
+                // Instead do not logout user and handle this on login screen
+                LoginManager.getInstance().logOut();
                 finish();
                 break;
 
