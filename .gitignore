@@ -1,3 +1,14 @@
+*.iml
+\.idea/
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+
 
 # Created by https://www.gitignore.io/api/androidstudio
 
@@ -130,4 +141,3 @@ fabric.properties
 
 
 # End of https://www.gitignore.io/api/androidstudio
-\.idea/

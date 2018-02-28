@@ -1,38 +1,121 @@
-CS-PrepGuide
-One paragraph to describe your project. Your description should include the project concept and key features implemented.
+# CS-PrepGuide
 
 We aim to create a platform that provides information about the different disciplines in Computer Science and the jobs or positions available within each discipline in a particular company in which
 they want to get placed. This valuable information in the form of guide provided in our app will help users to make and plan their career path. Once the users have made this decision the users can 
 browse through job preparation guides that help the user achieve the skills they require to qualify for the best jobs at companies ranging from the top companies to smaller passionate companies.
 This will be useful to fresh Computer Science graduates as well as professionals considering a career change to join the booming IT industries.
 
-## Libraries
-Provide a list of **ALL** the libraries you used for your project. Example:
-
-**google-gson:** Gson is a Java library that can be used to convert Java Objects into their JSON representation. It can also be used to convert a JSON string to an equivalent Java object. Source [here](https://github.com/google/gson)
 
 ## Installation Notes
-This project zip file can be downloaded and unziped after which it can be opened in Android studio to be able to test and run the application. 
+This project zip file can be downloaded and unzipped after which it can be opened in Android studio to be able to test and run the application. 
 
 ## Code Examples
-You will encounter roadblocks and problems while developing your project. Share 2-3 'problems' that your team solved while developing your project. Write a few sentences that describe your solution and provide a code snippet/block that shows your solution. Example:
 
-**Problem 1: We needed a method to calculate a Fibonacci sequence**
+**Problem 1: We used Firebase to allow users to login using email and password**
 
-A short description.
+Firebase makes the process easy for login implementation, Below is a code example which authenticates the users
+```java
+    private void signIn(String email, String password){
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
+                            intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
+                            txtEmail.setText("");
+                            txtPassword.setText("");
+
+                            startActivity(intentFromLogin);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(getApplicationContext(), "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+    }
+
 ```
-// The method we implemented that solved our problem
-public static int fibonacci(int fibIndex) {
-if (memoized.containsKey(fibIndex)) {
-return memoized.get(fibIndex);
-} else {
-int answer = fibonacci(fibIndex - 1) + fibonacci(fibIndex - 2);
-memoized.put(fibIndex, answer);
-return answer;
-}
-}
 
-// Source: Wikipedia Java [1]
+**Problem 2: We tried using Firebase RealtimeDB to store the data**
+
+Below is a code example which can be used to update email address to a user account using Firebase
+
+```java
+    private void addUserToFireBaseDB(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // Name, email address, and profile photo Url
+            String name = user.getDisplayName();
+            String email = user.getEmail();
+            //Uri photoUrl = user.getPhotoUrl();
+
+            // Check if user's email is verified
+            boolean emailVerified = user.isEmailVerified();
+
+            // The user's ID, unique to the Firebase project. Do NOT use this value to
+            // authenticate with your backend server, if you have one. Use
+            // FirebaseUser.getToken() instead.
+            String uid = user.getUid();
+            
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference();
+            myRef.child("users").child(uid).child("email").setValue(email);
+        }
+    }
+```
+
+**Problem 3: We used fragments in NavigationActivity to allow users to navigate between the screens**
+
+Below is a code example which shows the initial implementation
+
+```java
+public class NavigationActivityCS extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,
+        filterFragment.OnFragmentInteractionListener,
+        guideFragment.OnFragmentInteractionListener,profileFragment.OnFragmentInteractionListener {
+
+    FragmentManager fmg = null;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        fmg = getSupportFragmentManager();
+
+        setContentView(R.layout.activity_navigation_cs);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        // Check whether the activity is using the layout version with
+        // the fragment_container FrameLayout. If so, we must add the first fragment
+        if (findViewById(R.id.fragment_container) != null) {
+
+            // However, if we're being restored from a previous state,
+            // then we don't need to do anything and should return or else
+            // we could end up with overlapping fragments.
+            if (savedInstanceState != null) {
+                return;
+            }
+
+            displaySelectedScreen(R.id.nav_filter_jobs);
+        }
+    }
 ```
 
 ## Feature Section
@@ -51,7 +134,7 @@ List all the main features of your application with a brief description of each 
 
 
 ## Final Project Status
-Write a description of the final status of the project. Did you achieve all your goals? What would be the next step for this project (if it were to continue)?
+We have started with the development of the application and currently working on various functionalities within the app. For now, we have implemented login, filtering jobs, and job guide view and navigation between various screens. The breakdown of the functionalities and the breakdown is given below. 
 
 #### Minimum Functionality
  - Sign up/Sign in  (Completed)
@@ -73,14 +156,6 @@ Write a description of the final status of the project. Did you achieve all your
  - Email the people who bookmarked for a job (Not implemented)
 
 ## Sources
-Use IEEE citation style.
-What to include in your project sources:
-- Stock images
-- Design guides
-- Programming tutorials
-- Research material
-- Android libraries
-- Everything listed on the Dalhousie [*Plagiarism and Cheating*](https://www.dal.ca/dept/university_secretariat/academic-integrity/plagiarism-cheating.html)
-- Remember AC/DC *Always Cite / Don't Cheat* (see Lecture 0 for more info)
 
-[1] "Java (programming language)", En.wikipedia.org, 2018. [Online]. Available: https://en.wikipedia.org/wiki/Java_(programming_language).
+[1] 
+
