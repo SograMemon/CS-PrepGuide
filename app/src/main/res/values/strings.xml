@@ -2,7 +2,7 @@
     <string name="app_name">CS-PrepGuide</string>
     <string name="title_activity_navigation_cs">CS PrepGuide</string>
     <string name="filter_activity">Filter</string>
-
+    <string name="test_string">testString</string>
     <string name="login">Login</string>
     <string name="email">E-mail</string>
     <string name="password">Password</string>
