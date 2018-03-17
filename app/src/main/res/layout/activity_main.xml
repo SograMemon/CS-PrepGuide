@@ -41,9 +41,9 @@
         android:id="@+id/btnRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/textView2"
         android:layout_alignTop="@+id/login_button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="38dp"
+        android:layout_marginTop="43dp"
         android:text="@string/register"
         android:textAllCaps="false" />
 
@@ -75,6 +75,15 @@
         android:text="CS-PrepGuide"
         android:textSize="36sp"
         android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnForgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnRegister"
+        android:layout_alignBottom="@+id/btnRegister"
+        android:layout_alignEnd="@+id/textView2"
+        android:text="Forgot Pwd" />
 
 
 </RelativeLayout>

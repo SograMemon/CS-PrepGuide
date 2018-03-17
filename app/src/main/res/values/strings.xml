@@ -7,7 +7,7 @@
     <string name="email">E-mail</string>
     <string name="password">Password</string>
     <string name="register">Register</string>
-
+    <string name="forgot_password_toast_text"> An email has has been sent which has steps to reset your password</string>
     <string name="facebook_app_id">1958233554393369</string>
     <string name="fb_login_protocol_scheme">fb1958233554393369</string>
 

@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     CallbackManager mCallbackManager;
     private FirebaseAuth mAuth;
 
-    private Button btnLogin,btnRegister;
+    private Button btnLogin,btnRegister, btnForgotPassword;
     private TextView txtEmail, txtPassword;
     private boolean isRegisterFirstTime = true;
 
@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.btnRegister);
         txtEmail = findViewById(R.id.txtEmail);
         txtPassword = findViewById(R.id.txtPassword);
+        btnForgotPassword = findViewById(R.id.btnForgotPassword);
         // Set the dimensions of the sign-in button.
         SignInButton signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
@@ -128,6 +129,26 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                     Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                     startActivityForResult(signInIntent, RC_SIGN_IN);
+            }
+        });
+
+        btnForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String emailAddress = txtEmail.getText().toString();
+                mAuth.sendPasswordResetEmail(emailAddress)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "Email sent.");
+                                    txtEmail.setText("");
+                                    txtPassword.setText("");
+                                    btnLogin.setVisibility(View.VISIBLE);
+                                    Toast.makeText(getApplicationContext(), R.string.forgot_password_toast_text, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
             }
         });
 
