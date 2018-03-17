@@ -1,5 +1,6 @@
 package ca.dal.cs.web.cs_prepguide;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
@@ -55,6 +56,7 @@ public class filterFragment extends Fragment {
 
     public filterFragment (){};
 
+    @SuppressLint("ValidFragment")
     public filterFragment(Activity parent) {
         // Required empty public constructor
         this.parent = parent;

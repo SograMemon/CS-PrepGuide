@@ -1,5 +1,6 @@
 package ca.dal.cs.web.cs_prepguide;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
@@ -49,6 +50,7 @@ public class guideFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @SuppressLint("ValidFragment")
     public guideFragment(Activity parent, FragmentManager fmg) {
         // Required empty public constructor
         this.parent = parent;

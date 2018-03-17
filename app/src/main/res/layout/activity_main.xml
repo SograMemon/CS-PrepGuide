@@ -65,5 +65,16 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="30dp" />
 
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/txtEmail"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="49dp"
+        android:text="CS-PrepGuide"
+        android:textSize="36sp"
+        android:textStyle="bold" />
+
 
 </RelativeLayout>

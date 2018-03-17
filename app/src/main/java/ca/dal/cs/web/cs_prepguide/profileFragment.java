@@ -1,5 +1,6 @@
 package ca.dal.cs.web.cs_prepguide;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -58,7 +59,7 @@ public class profileFragment extends Fragment {
     public profileFragment() {
         // Required empty public constructor
     }
-
+    @SuppressLint("ValidFragment")
     public profileFragment(Activity parent) {
         // Required empty public constructor
         this.parent = parent;
