@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textSize="20sp"
-    android:textColor="#ff0000">
+    android:textColor="#FFFFFF"
+    android:background="#40C4FF">
 
 </TextView>

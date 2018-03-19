@@ -30,13 +30,26 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp">
         </Spinner>
+
+        <EditText
+            android:id="@+id/edittext_addJob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter job"/>
+
         <Button
             android:id="@+id/btnApplyFilter"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:layout_marginTop="20dp"
             android:text="@string/btnapplyFilter" />
+
+        <ListView
+            android:id="@+id/ListView_jobs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"></ListView>
     </LinearLayout>
 
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ca.dal.cs.web.cs_prepguide.jobListing">
+    tools:context="ca.dal.cs.web.cs_prepguide.jobList">
 
     <ListView
         android:id="@+id/list_job"

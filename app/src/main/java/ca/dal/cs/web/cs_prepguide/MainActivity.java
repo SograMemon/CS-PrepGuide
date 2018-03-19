@@ -101,11 +101,17 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!txtEmail.getText().toString().equals("") && !txtPassword.getText().toString().equals("")){
-                    signIn(txtEmail.getText().toString(), txtPassword.getText().toString());
-                }else{
-                    Toast.makeText(getApplicationContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
-                }
+                //Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
+                //startActivity(intentFromLogin);
+                //if(!txtEmail.getText().toString().equals("") && !txtPassword.getText().toString().equals("")){
+                   // signIn(txtEmail.getText().toString(), txtPassword.getText().toString());
+                //}else{
+                   // Toast.makeText(getApplicationContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
+                //}
+                Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
+                intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
+                startActivity(intentFromLogin);
+
             }
         });
 
