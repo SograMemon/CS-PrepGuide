@@ -2,22 +2,42 @@ package ca.dal.cs.web.cs_prepguide;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.support.v4.app.Fragment;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
+import static android.app.Activity.RESULT_OK;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 /**
@@ -43,6 +63,50 @@ public class profileFragment extends Fragment {
     Button btnProfileSend;
     Button addSkill;
     ListView skillList;
+    private Button btnUpload;
+    private  static  final int CAMERA_REQUEST_CODE=1;
+    private StorageReference mStorage;
+    private ProgressDialog mProgress;
+    private ImageView ProfilePic;
+    String mCurrentPhotoPath;
+    Uri photoURI;
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPG_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_";
+        File storageDirectory = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File pic = File.createTempFile(imageFileName,".jpg",storageDirectory);
+
+        // Save a path for the file and use with ACTION_VIEW intents
+        mCurrentPhotoPath = pic.getAbsolutePath();
+        return pic;
+    }
+
+    private void dispatchTakePhotoIntent() {
+        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePhotoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+
+            // Create the File for the location of the photo
+            File photoFile=null;
+            try{
+                photoFile=createImageFile();
+            }
+            catch (IOException ex){
+
+                // Error occurred while creating the File...
+                ex.printStackTrace();
+            }
+            // Continue only if the File was successfully created
+            if (photoFile!=null){
+                photoURI= FileProvider.getUriForFile(getApplicationContext(),"com.example.android.fileprovider",photoFile);
+                takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePhotoIntent, CAMERA_REQUEST_CODE);
+            }
+        }
+    }
+
 
     //to store skills in arraylist variable
     ArrayList<String> skillsList = new ArrayList<String>();
@@ -139,9 +203,65 @@ public class profileFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+
+        if (requestCode ==CAMERA_REQUEST_CODE && resultCode==RESULT_OK ){
+
+//            mProgress.setMessage("Uploading Image...");
+//            mProgress.show();
+
+            //Uri uri =  data.getData();
+
+           /* if (uri != null) {*/
+            StorageReference filepath = mStorage.child("Photos").child(photoURI.getLastPathSegment());
+
+
+            filepath.putFile(photoURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    Uri downloadUri = taskSnapshot.getDownloadUrl();
+                    Picasso.with(getApplicationContext()).load(downloadUri).fit().centerCrop().into(ProfilePic);
+                    mProgress.dismiss();
+                    Toast.makeText(getApplicationContext(), "Uploading Done!! .... ", Toast.LENGTH_LONG).show();
+
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                    Toast.makeText(getApplicationContext(), "Failure while uploading!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            /*} else {
+                Log.v(TAG, "File URI is null");
+            }*/
+        }
+
+    }
+
+
     @Override
     public void onStart(){
         super.onStart();
+        mStorage = FirebaseStorage.getInstance().getReference();
+        mProgress = new ProgressDialog(getApplicationContext());
+
+        ProfilePic= parent.findViewById(R.id.ProfilePic);
+        btnUpload = parent.findViewById(R.id.btnUpload);
+        btnUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                dispatchTakePhotoIntent();
+                //Intent intent1 =new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                //startActivityForResult(intent1,CAMERA_REQUEST_CODE);
+
+            }
+        });
+
 
         skillsEdit = parent.findViewById(R.id.skillsEdit);
 //        btnProfileSend = parent.findViewById(R.id.btnProfileSend);

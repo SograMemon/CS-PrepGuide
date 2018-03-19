@@ -11,6 +11,21 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context="ca.dal.cs.web.cs_prepguide.NavigationActivityCS">
+
+        <ImageView
+            android:id="@+id/ProfilePic"
+            android:layout_width="115dp"
+            android:layout_height="115dp"
+            android:background="@drawable/ic_account_circle_black_48dp"
+            android:layout_gravity="center"/>
+
+        <Button
+            android:id="@+id/btnUpload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="upload photo" />
+
         <TextView
             android:id="@+id/skills"
             android:layout_width="wrap_content"
