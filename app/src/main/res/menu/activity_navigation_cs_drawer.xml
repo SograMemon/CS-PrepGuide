@@ -6,23 +6,23 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_perm_identity_black_24dp"
             android:title="Skills Profile" />
         <item
             android:id="@+id/nav_bookmarks"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@android:drawable/btn_star"
             android:title="Bookmarks" />
         <item
             android:id="@+id/nav_filter_jobs"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_filter_list_black_24dp"
             android:title="Filter Jobs" />
         <item
             android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="?android:attr/actionModePasteDrawable"
             android:title="Posts for job" />
         <item
             android:id="@+id/nav_logout"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@android:drawable/ic_lock_power_off"
             android:title="Log Out" />
     </group>
 
@@ -30,7 +30,7 @@
         <menu>
             <item
                 android:id="@+id/nav_help"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/ic_help_black_24dp"
                 android:title="Help" />
 
         </menu>
