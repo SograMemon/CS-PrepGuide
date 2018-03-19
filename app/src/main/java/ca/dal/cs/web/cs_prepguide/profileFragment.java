@@ -43,7 +43,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link profileFragment.OnFragmentInteractionListener} interface
+ * {@link profileFragment.profileFragmentInterface} interface
  * to handle interaction events.
  * Use the {@link profileFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -116,18 +116,18 @@ public class profileFragment extends Fragment {
 
 
     Intent intent;
-    Activity parent = null;
+//    Activity parent = null;
 
-    private OnFragmentInteractionListener mListener;
+    private profileFragmentInterface mListener;
 
     public profileFragment() {
         // Required empty public constructor
     }
-    @SuppressLint("ValidFragment")
-    public profileFragment(Activity parent) {
-        // Required empty public constructor
-        this.parent = parent;
-    }
+//    @SuppressLint("ValidFragment")
+//    public profileFragment(Activity parent) {
+//        // Required empty public constructor
+//        this.parent = parent;
+//    }
 
 
     /**
@@ -161,7 +161,64 @@ public class profileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view =  inflater.inflate(R.layout.fragment_profile, container, false);
+
+        mStorage = FirebaseStorage.getInstance().getReference();
+        mProgress = new ProgressDialog(getApplicationContext());
+
+        ProfilePic= view.findViewById(R.id.ProfilePic);
+        btnUpload = view.findViewById(R.id.btnUpload);
+        btnUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                dispatchTakePhotoIntent();
+                //Intent intent1 =new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                //startActivityForResult(intent1,CAMERA_REQUEST_CODE);
+
+            }
+        });
+
+
+        skillsEdit = view.findViewById(R.id.skillsEdit);
+//        btnProfileSend = parent.findViewById(R.id.btnProfileSend);
+        skillList= view.findViewById(R.id.skillsList1);
+
+        addSkill= view.findViewById(R.id.addSkill);
+        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,skillsList);
+
+
+        skillList.setAdapter(adapter);
+
+        addSkill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                skillsList.add(skillsEdit.getText().toString());
+
+                //making the edittext field blank
+                skillsEdit.setText("");
+                adapter.notifyDataSetChanged();
+
+                //toast to make user aware of the what's going on
+//                Toast.makeText(getApplicationContext(),"Skill Added Successfully",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //
+
+//        btnProfileSend.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                intent = new Intent(getApplicationContext(),SkillsSelection.class);
+//                intent.putExtra(SKILLSEDIT, skillsList.toString());
+//                startActivity(intent);
+//                Toast.makeText(getApplicationContext(),"Saving",Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -174,8 +231,8 @@ public class profileFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof profileFragmentInterface) {
+            mListener = (profileFragmentInterface) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -198,7 +255,7 @@ public class profileFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface profileFragmentInterface {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
@@ -246,59 +303,5 @@ public class profileFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        mStorage = FirebaseStorage.getInstance().getReference();
-        mProgress = new ProgressDialog(getApplicationContext());
-
-        ProfilePic= parent.findViewById(R.id.ProfilePic);
-        btnUpload = parent.findViewById(R.id.btnUpload);
-        btnUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                dispatchTakePhotoIntent();
-                //Intent intent1 =new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                //startActivityForResult(intent1,CAMERA_REQUEST_CODE);
-
-            }
-        });
-
-
-        skillsEdit = parent.findViewById(R.id.skillsEdit);
-//        btnProfileSend = parent.findViewById(R.id.btnProfileSend);
-        skillList= parent.findViewById(R.id.skillsList1);
-
-        addSkill= parent.findViewById(R.id.addSkill);
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,skillsList);
-
-
-        skillList.setAdapter(adapter);
-
-        addSkill.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                skillsList.add(skillsEdit.getText().toString());
-
-                //making the edittext field blank
-                skillsEdit.setText("");
-                adapter.notifyDataSetChanged();
-
-                //toast to make user aware of the what's going on
-//                Toast.makeText(getApplicationContext(),"Skill Added Successfully",Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        //
-
-//        btnProfileSend.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                intent = new Intent(getApplicationContext(),SkillsSelection.class);
-//                intent.putExtra(SKILLSEDIT, skillsList.toString());
-//                startActivity(intent);
-//                Toast.makeText(getApplicationContext(),"Saving",Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
     }
 }
