@@ -136,25 +136,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String emailAddress = txtEmail.getText().toString();
-                mAuth.sendPasswordResetEmail(emailAddress)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Log.d(TAG, "Email sent.");
-                                    txtEmail.setText("");
-                                    txtPassword.setText("");
-                                    btnLogin.setVisibility(View.VISIBLE);
-                                    Toast.makeText(getApplicationContext(), R.string.forgot_password_toast_text, Toast.LENGTH_SHORT).show();
+                if(emailAddress.equals("")){
+                    Toast.makeText(getApplicationContext(), "Email address can not be empty", Toast.LENGTH_SHORT).show();
+                }else{
+                    mAuth.sendPasswordResetEmail(emailAddress)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "Email sent.");
+                                        txtEmail.setText("");
+                                        txtPassword.setText("");
+                                        btnLogin.setVisibility(View.VISIBLE);
+                                        Toast.makeText(getApplicationContext(), R.string.forgot_password_toast_text, Toast.LENGTH_LONG).show();
+                                    }else{
+                                        Toast.makeText(getApplicationContext(), "Please check if your email is valid. If the problem persists, Please try again later.", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
+
             }
         });
 
     }
-
-
 
     @Override
     public void onStart() {
