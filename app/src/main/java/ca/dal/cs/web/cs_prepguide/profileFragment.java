@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -70,6 +72,8 @@ public class profileFragment extends Fragment {
     private ImageView ProfilePic;
     String mCurrentPhotoPath;
     Uri photoURI;
+    CSPrepGuideSingleTon singleTon = CSPrepGuideSingleTon.getInstance(getApplicationContext());
+    private static final String TAG = "Profile Fragment";
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -179,6 +183,12 @@ public class profileFragment extends Fragment {
             }
         });
 
+        if(!singleTon.getAppUser().getImageUrl().isEmpty()){
+//           ProfilePic.setImageURI(Uri.parse(singleTon.getAppUser().getImageUrl()));
+            // TO DO Add Reference
+            Picasso.with(getApplicationContext()).load(Uri.parse(singleTon.getAppUser().getImageUrl())).fit().centerCrop().into(ProfilePic);
+        }
+
 
         skillsEdit = view.findViewById(R.id.skillsEdit);
 //        btnProfileSend = parent.findViewById(R.id.btnProfileSend);
@@ -197,6 +207,8 @@ public class profileFragment extends Fragment {
 
                 //making the edittext field blank
                 skillsEdit.setText("");
+                singleTon.getAppUser().setSkills(skillsList);
+                Log.d(TAG, "after adding skills" + singleTon.getAppUser().getSkills().toString());
                 adapter.notifyDataSetChanged();
 
                 //toast to make user aware of the what's going on

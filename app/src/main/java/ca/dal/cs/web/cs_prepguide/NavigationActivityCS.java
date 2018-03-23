@@ -41,10 +41,15 @@ public class NavigationActivityCS extends AppCompatActivity
     private FirebaseAuth mAuth;
     TextView txtNavUserId, txtNavUserEmail;
     private static final String TAG = "NavigationActivity";
+    CSPrepGuideSingleTon singleTonInstance;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        singleTonInstance = CSPrepGuideSingleTon.getInstance(getApplicationContext());
+        Log.d(TAG, "user details after Navigation"+singleTonInstance.getAppUser().toString());
+
 
         setContentView(R.layout.activity_navigation_cs);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -66,12 +71,12 @@ public class NavigationActivityCS extends AppCompatActivity
         txtNavUserEmail = navigationHeaderView.findViewById(R.id.txtNavUserEmail);
         txtNavUserId = navigationHeaderView.findViewById(R.id.txtNavUserId);
 //        txtNavUserId.setText(user.getUid());
-        if(user != null){
-            txtNavUserId.setText(user.getEmail());
-            //        txtNavUserEmail.setText(user.getEmail());
-            Log.d(TAG, String.valueOf(user.getDisplayName()));
-            txtNavUserEmail.setText("");
 
+        if(singleTonInstance.getAppUser() != null){
+            txtNavUserId.setText(singleTonInstance.getAppUser().getEmail());
+            //        txtNavUserEmail.setText(user.getEmail());
+//            Log.d(TAG, String.valueOf(user.getDisplayName()));
+            txtNavUserEmail.setText("");
         }
 
 

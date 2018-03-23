@@ -1,6 +1,7 @@
 package ca.dal.cs.web.cs_prepguide;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,6 +34,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final String MESSAGE_FROM_LOGIN = "Message from login";
@@ -41,11 +44,12 @@ public class MainActivity extends AppCompatActivity {
 
     CallbackManager mCallbackManager;
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     private Button btnLogin,btnRegister, btnForgotPassword;
     private TextView txtEmail, txtPassword;
     private boolean isRegisterFirstTime = true;
-
+    CSPrepGuideSingleTon singleTonInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
         //https://stackoverflow.com/questions/14475109/remove-android-app-title-bar
         getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
+
+        singleTonInstance = CSPrepGuideSingleTon.getInstance(getApplicationContext());
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
@@ -119,7 +126,12 @@ public class MainActivity extends AppCompatActivity {
                     txtPassword.setText("");
                     Toast.makeText(getApplicationContext(), "Enter your details and press register to create an account", Toast.LENGTH_SHORT).show();
                 }else{
-                    registerUser(txtEmail.getText().toString(), txtPassword.getText().toString());
+                    if(txtEmail.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()){
+                        Toast.makeText(getApplicationContext(), "Email and Password cannot be empty", Toast.LENGTH_SHORT).show();
+                    }else{
+                        registerUser(txtEmail.getText().toString(), txtPassword.getText().toString());
+                    }
+
                 }
             }
         });
@@ -174,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
 //        updateUI(account);
     }
 
-    private void registerUser(String email, String password){
+    private void registerUser(final String email, String password){
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -183,8 +195,13 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            Log.w(TAG, user.toString());
 //                            updateUI(user);
                             isRegisterFirstTime = true;
+                            singleTonInstance.createUser("", email, "", new ArrayList<String>(), new ArrayList<String>());
+                            Log.d(TAG, "user details after registering"+singleTonInstance.getAppUser().toString());
+                            Toast.makeText(getApplicationContext(), "Registration Success",
+                                    Toast.LENGTH_SHORT).show();
                             btnLogin.setVisibility(View.VISIBLE);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -207,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            Log.w(TAG, user.toString());
                             Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
                             intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
                             txtEmail.setText("");
@@ -247,10 +265,25 @@ public class MainActivity extends AppCompatActivity {
 
             // Signed in successfully, show authenticated UI.
 //            updateUI(account);
+            Log.w(TAG, account.toString());
+            if (account != null) {
+//                String personName = account.getDisplayName();
+//                String personGivenName = account.getGivenName();
+//                String personFamilyName = account.getFamilyName();
+//                String personEmail = account.getEmail();
+//                String personId = account.getId();
+//                Uri personPhoto = account.getPhotoUrl();
+//                Log.w(TAG, personName + personEmail + personGivenName + personFamilyName + personId + personPhoto.toString());
+                singleTonInstance.createUser(account.getDisplayName(), account.getEmail(), account.getPhotoUrl().toString(), new ArrayList<String>(), new ArrayList<String>());
+                Log.d(TAG, "user after google login"+singleTonInstance.getAppUser().toString());
+            }
+
 
             // Sign in success, update UI with the signed-in user's information
             Log.d(TAG, "signInWithGoogle:success");
+//            addUserToFireBaseDB();
 //            FirebaseUser user = mAuth.getCurrentUser();
+//            Log.w(TAG, user.toString());
             Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
             intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
             txtEmail.setText("");
@@ -301,6 +334,10 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            Log.w(TAG, user.toString());
+                            Log.w(TAG, user.getDisplayName() + user.getEmail() + user.getUid() + user.getPhotoUrl().toString());
+                            singleTonInstance.createUser(user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), new ArrayList<String>(), new ArrayList<String>());
+                            Log.d(TAG, "user after facebook login"+singleTonInstance.getAppUser().toString());
 //                            updateUI(user);
                             Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
                             intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
