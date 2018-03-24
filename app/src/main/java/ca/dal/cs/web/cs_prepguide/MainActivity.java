@@ -31,8 +31,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -44,9 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
     CallbackManager mCallbackManager;
     private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
+    private DatabaseReference mDatabase, myRef1;
 
-    private Button btnLogin,btnRegister, btnForgotPassword;
+    private Button btnLogin, btnRegister, btnForgotPassword;
     private TextView txtEmail, txtPassword;
     private boolean isRegisterFirstTime = true;
     CSPrepGuideSingleTon singleTonInstance;
@@ -108,9 +111,9 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!txtEmail.getText().toString().equals("") && !txtPassword.getText().toString().equals("")){
+                if (!txtEmail.getText().toString().equals("") && !txtPassword.getText().toString().equals("")) {
                     signIn(txtEmail.getText().toString(), txtPassword.getText().toString());
-                }else{
+                } else {
                     Toast.makeText(getApplicationContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -119,16 +122,16 @@ public class MainActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isRegisterFirstTime){
+                if (isRegisterFirstTime) {
                     isRegisterFirstTime = false;
                     btnLogin.setVisibility(View.INVISIBLE);
                     txtEmail.setText("");
                     txtPassword.setText("");
                     Toast.makeText(getApplicationContext(), "Enter your details and press register to create an account", Toast.LENGTH_SHORT).show();
-                }else{
-                    if(txtEmail.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()){
+                } else {
+                    if (txtEmail.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
                         Toast.makeText(getApplicationContext(), "Email and Password cannot be empty", Toast.LENGTH_SHORT).show();
-                    }else{
+                    } else {
                         registerUser(txtEmail.getText().toString(), txtPassword.getText().toString());
                     }
 
@@ -139,8 +142,8 @@ public class MainActivity extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                    startActivityForResult(signInIntent, RC_SIGN_IN);
+                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                startActivityForResult(signInIntent, RC_SIGN_IN);
             }
         });
 
@@ -148,9 +151,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String emailAddress = txtEmail.getText().toString();
-                if(emailAddress.equals("")){
+                if (emailAddress.equals("")) {
                     Toast.makeText(getApplicationContext(), "Email address can not be empty", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     mAuth.sendPasswordResetEmail(emailAddress)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -161,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                                         txtPassword.setText("");
                                         btnLogin.setVisibility(View.VISIBLE);
                                         Toast.makeText(getApplicationContext(), R.string.forgot_password_toast_text, Toast.LENGTH_LONG).show();
-                                    }else{
+                                    } else {
                                         Toast.makeText(getApplicationContext(), "Please check if your email is valid. If the problem persists, Please try again later.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -186,27 +189,27 @@ public class MainActivity extends AppCompatActivity {
 //        updateUI(account);
     }
 
-    private void registerUser(final String email, String password){
+    private void registerUser(final String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "createUserWithEmail:success");
+                            Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             Log.w(TAG, user.toString());
                             Log.w(TAG, user.getUid());
 //                            updateUI(user);
                             isRegisterFirstTime = true;
-                            singleTonInstance.createUser("", user.getUid(),  email, "", new ArrayList<String>(), new ArrayList<String>());
-                            Log.d(TAG, "user details after registering"+singleTonInstance.getAppUser().toString());
+                            singleTonInstance.createUser("", user.getUid(), email, "", new ArrayList<String>(), new ArrayList<String>());
+                            Log.d(TAG, "user details after registering" + singleTonInstance.getAppUser().toString());
                             Toast.makeText(getApplicationContext(), "Registration Success",
                                     Toast.LENGTH_SHORT).show();
                             btnLogin.setVisibility(View.VISIBLE);
                         } else {
                             // If sign in fails, display a message to the user.
-                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(getApplicationContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
 //                            updateUI(null);
@@ -216,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void signIn(String email, String password){
+    private void signIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -225,9 +228,16 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Log.w(TAG, user.getUid().toString());
+                            Log.w(TAG, user.getUid());
                             Log.w(TAG, user.toString());
-                            singleTonInstance.createUser("", user.getUid(), user.getEmail(), "", new ArrayList<String>(), new ArrayList<String>());
+
+                            if (getUserDetailsFromFirebase(user.getUid()).equals("Failure")) {
+                                // No user Exist so create a new user with details from provided details
+                                Log.d(TAG, "No User Exist test");
+                                singleTonInstance.createUser("", user.getUid(), user.getEmail(), "", new ArrayList<String>(), new ArrayList<String>());
+                                singleTonInstance.addUserToFireBaseDB();
+                            }
+
                             Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
                             intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
                             txtEmail.setText("");
@@ -277,9 +287,13 @@ public class MainActivity extends AppCompatActivity {
 //                String personId = account.getId();
 //                Uri personPhoto = account.getPhotoUrl();
 //                Log.w(TAG, personName + personEmail + personGivenName + personFamilyName + personId + personPhoto.toString());
-                singleTonInstance.createUser(account.getDisplayName(), account.getId(), account.getEmail(), account.getPhotoUrl().toString(), new ArrayList<String>(), new ArrayList<String>());
-//                addUserToFireBaseDB();
-                Log.d(TAG, "user after google login"+singleTonInstance.getAppUser().toString());
+                if (getUserDetailsFromFirebase(account.getId()).equals("Failure")) {
+                    // No user Exist so create a new user with details form google
+                    Log.d(TAG, "No User Exist test");
+                    singleTonInstance.createUser(account.getDisplayName(), account.getId(), account.getEmail(), account.getPhotoUrl().toString(), new ArrayList<String>(), new ArrayList<String>());
+                    singleTonInstance.addUserToFireBaseDB();
+                }
+                Log.d(TAG, "user after google login" + singleTonInstance.getAppUser().toString());
             }
 
 
@@ -303,29 +317,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void addUserToFireBaseDB(){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // Name, email address, and profile photo Url
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-//            Uri photoUrl = user.getPhotoUrl();
-
-            // Check if user's email is verified
-            boolean emailVerified = user.isEmailVerified();
-
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getToken() instead.
-            String uid = user.getUid();
-
-
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference();
-            myRef.child("users").child(uid).child("email").setValue(email);
-        }
-    }
-
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
@@ -340,9 +331,16 @@ public class MainActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             Log.w(TAG, user.toString());
                             Log.w(TAG, user.getDisplayName() + user.getEmail() + user.getUid() + user.getPhotoUrl().toString());
-                            singleTonInstance.createUser(user.getDisplayName(), user.getUid(), user.getEmail(), user.getPhotoUrl().toString(), new ArrayList<String>(), new ArrayList<String>());
-                            Log.d(TAG, "user after facebook login"+singleTonInstance.getAppUser().toString());
 //                            updateUI(user);
+
+                            if (getUserDetailsFromFirebase(user.getUid()).equals("Failure")) {
+                                // No user Exist so create a new user with details from facebook
+                                Log.d(TAG, "No User Exist test");
+                                singleTonInstance.createUser(user.getDisplayName(), user.getUid(), user.getEmail(), user.getPhotoUrl().toString(), new ArrayList<String>(), new ArrayList<String>());
+                                singleTonInstance.addUserToFireBaseDB();
+                            }
+
+                            Log.d(TAG, "user after facebook login" + singleTonInstance.getAppUser().toString());
                             Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
                             intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
                             txtEmail.setText("");
@@ -361,5 +359,39 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    private String getUserDetailsFromFirebase(String userID) {
+        final User[] user = new User[1];
+        String currentUser = "users/".concat(userID);
+//        String currentUser = "users/".concat("sample");
+        Log.d(TAG, "reference" + currentUser);
+        myRef1 = FirebaseDatabase.getInstance().getReference(currentUser);
+        // Read from the database
+        myRef1.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                user[0] = dataSnapshot.getValue(User.class);
+                if (user[0] != null) {
+                    Log.d(TAG, "User Value is: " + user[0].toString());
+                    singleTonInstance.createUser(user[0]);
+                    Log.d(TAG, "User Value After creating singleton instance is: " + singleTonInstance.getAppUser().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+
+        });
+        if (user[0] != null) {
+            return "Success";
+        } else {
+            return "Failure";
+        }
+    }
 }
 

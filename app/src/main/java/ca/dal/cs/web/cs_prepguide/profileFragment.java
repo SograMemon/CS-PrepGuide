@@ -208,6 +208,7 @@ public class profileFragment extends Fragment {
                 //making the edittext field blank
                 skillsEdit.setText("");
                 singleTon.getAppUser().setSkills(skillsList);
+                singleTon.addUserToFireBaseDB();
                 Log.d(TAG, "after adding skills" + singleTon.getAppUser().getSkills().toString());
                 adapter.notifyDataSetChanged();
 
