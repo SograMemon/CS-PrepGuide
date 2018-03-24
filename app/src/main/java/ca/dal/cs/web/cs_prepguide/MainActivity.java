@@ -59,7 +59,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         singleTonInstance = CSPrepGuideSingleTon.getInstance(getApplicationContext());
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
 
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
@@ -78,8 +80,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Build a GoogleSignInClient with the options specified by gso.
         final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        mAuth = FirebaseAuth.getInstance();
 
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
@@ -196,9 +196,10 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             Log.w(TAG, user.toString());
+                            Log.w(TAG, user.getUid());
 //                            updateUI(user);
                             isRegisterFirstTime = true;
-                            singleTonInstance.createUser("", email, "", new ArrayList<String>(), new ArrayList<String>());
+                            singleTonInstance.createUser("", user.getUid(),  email, "", new ArrayList<String>(), new ArrayList<String>());
                             Log.d(TAG, "user details after registering"+singleTonInstance.getAppUser().toString());
                             Toast.makeText(getApplicationContext(), "Registration Success",
                                     Toast.LENGTH_SHORT).show();
@@ -224,7 +225,9 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            Log.w(TAG, user.getUid().toString());
                             Log.w(TAG, user.toString());
+                            singleTonInstance.createUser("", user.getUid(), user.getEmail(), "", new ArrayList<String>(), new ArrayList<String>());
                             Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
                             intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
                             txtEmail.setText("");
@@ -274,14 +277,15 @@ public class MainActivity extends AppCompatActivity {
 //                String personId = account.getId();
 //                Uri personPhoto = account.getPhotoUrl();
 //                Log.w(TAG, personName + personEmail + personGivenName + personFamilyName + personId + personPhoto.toString());
-                singleTonInstance.createUser(account.getDisplayName(), account.getEmail(), account.getPhotoUrl().toString(), new ArrayList<String>(), new ArrayList<String>());
+                singleTonInstance.createUser(account.getDisplayName(), account.getId(), account.getEmail(), account.getPhotoUrl().toString(), new ArrayList<String>(), new ArrayList<String>());
+//                addUserToFireBaseDB();
                 Log.d(TAG, "user after google login"+singleTonInstance.getAppUser().toString());
             }
 
 
             // Sign in success, update UI with the signed-in user's information
             Log.d(TAG, "signInWithGoogle:success");
-//            addUserToFireBaseDB();
+//
 //            FirebaseUser user = mAuth.getCurrentUser();
 //            Log.w(TAG, user.toString());
             Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
@@ -336,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             Log.w(TAG, user.toString());
                             Log.w(TAG, user.getDisplayName() + user.getEmail() + user.getUid() + user.getPhotoUrl().toString());
-                            singleTonInstance.createUser(user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), new ArrayList<String>(), new ArrayList<String>());
+                            singleTonInstance.createUser(user.getDisplayName(), user.getUid(), user.getEmail(), user.getPhotoUrl().toString(), new ArrayList<String>(), new ArrayList<String>());
                             Log.d(TAG, "user after facebook login"+singleTonInstance.getAppUser().toString());
 //                            updateUI(user);
                             Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);

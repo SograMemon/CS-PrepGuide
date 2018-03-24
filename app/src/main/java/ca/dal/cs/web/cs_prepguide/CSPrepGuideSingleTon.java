@@ -23,8 +23,8 @@ public class CSPrepGuideSingleTon {
         return mInstance;
     }
 
-    public void createUser(String name, String email, String imageUrl, ArrayList<String> skills, ArrayList<String> bookmarks){
-        AppUser = new User(name, email, email, imageUrl, skills, bookmarks);
+    public void createUser(String name, String id, String email, String imageUrl, ArrayList<String> skills, ArrayList<String> bookmarks){
+        AppUser = new User(name, id, email, imageUrl, skills, bookmarks);
     }
 
     public User getAppUser() {
