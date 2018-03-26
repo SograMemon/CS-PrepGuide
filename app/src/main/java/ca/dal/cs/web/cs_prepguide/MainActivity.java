@@ -230,15 +230,7 @@ public class MainActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             Log.w(TAG, user.getUid());
                             Log.w(TAG, user.toString());
-
-                            if (getUserDetailsFromFirebase(user.getUid()).equals("Failure")) {
-                                // No user Exist so create a new user with details from provided details
-                                Log.d(TAG, "No User Exist test");
-                                singleTonInstance.createUser("", user.getUid(), user.getEmail(), "", new ArrayList<String>(), new ArrayList<String>());
-                                singleTonInstance.addUserToFireBaseDB();
-                            }
-
-                            navigateToApplication();
+                            getUserDetailsFromFirebase(user.getUid(), user.getEmail(), "", "");
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -282,13 +274,26 @@ public class MainActivity extends AppCompatActivity {
 //                String personId = account.getId();
 //                Uri personPhoto = account.getPhotoUrl();
 //                Log.w(TAG, personName + personEmail + personGivenName + personFamilyName + personId + personPhoto.toString());
-                if (getUserDetailsFromFirebase(account.getId()).equals("Failure")) {
-                    // No user Exist so create a new user with details form google
-                    Log.d(TAG, "No User Exist test");
-                    singleTonInstance.createUser(account.getDisplayName(), account.getId(), account.getEmail(), account.getPhotoUrl().toString(), new ArrayList<String>(), new ArrayList<String>());
-                    singleTonInstance.addUserToFireBaseDB();
-                }
-                Log.d(TAG, "user after google login" + singleTonInstance.getAppUser().toString());
+                getUserDetailsFromFirebase(account.getId(), account.getEmail(), account.getDisplayName(), account.getPhotoUrl().toString());
+
+
+//                TA's Code to solve google sign in error
+//                AuthCredential credential = GoogleAuthProvider.getCredential(account.getId(), null);
+//                FirebaseAuth.getInstance().signInWithCredential(credential)
+//                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//                            @Override
+//                            public void onComplete(@NonNull Task<AuthResult> task) {
+//                                Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+//                                if (task.isSuccessful()) {
+//                                    Log.d(TAG, "Signed in");
+//                                    getUserDetailsFromFirebase(account.getId(), account.getEmail(),
+//                                            account.getDisplayName(), account.getPhotoUrl().toString());
+//                                } else {
+//                                    Log.w(TAG, "signInWithCredential: " + task.getException().getMessage());
+//                                }
+//                            }
+//                        });
+//                Log.d(TAG, "user after google login" + singleTonInstance.getAppUser().toString());
             }
 
 
@@ -297,7 +302,6 @@ public class MainActivity extends AppCompatActivity {
 //
 //            FirebaseUser user = mAuth.getCurrentUser();
 //            Log.w(TAG, user.toString());
-            navigateToApplication();
 
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
@@ -306,6 +310,7 @@ public class MainActivity extends AppCompatActivity {
 //            updateUI(null);
         }
     }
+
 
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
@@ -322,16 +327,8 @@ public class MainActivity extends AppCompatActivity {
                             Log.w(TAG, user.toString());
                             Log.w(TAG, user.getDisplayName() + user.getEmail() + user.getUid() + user.getPhotoUrl().toString());
 //                            updateUI(user);
-
-                            if (getUserDetailsFromFirebase(user.getUid()).equals("Failure")) {
-                                // No user Exist so create a new user with details from facebook
-                                Log.d(TAG, "No User Exist test");
-                                singleTonInstance.createUser(user.getDisplayName(), user.getUid(), user.getEmail(), user.getPhotoUrl().toString(), new ArrayList<String>(), new ArrayList<String>());
-                                singleTonInstance.addUserToFireBaseDB();
-                            }
-
-                            Log.d(TAG, "user after facebook login" + singleTonInstance.getAppUser().toString());
-                            navigateToApplication();
+                            getUserDetailsFromFirebase(user.getUid(), user.getEmail(), user.getDisplayName(), user.getPhotoUrl().toString());
+//                            Log.d(TAG, "user after facebook login" + singleTonInstance.getAppUser().toString());
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -345,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private String getUserDetailsFromFirebase(String userID) {
+    private void getUserDetailsFromFirebase(final String userID, final String userEmail, final String name, final String imageUrl) {
         final User[] user = new User[1];
         String currentUser = "users/".concat(userID);
 //        String currentUser = "users/".concat("sample");
@@ -361,26 +358,32 @@ public class MainActivity extends AppCompatActivity {
                 user[0] = dataSnapshot.getValue(User.class);
                 if (user[0] != null) {
                     Log.d(TAG, "User Value is: " + user[0].toString());
+                    if (user[0].getSkills() == null) {
+                        user[0].setSkills(new ArrayList<String>());
+                    }
+                    if (user[0].getBookmarks() == null) {
+                        user[0].setBookmarks(new ArrayList<String>());
+                    }
                     singleTonInstance.createUser(user[0]);
                     Log.d(TAG, "User Value After creating singleton instance is: " + singleTonInstance.getAppUser().toString());
+                } else {
+                    singleTonInstance.createUser(name, userID, userEmail, imageUrl, new ArrayList<String>(), new ArrayList<String>());
+                    singleTonInstance.addUserToFireBaseDB();
                 }
+                navigateToApplication();
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
+                Toast.makeText(getApplicationContext(), "Error with Firebase database. please try later", Toast.LENGTH_SHORT).show();
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
 
         });
-        if (user[0] != null) {
-            return "Success";
-        } else {
-            return "Failure";
-        }
     }
 
-    private void navigateToApplication(){
+    private void navigateToApplication() {
         Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
         intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
         txtEmail.setText("");

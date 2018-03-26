@@ -64,7 +64,7 @@ public class profileFragment extends Fragment {
     EditText skillsEdit;
     Button btnProfileSend;
     Button addSkill;
-    ListView skillList;
+    ListView lvSkillList;
     private Button btnUpload;
     private  static  final int CAMERA_REQUEST_CODE=1;
     private StorageReference mStorage;
@@ -113,7 +113,8 @@ public class profileFragment extends Fragment {
 
 
     //to store skills in arraylist variable
-    ArrayList<String> skillsList = new ArrayList<String>();
+//    ArrayList<String> skillsList = new ArrayList<String>();
+    ArrayList<String> skillsList = singleTon.getAppUser().getSkills();
 
     //setting up the listview
     ArrayAdapter<String> adapter;
@@ -192,13 +193,13 @@ public class profileFragment extends Fragment {
 
         skillsEdit = view.findViewById(R.id.skillsEdit);
 //        btnProfileSend = parent.findViewById(R.id.btnProfileSend);
-        skillList= view.findViewById(R.id.skillsList1);
+        lvSkillList= view.findViewById(R.id.skillsList1);
 
         addSkill= view.findViewById(R.id.addSkill);
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,skillsList);
 
 
-        skillList.setAdapter(adapter);
+        lvSkillList.setAdapter(adapter);
 
         addSkill.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -293,6 +294,10 @@ public class profileFragment extends Fragment {
 
                     Uri downloadUri = taskSnapshot.getDownloadUrl();
                     Picasso.with(getApplicationContext()).load(downloadUri).fit().centerCrop().into(ProfilePic);
+
+                    singleTon.getAppUser().setImageUrl(downloadUri.toString());
+                    singleTon.addUserToFireBaseDB();
+
                     mProgress.dismiss();
                     Toast.makeText(getApplicationContext(), "Uploading Done!! .... ", Toast.LENGTH_LONG).show();
 
