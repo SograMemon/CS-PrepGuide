@@ -211,6 +211,11 @@ public class NavigationActivityCS extends AppCompatActivity
         Log.d(TAG, a + b + c);
     }
 
+    @Override
+    public void bookmarksItemClicked(int position, String id) {
+        Log.d(TAG, "bookmarks clicked with" + position + id);
+    }
+
 
     // Adapter for the viewpager using FragmentPagerAdapter
     static class ViewPagerAdapter extends FragmentPagerAdapter {

@@ -238,12 +238,7 @@ public class MainActivity extends AppCompatActivity {
                                 singleTonInstance.addUserToFireBaseDB();
                             }
 
-                            Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
-                            intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
-                            txtEmail.setText("");
-                            txtPassword.setText("");
-
-                            startActivity(intentFromLogin);
+                            navigateToApplication();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -278,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Signed in successfully, show authenticated UI.
 //            updateUI(account);
-            Log.w(TAG, account.toString());
+//            Log.w(TAG, account.toString());
             if (account != null) {
 //                String personName = account.getDisplayName();
 //                String personGivenName = account.getGivenName();
@@ -302,12 +297,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //            FirebaseUser user = mAuth.getCurrentUser();
 //            Log.w(TAG, user.toString());
-            Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
-            intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
-            txtEmail.setText("");
-            txtPassword.setText("");
-
-            startActivity(intentFromLogin);
+            navigateToApplication();
 
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
@@ -341,11 +331,7 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             Log.d(TAG, "user after facebook login" + singleTonInstance.getAppUser().toString());
-                            Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
-                            intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
-                            txtEmail.setText("");
-                            txtPassword.setText("");
-                            startActivity(intentFromLogin);
+                            navigateToApplication();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -392,6 +378,14 @@ public class MainActivity extends AppCompatActivity {
         } else {
             return "Failure";
         }
+    }
+
+    private void navigateToApplication(){
+        Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
+        intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
+        txtEmail.setText("");
+        txtPassword.setText("");
+        startActivity(intentFromLogin);
     }
 }
 
