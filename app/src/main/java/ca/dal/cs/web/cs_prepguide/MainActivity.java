@@ -274,7 +274,13 @@ public class MainActivity extends AppCompatActivity {
 //                String personId = account.getId();
 //                Uri personPhoto = account.getPhotoUrl();
 //                Log.w(TAG, personName + personEmail + personGivenName + personFamilyName + personId + personPhoto.toString());
-                getUserDetailsFromFirebase(account.getId(), account.getEmail(), account.getDisplayName(), account.getPhotoUrl().toString());
+                String personPhoto;
+                if(account.getPhotoUrl() == null){
+                    personPhoto = "";
+                }else{
+                    personPhoto = account.getPhotoUrl().toString();
+                }
+                getUserDetailsFromFirebase(account.getId(), account.getEmail(), account.getDisplayName(), personPhoto);
 
 
 //                TA's Code to solve google sign in error
@@ -325,9 +331,16 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             Log.w(TAG, user.toString());
-                            Log.w(TAG, user.getDisplayName() + user.getEmail() + user.getUid() + user.getPhotoUrl().toString());
+                            Log.w(TAG, user.getDisplayName() + user.getEmail() + user.getUid() + user.getPhotoUrl());
 //                            updateUI(user);
-                            getUserDetailsFromFirebase(user.getUid(), user.getEmail(), user.getDisplayName(), user.getPhotoUrl().toString());
+                            String personPhoto;
+                            if(user.getPhotoUrl() == null){
+                                personPhoto = "";
+                            }else{
+                                personPhoto = user.getPhotoUrl().toString();
+                            }
+
+                            getUserDetailsFromFirebase(user.getUid(), user.getEmail(), user.getDisplayName(), personPhoto);
 //                            Log.d(TAG, "user after facebook login" + singleTonInstance.getAppUser().toString());
                         } else {
                             // If sign in fails, display a message to the user.
