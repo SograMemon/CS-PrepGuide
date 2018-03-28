@@ -21,12 +21,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.app.Fragment;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
@@ -68,16 +70,21 @@ public class profileFragment extends Fragment {
     private Button btnUpload;
     private  static  final int CAMERA_REQUEST_CODE=1;
     private StorageReference mStorage;
-    private ProgressDialog mProgress;
+    public ProgressDialog mProgress;
     private ImageView ProfilePic;
     String mCurrentPhotoPath;
     Uri photoURI;
     CSPrepGuideSingleTon singleTon = CSPrepGuideSingleTon.getInstance(getApplicationContext());
     private static final String TAG = "Profile Fragment";
+    private TextView userEmail;
+    private  EditText userName;
+    private Button btnSave;
+    private boolean clicked;
+
+    //CAMERA UPLOAD PHOTO REFERRED FROM: https://stackoverflow.com/questions/40710599/image-capture-with-camera-upload-to-firebase-uri-in-onactivityresult-is-nul
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        //String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPG_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_";
         File storageDirectory = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File pic = File.createTempFile(imageFileName,".jpg",storageDirectory);
@@ -113,7 +120,6 @@ public class profileFragment extends Fragment {
 
 
     //to store skills in arraylist variable
-//    ArrayList<String> skillsList = new ArrayList<String>();
     ArrayList<String> skillsList = singleTon.getAppUser().getSkills();
 
     //setting up the listview
@@ -121,18 +127,12 @@ public class profileFragment extends Fragment {
 
 
     Intent intent;
-//    Activity parent = null;
 
     private profileFragmentInterface mListener;
 
     public profileFragment() {
         // Required empty public constructor
     }
-//    @SuppressLint("ValidFragment")
-//    public profileFragment(Activity parent) {
-//        // Required empty public constructor
-//        this.parent = parent;
-//    }
 
 
     /**
@@ -167,6 +167,7 @@ public class profileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_profile, container, false);
+        clicked =false;
 
         mStorage = FirebaseStorage.getInstance().getReference();
         mProgress = new ProgressDialog(getApplicationContext());
@@ -186,7 +187,7 @@ public class profileFragment extends Fragment {
 
         if(!singleTon.getAppUser().getImageUrl().isEmpty()){
 //           ProfilePic.setImageURI(Uri.parse(singleTon.getAppUser().getImageUrl()));
-            // TO DO Add Reference
+            // PICASSO REFERENCE: http://square.github.io/picasso/
             Picasso.with(getApplicationContext()).load(Uri.parse(singleTon.getAppUser().getImageUrl())).fit().centerCrop().into(ProfilePic);
         }
 
@@ -194,6 +195,16 @@ public class profileFragment extends Fragment {
         skillsEdit = view.findViewById(R.id.skillsEdit);
 //        btnProfileSend = parent.findViewById(R.id.btnProfileSend);
         lvSkillList= view.findViewById(R.id.skillsList1);
+        userEmail = view.findViewById(R.id.userEmail);
+        userName = view.findViewById(R.id.userName);
+        btnSave = view.findViewById(R.id.btnSave);
+
+        String emailID ="EMAIL : "+singleTon.getAppUser().getEmail();
+        //Setting the retrieved Email ID of the user
+        userEmail.setText(emailID);
+        userName.setEnabled(false);
+        userName.setText(singleTon.getAppUser().getName());
+
 
         addSkill= view.findViewById(R.id.addSkill);
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,skillsList);
@@ -218,19 +229,32 @@ public class profileFragment extends Fragment {
             }
         });
 
-        //
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-//        btnProfileSend.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                intent = new Intent(getApplicationContext(),SkillsSelection.class);
-//                intent.putExtra(SKILLSEDIT, skillsList.toString());
-//                startActivity(intent);
-//                Toast.makeText(getApplicationContext(),"Saving",Toast.LENGTH_SHORT).show();
-//            }
-//        });
+                if(!clicked) {
+                    singleTon.getAppUser().setName(userName.getText().toString());
+                    userName.setEnabled(false);
+                    btnSave.setText(getResources().getText(R.string.edit));
+                    singleTon.addUserToFireBaseDB();
+                    userName.setEnabled(true);
+                    btnSave.setText(getResources().getText(R.string.save));
+                    clicked=true;
+                }
+                else {
 
+                    singleTon.getAppUser().setName(userName.getText().toString());
+                    userName.setEnabled(true);
+                    btnSave.setText(getResources().getText(R.string.save));
+                    singleTon.addUserToFireBaseDB();
+                    userName.setEnabled(false);
+                    btnSave.setText(getResources().getText(R.string.edit));
+                    clicked=false;
+
+                }
+            }
+        });
 
         return view;
     }
@@ -279,8 +303,10 @@ public class profileFragment extends Fragment {
 
         if (requestCode ==CAMERA_REQUEST_CODE && resultCode==RESULT_OK ){
 
-//            mProgress.setMessage("Uploading Image...");
-//            mProgress.show();
+            mProgress = new ProgressDialog(getActivity());
+            mProgress.setMessage("Uploading Image...");
+            mProgress.show();
+
 
             //Uri uri =  data.getData();
 
