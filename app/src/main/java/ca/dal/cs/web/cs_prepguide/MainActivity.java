@@ -364,6 +364,9 @@ public class MainActivity extends AppCompatActivity {
                     if (user[0].getBookmarks() == null) {
                         user[0].setBookmarks(new ArrayList<String>());
                     }
+                    if (user[0].getImageUrl() == null ){
+                        user[0].setImageUrl("");
+                    }
                     singleTonInstance.createUser(user[0]);
                     Log.d(TAG, "User Value After creating singleton instance is: " + singleTonInstance.getAppUser().toString());
                 } else {
