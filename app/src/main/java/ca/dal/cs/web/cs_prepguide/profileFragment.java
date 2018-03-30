@@ -177,11 +177,14 @@ public class profileFragment extends Fragment {
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                dispatchTakePhotoIntent();
-                //Intent intent1 =new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                //startActivityForResult(intent1,CAMERA_REQUEST_CODE);
-
+                try {
+                    dispatchTakePhotoIntent();
+                    //Intent intent1 =new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    //startActivityForResult(intent1,CAMERA_REQUEST_CODE);
+                }
+                catch (Exception ex){
+                    Toast.makeText(getApplicationContext(),"Make sure Camera Permission is Granted in Settings for this App",Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -193,7 +196,7 @@ public class profileFragment extends Fragment {
 
 
         skillsEdit = view.findViewById(R.id.skillsEdit);
-//        btnProfileSend = parent.findViewById(R.id.btnProfileSend);
+        //btnProfileSend = parent.findViewById(R.id.btnProfileSend);
         lvSkillList= view.findViewById(R.id.skillsList1);
         userEmail = view.findViewById(R.id.userEmail);
         userName = view.findViewById(R.id.userName);
@@ -215,14 +218,20 @@ public class profileFragment extends Fragment {
         addSkill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                skillsList.add(skillsEdit.getText().toString());
 
-                //making the edittext field blank
-                skillsEdit.setText("");
-                singleTon.getAppUser().setSkills(skillsList);
-                singleTon.addUserToFireBaseDB();
-                Log.d(TAG, "after adding skills" + singleTon.getAppUser().getSkills().toString());
-                adapter.notifyDataSetChanged();
+                if(skillsEdit.equals("")) {
+                    skillsList.add(skillsEdit.getText().toString());
+
+                    //making the edittext field blank
+                    skillsEdit.setText("");
+                    singleTon.getAppUser().setSkills(skillsList);
+                    singleTon.addUserToFireBaseDB();
+                    Log.d(TAG, "after adding skills" + singleTon.getAppUser().getSkills().toString());
+                    adapter.notifyDataSetChanged();
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),"Please add a Skill",Toast.LENGTH_SHORT).show();
+                }
 
                 //toast to make user aware of the what's going on
 //                Toast.makeText(getApplicationContext(),"Skill Added Successfully",Toast.LENGTH_SHORT).show();

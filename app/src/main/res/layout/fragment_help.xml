@@ -6,8 +6,73 @@
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/pageHeader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Help Fragment" />
+        android:text="@string/help_section"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:textSize="25sp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/appIntro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:text="We aim to create a platform that provides information about\nthe different disciplines in Computer Science and the jobs or\npositions available within each discipline in a particular\ncompany in which they want to get placed. This valuable\ninformation in the form of guide provided in our app\nwill help users to make and plan their career path. This will be\nuseful to fresh Computer Science graduates as well as\nprofessionals considering a career change to join the booming IT industries."/>
+
+        <TextView
+            android:id="@+id/permissionsApp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/permissions_required_for_the_app"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/appIntro"/>
+        <TextView
+            android:id="@+id/perm1"
+            android:layout_below="@id/permissionsApp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1.Camera \n2. Storage\nMake sure both permissions are granted"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/loginTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/login_help"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/perm1"/>
+
+        <TextView
+            android:id="@+id/log1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/loginTxt"
+            android:text="1. New Password can be set using Forget Password Button.\n2. Login can be done with Google/Facebook"/>
+
+
+        <TextView
+            android:id="@+id/cameraIssue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/camera_issue"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/log1"/>
+        <TextView
+            android:id="@+id/cam1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cameraIssue"
+            android:text="If the application crashes on clicking upload, check whether\nCamera permissions are granted or not"/>
+
+
+    </RelativeLayout>
+
 
 </FrameLayout>
