@@ -13,7 +13,6 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
     <string name="btnapplyFilter">Apply Filter</string>
     <string-array name="stream_array">
@@ -62,4 +61,12 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="name">NAME :</string>
+    <string name="btnSave"><![CDATA[EDIT & SAVE]]></string>
+    <string name="add_skill">ADD Skill</string>
+    <string name="enter_your_technical_skills">Enter Your Technical Skills</string>
+    <string name="upload_photo">upload photo</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="web_client_id_for_google">417200596169-kn9l0dmgtk0g9dnqfr53mi3vj8m4r1iv.apps.googleusercontent.com</string>
 </resources>

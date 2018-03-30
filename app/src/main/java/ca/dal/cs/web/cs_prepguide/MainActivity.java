@@ -1,6 +1,7 @@
 package ca.dal.cs.web.cs_prepguide;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,8 +31,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,11 +48,12 @@ public class MainActivity extends AppCompatActivity {
 
     CallbackManager mCallbackManager;
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase, myRef1;
 
-    private Button btnLogin,btnRegister, btnForgotPassword;
+    private Button btnLogin, btnRegister, btnForgotPassword;
     private TextView txtEmail, txtPassword;
     private boolean isRegisterFirstTime = true;
-
+    CSPrepGuideSingleTon singleTonInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +62,17 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
 
+        singleTonInstance = CSPrepGuideSingleTon.getInstance(getApplicationContext());
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
         txtEmail = findViewById(R.id.txtEmail);
         txtPassword = findViewById(R.id.txtPassword);
         btnForgotPassword = findViewById(R.id.btnForgotPassword);
+
         // Set the dimensions of the sign-in button.
         SignInButton signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
@@ -66,13 +80,12 @@ public class MainActivity extends AppCompatActivity {
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.web_client_id_for_google))
                 .requestEmail()
                 .build();
 
         // Build a GoogleSignInClient with the options specified by gso.
         final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        mAuth = FirebaseAuth.getInstance();
 
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
@@ -101,31 +114,30 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
-                //startActivity(intentFromLogin);
-                //if(!txtEmail.getText().toString().equals("") && !txtPassword.getText().toString().equals("")){
-                   // signIn(txtEmail.getText().toString(), txtPassword.getText().toString());
-                //}else{
-                   // Toast.makeText(getApplicationContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
-                //}
-                Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
-                intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
-                startActivity(intentFromLogin);
-
+                if (!txtEmail.getText().toString().equals("") && !txtPassword.getText().toString().equals("")) {
+                    signIn(txtEmail.getText().toString(), txtPassword.getText().toString());
+                } else {
+                    Toast.makeText(getApplicationContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isRegisterFirstTime){
+                if (isRegisterFirstTime) {
                     isRegisterFirstTime = false;
                     btnLogin.setVisibility(View.INVISIBLE);
                     txtEmail.setText("");
                     txtPassword.setText("");
                     Toast.makeText(getApplicationContext(), "Enter your details and press register to create an account", Toast.LENGTH_SHORT).show();
-                }else{
-                    registerUser(txtEmail.getText().toString(), txtPassword.getText().toString());
+                } else {
+                    if (txtEmail.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
+                        Toast.makeText(getApplicationContext(), "Email and Password cannot be empty", Toast.LENGTH_SHORT).show();
+                    } else {
+                        registerUser(txtEmail.getText().toString(), txtPassword.getText().toString());
+                    }
+
                 }
             }
         });
@@ -133,8 +145,8 @@ public class MainActivity extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                    startActivityForResult(signInIntent, RC_SIGN_IN);
+                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                startActivityForResult(signInIntent, RC_SIGN_IN);
             }
         });
 
@@ -142,25 +154,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String emailAddress = txtEmail.getText().toString();
-                mAuth.sendPasswordResetEmail(emailAddress)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Log.d(TAG, "Email sent.");
-                                    txtEmail.setText("");
-                                    txtPassword.setText("");
-                                    btnLogin.setVisibility(View.VISIBLE);
-                                    Toast.makeText(getApplicationContext(), R.string.forgot_password_toast_text, Toast.LENGTH_SHORT).show();
+                if (emailAddress.equals("")) {
+                    Toast.makeText(getApplicationContext(), "Email address can not be empty", Toast.LENGTH_SHORT).show();
+                } else {
+                    mAuth.sendPasswordResetEmail(emailAddress)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "Email sent.");
+                                        txtEmail.setText("");
+                                        txtPassword.setText("");
+                                        btnLogin.setVisibility(View.VISIBLE);
+                                        Toast.makeText(getApplicationContext(), R.string.forgot_password_toast_text, Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Please check if your email is valid. If the problem persists, Please try again later.", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
+
             }
         });
 
     }
-
-
 
     @Override
     public void onStart() {
@@ -175,21 +192,27 @@ public class MainActivity extends AppCompatActivity {
 //        updateUI(account);
     }
 
-    private void registerUser(String email, String password){
+    private void registerUser(final String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "createUserWithEmail:success");
+                            Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            Log.w(TAG, user.toString());
+                            Log.w(TAG, user.getUid());
 //                            updateUI(user);
                             isRegisterFirstTime = true;
+                            singleTonInstance.createUser("", user.getUid(), email, "", new ArrayList<String>(), new ArrayList<String>());
+                            Log.d(TAG, "user details after registering" + singleTonInstance.getAppUser().toString());
+                            Toast.makeText(getApplicationContext(), "Registration Success",
+                                    Toast.LENGTH_SHORT).show();
                             btnLogin.setVisibility(View.VISIBLE);
                         } else {
                             // If sign in fails, display a message to the user.
-                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(getApplicationContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
 //                            updateUI(null);
@@ -199,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void signIn(String email, String password){
+    private void signIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -208,12 +231,9 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
-                            intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
-                            txtEmail.setText("");
-                            txtPassword.setText("");
-
-                            startActivity(intentFromLogin);
+                            Log.w(TAG, user.getUid());
+                            Log.w(TAG, user.toString());
+                            getUserDetailsFromFirebase(user.getUid(), user.getEmail(), "", "");
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -230,65 +250,76 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...)
         if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                handleSignInResult(account);
+            } catch (ApiException e) {
+                // Google Sign In failed, update UI appropriately
+                Log.w(TAG, "Google sign in failed", e);
+                // ...
+            }
         }
 
+        // For facebook login
         // Pass the activity result back to the Facebook SDK
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+    private void handleSignInResult(final GoogleSignInAccount acct) {
 
-            // Signed in successfully, show authenticated UI.
+        // Signed in successfully, show authenticated UI.
 //            updateUI(account);
+//            Log.w(TAG, account.toString());
+//            if (account != null) {
+//                FirebaseUser user = mAuth.getCurrentUser();
 
-            // Sign in success, update UI with the signed-in user's information
-            Log.d(TAG, "signInWithGoogle:success");
-//            FirebaseUser user = mAuth.getCurrentUser();
-            Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
-            intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
-            txtEmail.setText("");
-            txtPassword.setText("");
+//                String personName = account.getDisplayName();
+//                String personGivenName = account.getGivenName();
+//                String personFamilyName = account.getFamilyName();
+//                String personEmail = account.getEmail();
+//                String personId = account.getId();
+//                Uri personPhoto = account.getPhotoUrl();
+//                Log.w(TAG, personName + personEmail + personGivenName + personFamilyName + personId + personPhoto.toString());
 
-            startActivity(intentFromLogin);
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
-        } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-//            updateUI(null);
-        }
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Log.d(TAG, user.getUid() + user.getEmail());
+                            String personPhoto;
+                            if (user.getPhotoUrl() == null) {
+                                personPhoto = "";
+                            } else {
+                                personPhoto = user.getPhotoUrl().toString();
+                            }
+                            getUserDetailsFromFirebase(user.getUid(), user.getEmail(), user.getDisplayName(), personPhoto);
+
+//                            updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+//                            Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
+//                            updateUI(null);
+                        }
+
+                        // ...
+                    }
+                });
+
+
     }
 
-    private void addUserToFireBaseDB(){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // Name, email address, and profile photo Url
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-//            Uri photoUrl = user.getPhotoUrl();
-
-            // Check if user's email is verified
-            boolean emailVerified = user.isEmailVerified();
-
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getToken() instead.
-            String uid = user.getUid();
-
-
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference();
-            myRef.child("users").child(uid).child("email").setValue(email);
-        }
-    }
 
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
@@ -302,12 +333,18 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            Log.w(TAG, user.toString());
+                            Log.w(TAG, user.getDisplayName() + user.getEmail() + user.getUid() + user.getPhotoUrl());
 //                            updateUI(user);
-                            Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
-                            intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
-                            txtEmail.setText("");
-                            txtPassword.setText("");
-                            startActivity(intentFromLogin);
+                            String personPhoto;
+                            if(user.getPhotoUrl() == null){
+                                personPhoto = "";
+                            }else{
+                                personPhoto = user.getPhotoUrl().toString();
+                            }
+
+                            getUserDetailsFromFirebase(user.getUid(), user.getEmail(), user.getDisplayName(), personPhoto);
+//                            Log.d(TAG, "user after facebook login" + singleTonInstance.getAppUser().toString());
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -321,5 +358,56 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    private void getUserDetailsFromFirebase(final String userID, final String userEmail, final String name, final String imageUrl) {
+        final User[] user = new User[1];
+        String currentUser = "users/".concat(userID);
+//        String currentUser = "users/".concat("sample");
+        Log.d(TAG, "reference" + currentUser);
+        myRef1 = FirebaseDatabase.getInstance().getReference(currentUser);
+        // Read from the database
+        myRef1.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                user[0] = dataSnapshot.getValue(User.class);
+                if (user[0] != null) {
+                    Log.d(TAG, "User Value is: " + user[0].toString());
+                    if (user[0].getSkills() == null) {
+                        user[0].setSkills(new ArrayList<String>());
+                    }
+                    if (user[0].getBookmarks() == null) {
+                        user[0].setBookmarks(new ArrayList<String>());
+                    }
+                    if (user[0].getImageUrl() == null ){
+                        user[0].setImageUrl("");
+                    }
+                    singleTonInstance.createUser(user[0]);
+                    Log.d(TAG, "User Value After creating singleton instance is: " + singleTonInstance.getAppUser().toString());
+                } else {
+                    singleTonInstance.createUser(name, userID, userEmail, imageUrl, new ArrayList<String>(), new ArrayList<String>());
+                    singleTonInstance.addUserToFireBaseDB();
+                }
+                navigateToApplication();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Toast.makeText(getApplicationContext(), "Error with Firebase database. please try later", Toast.LENGTH_SHORT).show();
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+
+        });
+    }
+
+    private void navigateToApplication() {
+        Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
+        intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
+        txtEmail.setText("");
+        txtPassword.setText("");
+        startActivity(intentFromLogin);
+    }
 }
 

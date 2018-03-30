@@ -3,6 +3,7 @@ package ca.dal.cs.web.cs_prepguide;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
@@ -10,6 +11,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,7 +36,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link filterFragment.OnFragmentInteractionListener} interface
+ * {@link filterFragment.filterFragmentInterface} interface
  * to handle interaction events.
  * Use the {@link filterFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -42,6 +44,10 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class filterFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    public static final String job_Title="jobtitle";
+    public static final String job_ID="jobid";
+    public static final String v="";
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -49,7 +55,7 @@ public class filterFragment extends Fragment {
     public static final String COMPANY="COMPANY";
     public static final String TYPE="TYPE";
 
-    Activity parent = null;
+//    Activity parent = null;
 
     private Button btnApplyFilter;
     private Spinner spinnerCompany, spinnerType, spinnerStream;
@@ -70,18 +76,16 @@ public class filterFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private filterFragmentInterface mListener;
 
     public  filterFragment() {
     }
 
-
-//        SuppressLint("ValidFragment")
-    @SuppressLint("ValidFragment")
-    public filterFragment(NavigationActivityCS parent) {
-        // Required empty public constructor
-        this.parent = parent;
-    }
+//    @SuppressLint("ValidFragment")
+//    public filterFragment(Activity parent) {
+//        // Required empty public constructor
+//        this.parent = parent;
+//    }
 
     /**
      * Use this factory method to create a new instance of
@@ -120,31 +124,9 @@ public class filterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_filter, container, false);
-    }
+        final View view = inflater.inflate(R.layout.fragment_filter, container, false);
+//        System.out.println(getView());
 
-    // TODO: Rename method, update argument and hook method into UI event
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onStart(){
-        super.onStart();
         System.out.println(getView());
         final String jobsList[]= { "google", "Apple", "Android"};
 
@@ -152,12 +134,16 @@ public class filterFragment extends Fragment {
         jobList =new ArrayList<>();
 
         // Inflate the layout for this fragment
-        btnApplyFilter =  parent.findViewById(R.id.btnApplyFilter);
-        spinnerStream= parent.findViewById(R.id.spinner_stream);
-        spinnerCompany= parent.findViewById(R.id.spinner_company);
-        spinnerType= parent.findViewById(R.id.spinner_type);
-        listView_jobs=(ListView)parent.findViewById(R.id.ListView_jobs);
-        editText_addJob=(EditText)parent.findViewById(R.id.edittext_addJob);
+        btnApplyFilter =  view.findViewById(R.id.btnApplyFilter);
+        spinnerStream= view.findViewById(R.id.spinner_stream);
+        spinnerCompany= view.findViewById(R.id.spinner_company);
+        spinnerType= view.findViewById(R.id.spinner_type);
+        listView_jobs=(ListView)view.findViewById(R.id.ListView_jobs);
+        editText_addJob=(EditText)view.findViewById(R.id.edittext_addJob);
+        btnApplyFilter =  view.findViewById(R.id.btnApplyFilter);
+        spinnerStream= view.findViewById(R.id.spinner_stream);
+        spinnerCompany= view.findViewById(R.id.spinner_company);
+        spinnerType= view.findViewById(R.id.spinner_type);
 //        jobList = parent.findViewById(R.id.jobList);
 
 
@@ -174,8 +160,19 @@ public class filterFragment extends Fragment {
         spinnerType.setAdapter(typeAdapter);
 
         //ArrayAdapter<CharSequence> jobAdapter= ArrayAdapter.createFromResource(getActivity(),
-            //    R.array.jobList, android.R.layout.simple_expandable_list_item_1);
+        //    R.array.jobList, android.R.layout.simple_expandable_list_item_1);
         //listView_jobs.setAdapter(jobAdapter);
+
+        btnApplyFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onFilterClicked("Hello","World", "from Filter Fragment");
+            }
+        });
+
+//        ArrayAdapter<CharSequence> jobListAdapter= ArrayAdapter.createFromResource(getActivity(),
+//                R.array.jobList, R.layout.activity_filter);
+//        jobList.setAdapter(jobListAdapter);
 
 
 
@@ -183,6 +180,23 @@ public class filterFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 addJob();
+
+            }
+        });
+
+        listView_jobs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                job job1= jobList.get(i);
+                Intent intentPost= new Intent(getApplicationContext(), NavigationActivityCS.class);
+                intentPost.putExtra(job_ID, job1.getJobId());
+                intentPost.putExtra(job_Title, job1.getJobTitle());
+                intentPost.putExtra(v, "R.id.nav_manage");
+
+
+
+
+                startActivity(intentPost);
 
             }
         });
@@ -200,7 +214,7 @@ public class filterFragment extends Fragment {
                     jobList.add(job1);
                 }
 
-                jobList adapter = new jobList(parent, jobList);
+                jobList adapter = new jobList(getActivity(), jobList);
                 listView_jobs.setAdapter(adapter);
             }
 
@@ -210,6 +224,23 @@ public class filterFragment extends Fragment {
             }
         });
 
+
+
+
+        return view;
+    }
+    // TODO: Rename method, update argument and hook method into UI event
+
+//    public void onButtonPressed(Uri uri) {
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
+//    }
+
+
+    @Override
+    public void onStart(){
+        super.onStart();
     }
 
     private void addJob(){
@@ -240,6 +271,25 @@ public class filterFragment extends Fragment {
 
     }
 
+//    // TODO: Rename method, update argument and hook method into UI event
+//
+//    public void onButtonPressed(Uri uri) {
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
+//    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof filterFragmentInterface) {
+            mListener = (filterFragmentInterface) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -256,8 +306,8 @@ public class filterFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface filterFragmentInterface {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFilterClicked(String a, String b, String c);
     }
 }

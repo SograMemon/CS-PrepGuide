@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -18,9 +19,11 @@ import android.view.MenuItem;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.Fragment;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,16 +31,28 @@ import java.util.List;
 
 public class NavigationActivityCS extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        filterFragment.OnFragmentInteractionListener,
-        guideFragment.OnFragmentInteractionListener,profileFragment.OnFragmentInteractionListener {
+        filterFragment.filterFragmentInterface,
+        guideFragment.OnFragmentInteractionListener,
+        profileFragment.profileFragmentInterface,
+        bookmarksFragment.bookmarksFragmentInterface,
+        helpFragment.helpFragmentInterface {
 
     FragmentManager fmg = null;
+    private FirebaseAuth mAuth;
+    TextView txtNavUserId, txtNavUserEmail;
+    private static final String TAG = "NavigationActivity";
+    CSPrepGuideSingleTon singleTonInstance;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Intent intent= getIntent();
+        String v=null;
+        v=intent.getStringExtra(filterFragment.v);
         super.onCreate(savedInstanceState);
+        singleTonInstance = CSPrepGuideSingleTon.getInstance(getApplicationContext());
+        Log.d(TAG, "user details after Navigation"+singleTonInstance.getAppUser().toString());
 
-        fmg = getSupportFragmentManager();
 
         setContentView(R.layout.activity_navigation_cs);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -51,6 +66,28 @@ public class NavigationActivityCS extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+
+//        https://stackoverflow.com/questions/34973456/how-to-change-text-of-a-textview-in-navigation-drawer-header
+        View navigationHeaderView = navigationView.getHeaderView(0);
+        txtNavUserEmail = navigationHeaderView.findViewById(R.id.txtNavUserEmail);
+        txtNavUserId = navigationHeaderView.findViewById(R.id.txtNavUserId);
+//        txtNavUserId.setText(user.getUid());
+
+        if(singleTonInstance.getAppUser() != null){
+            txtNavUserId.setText(singleTonInstance.getAppUser().getEmail());
+            //        txtNavUserEmail.setText(user.getEmail());
+//            Log.d(TAG, String.valueOf(user.getDisplayName()));
+            txtNavUserEmail.setText("");
+        }
+
+
+
+        fmg = getSupportFragmentManager();
+
+
+
 
         // Check whether the activity is using the layout version with
         // the fragment_container FrameLayout. If so, we must add the first fragment
@@ -75,7 +112,11 @@ public class NavigationActivityCS extends AppCompatActivity
 //            manager.beginTransaction()
 //                    .add(R.id.fragment_container, firstFragment)
 //                    .commit();
-            displaySelectedScreen(R.id.nav_filter_jobs);
+            if(v!=null){
+                displaySelectedScreen(R.id.nav_manage);
+            }else {
+                displaySelectedScreen(R.id.nav_filter_jobs);
+            }
         }
     }
 
@@ -115,13 +156,19 @@ public class NavigationActivityCS extends AppCompatActivity
         Fragment fragment = null;
         switch(id){
             case R.id.nav_profile:
-                fragment = new profileFragment(this);
+                fragment = new profileFragment();
                 break;
             case R.id.nav_filter_jobs:
-                fragment = new filterFragment(this);
+                fragment = new filterFragment();
                 break;
             case R.id.nav_manage:
                 fragment = new guideFragment(this, fmg);
+                break;
+            case R.id.nav_bookmarks:
+                fragment = new bookmarksFragment();
+                break;
+            case R.id.nav_help:
+                fragment = new helpFragment();
                 break;
             case R.id.nav_logout:
                 FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -140,6 +187,7 @@ public class NavigationActivityCS extends AppCompatActivity
             // Add the fragment to the 'fragment_container' FrameLayout
             fmg.beginTransaction()
                     .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null) //https://stackoverflow.com/questions/25153364/implementing-back-button-in-android-fragment-activity
                     .commit();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -151,34 +199,28 @@ public class NavigationActivityCS extends AppCompatActivity
         return fmg;
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-//        if (id == R.id.nav_profile) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_bookmarks) {
-//
-//        } else if (id == R.id.nav_filter_jobs) {
-////            Intent intent = new Intent(getApplicationContext(), filter.class);
-////            startActivity(intent);
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_help) {
-//
-//        } else if (id == R.id.nav_logout){
-//            finish();
-//        }
         displaySelectedScreen(id);
-
         return true;
     }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public void onFilterClicked(String a, String b, String c) {
+//        displaySelectedScreen(R.id.nav_bookmarks);
+        Log.d(TAG, a + b + c);
+    }
+
+    @Override
+    public void bookmarksItemClicked(int position, String id) {
+        Log.d(TAG, "bookmarks clicked with" + position + id);
     }
 
 
