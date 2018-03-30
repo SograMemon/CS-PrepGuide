@@ -1,5 +1,6 @@
 package ca.dal.cs.web.cs_prepguide;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtEmail, txtPassword;
     private boolean isRegisterFirstTime = true;
     CSPrepGuideSingleTon singleTonInstance;
+    public ProgressDialog mProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,10 +114,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mProgress = new ProgressDialog(this);
+        mProgress.setMessage("Loading...");
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!txtEmail.getText().toString().equals("") && !txtPassword.getText().toString().equals("")) {
+                    mProgress.show();
                     signIn(txtEmail.getText().toString(), txtPassword.getText().toString());
                 } else {
                     Toast.makeText(getApplicationContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
@@ -135,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                     if (txtEmail.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
                         Toast.makeText(getApplicationContext(), "Email and Password cannot be empty", Toast.LENGTH_SHORT).show();
                     } else {
+                        mProgress.show();
                         registerUser(txtEmail.getText().toString(), txtPassword.getText().toString());
                     }
 
@@ -157,10 +165,12 @@ public class MainActivity extends AppCompatActivity {
                 if (emailAddress.equals("")) {
                     Toast.makeText(getApplicationContext(), "Email address can not be empty", Toast.LENGTH_SHORT).show();
                 } else {
+                    mProgress.show();
                     mAuth.sendPasswordResetEmail(emailAddress)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
+                                    mProgress.dismiss();
                                     if (task.isSuccessful()) {
                                         Log.d(TAG, "Email sent.");
                                         txtEmail.setText("");
@@ -183,7 +193,12 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            Log.d(TAG, currentUser.getUid());
+            mProgress.show();
+            getUserDetailsFromFirebase(currentUser.getUid(), "", "", "");
+        }
 //        updateUI(currentUser);
 
         // Check for existing Google Sign In account, if the user is already signed in
@@ -197,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        mProgress.dismiss();
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
@@ -235,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.w(TAG, user.toString());
                             getUserDetailsFromFirebase(user.getUid(), user.getEmail(), "", "");
                         } else {
+                            mProgress.dismiss();
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(getApplicationContext(), "Authentication failed.",
@@ -303,6 +320,7 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 personPhoto = user.getPhotoUrl().toString();
                             }
+                            mProgress.show();
                             getUserDetailsFromFirebase(user.getUid(), user.getEmail(), user.getDisplayName(), personPhoto);
 
 //                            updateUI(user);
@@ -342,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
                             }else{
                                 personPhoto = user.getPhotoUrl().toString();
                             }
-
+                            mProgress.show();
                             getUserDetailsFromFirebase(user.getUid(), user.getEmail(), user.getDisplayName(), personPhoto);
 //                            Log.d(TAG, "user after facebook login" + singleTonInstance.getAppUser().toString());
                         } else {
@@ -389,11 +407,13 @@ public class MainActivity extends AppCompatActivity {
                     singleTonInstance.createUser(name, userID, userEmail, imageUrl, new ArrayList<String>(), new ArrayList<String>());
                     singleTonInstance.addUserToFireBaseDB();
                 }
+                mProgress.dismiss();
                 navigateToApplication();
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
+                mProgress.dismiss();
                 // Failed to read value
                 Toast.makeText(getApplicationContext(), "Error with Firebase database. please try later", Toast.LENGTH_SHORT).show();
                 Log.w(TAG, "Failed to read value.", error.toException());
