@@ -3,19 +3,35 @@ package ca.dal.cs.web.cs_prepguide;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.support.v4.app.Fragment;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +44,10 @@ import java.util.ArrayList;
 public class filterFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    public static final String job_Title="jobtitle";
+    public static final String job_ID="jobid";
+    public static final String v="";
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -39,6 +59,10 @@ public class filterFragment extends Fragment {
 
     private Button btnApplyFilter;
     private Spinner spinnerCompany, spinnerType, spinnerStream;
+    private ListView listView_jobs;
+    private EditText editText_addJob;
+
+    public DatabaseReference databaseJobs= FirebaseDatabase.getInstance().getReference("jobs");
 //    ListView jobList;
 
 //    //to store skills in arraylist variable
@@ -54,7 +78,8 @@ public class filterFragment extends Fragment {
 
     private filterFragmentInterface mListener;
 
-    public filterFragment (){};
+    public  filterFragment() {
+    }
 
 //    @SuppressLint("ValidFragment")
 //    public filterFragment(Activity parent) {
@@ -80,12 +105,17 @@ public class filterFragment extends Fragment {
         return fragment;
     }
 
+    private List<job> jobList;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+
+
+
         }
 
     }
@@ -94,10 +124,22 @@ public class filterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view =  inflater.inflate(R.layout.fragment_filter, container, false);
+        final View view = inflater.inflate(R.layout.fragment_filter, container, false);
 //        System.out.println(getView());
 
+        System.out.println(getView());
+        final String jobsList[]= { "google", "Apple", "Android"};
+
+        //listView_jobs= (ListView) parent.findViewById(R.id.list_job);
+        jobList =new ArrayList<>();
+
         // Inflate the layout for this fragment
+        btnApplyFilter =  view.findViewById(R.id.btnApplyFilter);
+        spinnerStream= view.findViewById(R.id.spinner_stream);
+        spinnerCompany= view.findViewById(R.id.spinner_company);
+        spinnerType= view.findViewById(R.id.spinner_type);
+        listView_jobs=(ListView)view.findViewById(R.id.ListView_jobs);
+        editText_addJob=(EditText)view.findViewById(R.id.edittext_addJob);
         btnApplyFilter =  view.findViewById(R.id.btnApplyFilter);
         spinnerStream= view.findViewById(R.id.spinner_stream);
         spinnerCompany= view.findViewById(R.id.spinner_company);
@@ -117,6 +159,9 @@ public class filterFragment extends Fragment {
                 R.array.type_array, R.layout.spinner_dropdown_item);
         spinnerType.setAdapter(typeAdapter);
 
+        //ArrayAdapter<CharSequence> jobAdapter= ArrayAdapter.createFromResource(getActivity(),
+        //    R.array.jobList, android.R.layout.simple_expandable_list_item_1);
+        //listView_jobs.setAdapter(jobAdapter);
 
         btnApplyFilter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +174,101 @@ public class filterFragment extends Fragment {
 //                R.array.jobList, R.layout.activity_filter);
 //        jobList.setAdapter(jobListAdapter);
 
+
+
+        btnApplyFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addJob();
+
+            }
+        });
+
+        listView_jobs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                job job1= jobList.get(i);
+                Intent intentPost= new Intent(getApplicationContext(), NavigationActivityCS.class);
+                intentPost.putExtra(job_ID, job1.getJobId());
+                intentPost.putExtra(job_Title, job1.getJobTitle());
+                intentPost.putExtra(v, "R.id.nav_manage");
+
+
+
+
+                startActivity(intentPost);
+
+            }
+        });
+
+        databaseJobs.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                jobList.clear();
+
+
+                for(DataSnapshot jobSnapshot: dataSnapshot.getChildren()){
+                    job job1 = jobSnapshot.getValue(job.class);
+
+                    jobList.add(job1);
+                }
+
+                jobList adapter = new jobList(getActivity(), jobList);
+                listView_jobs.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
         return view;
+    }
+    // TODO: Rename method, update argument and hook method into UI event
+
+//    public void onButtonPressed(Uri uri) {
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
+//    }
+
+
+    @Override
+    public void onStart(){
+        super.onStart();
+    }
+
+    private void addJob(){
+        String title_job= editText_addJob.getText().toString().trim();
+        String jobStream= spinnerStream.getSelectedItem().toString();
+        String company=spinnerCompany.getSelectedItem().toString();
+        String type=spinnerType.getSelectedItem().toString();
+
+        if(!TextUtils.isEmpty(title_job)){
+            String id= databaseJobs.push().getKey();
+             job jobInstance= new job(id,title_job,jobStream, company, type);
+
+             databaseJobs.child(id).setValue(jobInstance);
+            Toast.makeText(getApplicationContext(), "Job added",
+                    Toast.LENGTH_SHORT).show();
+
+        }else{
+            Toast.makeText(getApplicationContext(), "Enter a job",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void getJob(){
+        String jobStream= spinnerStream.getSelectedItem().toString();
+        String company=spinnerCompany.getSelectedItem().toString();
+        String type=spinnerType.getSelectedItem().toString();
+
+
     }
 
 //    // TODO: Rename method, update argument and hook method into UI event
@@ -149,12 +288,6 @@ public class filterFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
-
-    @Override
-    public void onStart(){
-        super.onStart();
-
     }
 
     @Override

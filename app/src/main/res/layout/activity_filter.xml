@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:layout_centerHorizontal="true"
     android:layout_centerVertical="true"
-    tools:context="ca.dal.cs.web.cs_prepguide.filter">
+    tools:context="ca.dal.cs.web.cs_prepguide.filterFragment">
 
     <Spinner
         android:id="@+id/spinner_stream"

@@ -46,6 +46,9 @@ public class NavigationActivityCS extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Intent intent= getIntent();
+        String v=null;
+        v=intent.getStringExtra(filterFragment.v);
         super.onCreate(savedInstanceState);
         singleTonInstance = CSPrepGuideSingleTon.getInstance(getApplicationContext());
         Log.d(TAG, "user details after Navigation"+singleTonInstance.getAppUser().toString());
@@ -109,7 +112,11 @@ public class NavigationActivityCS extends AppCompatActivity
 //            manager.beginTransaction()
 //                    .add(R.id.fragment_container, firstFragment)
 //                    .commit();
-            displaySelectedScreen(R.id.nav_filter_jobs);
+            if(v!=null){
+                displaySelectedScreen(R.id.nav_manage);
+            }else {
+                displaySelectedScreen(R.id.nav_filter_jobs);
+            }
         }
     }
 
