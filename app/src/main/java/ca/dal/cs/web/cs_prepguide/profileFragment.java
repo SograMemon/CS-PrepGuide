@@ -219,7 +219,7 @@ public class profileFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if(skillsEdit.equals("")) {
+                if(skillsEdit.equals("") || skillsEdit!=null) {
                     skillsList.add(skillsEdit.getText().toString());
 
                     //making the edittext field blank
