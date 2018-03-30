@@ -113,9 +113,6 @@ public class filterFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
-
-
-
         }
 
     }
@@ -163,12 +160,12 @@ public class filterFragment extends Fragment {
         //    R.array.jobList, android.R.layout.simple_expandable_list_item_1);
         //listView_jobs.setAdapter(jobAdapter);
 
-        btnApplyFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onFilterClicked("Hello","World", "from Filter Fragment");
-            }
-        });
+//        btnApplyFilter.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mListener.onFilterClicked("Hello","World", "from Filter Fragment");
+//            }
+//        });
 
 //        ArrayAdapter<CharSequence> jobListAdapter= ArrayAdapter.createFromResource(getActivity(),
 //                R.array.jobList, R.layout.activity_filter);
@@ -187,16 +184,9 @@ public class filterFragment extends Fragment {
         listView_jobs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
                 job job1= jobList.get(i);
-                Intent intentPost= new Intent(getApplicationContext(), NavigationActivityCS.class);
-                intentPost.putExtra(job_ID, job1.getJobId());
-                intentPost.putExtra(job_Title, job1.getJobTitle());
-                intentPost.putExtra(v, "R.id.nav_manage");
-
-
-
-
-                startActivity(intentPost);
+                mListener.onFilterClicked(job1.getJobId(),job1.getJobTitle());
 
             }
         });
@@ -268,7 +258,6 @@ public class filterFragment extends Fragment {
         String company=spinnerCompany.getSelectedItem().toString();
         String type=spinnerType.getSelectedItem().toString();
 
-
     }
 
 //    // TODO: Rename method, update argument and hook method into UI event
@@ -308,6 +297,6 @@ public class filterFragment extends Fragment {
      */
     public interface filterFragmentInterface {
         // TODO: Update argument type and name
-        void onFilterClicked(String a, String b, String c);
+        void onFilterClicked(String JobId, String JobTitle);
     }
 }
