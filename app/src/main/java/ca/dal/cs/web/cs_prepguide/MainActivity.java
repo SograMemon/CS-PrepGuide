@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //https://stackoverflow.com/questions/14475109/remove-android-app-title-bar
         getSupportActionBar().hide();
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.login_new_layout);
 
         singleTonInstance = CSPrepGuideSingleTon.getInstance(getApplicationContext());
 
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isRegisterFirstTime) {
                     isRegisterFirstTime = false;
-                    btnLogin.setVisibility(View.INVISIBLE);
+//                    btnLogin.setVisibility(View.INVISIBLE);
                     txtEmail.setText("");
                     txtPassword.setText("");
                     Toast.makeText(getApplicationContext(), "Enter your details and press register to create an account", Toast.LENGTH_SHORT).show();
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                                         Log.d(TAG, "Email sent.");
                                         txtEmail.setText("");
                                         txtPassword.setText("");
-                                        btnLogin.setVisibility(View.VISIBLE);
+//                                        btnLogin.setVisibility(View.VISIBLE);
                                         Toast.makeText(getApplicationContext(), R.string.forgot_password_toast_text, Toast.LENGTH_LONG).show();
                                     } else {
                                         Toast.makeText(getApplicationContext(), "Please check if your email is valid. If the problem persists, Please try again later.", Toast.LENGTH_SHORT).show();
@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "user details after registering" + singleTonInstance.getAppUser().toString());
                             Toast.makeText(getApplicationContext(), "Registration Success",
                                     Toast.LENGTH_SHORT).show();
-                            btnLogin.setVisibility(View.VISIBLE);
+//                            btnLogin.setVisibility(View.VISIBLE);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
