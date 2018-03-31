@@ -38,6 +38,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ThrowOnExtraProperties;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -66,6 +67,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.login_new_layout);
 
         singleTonInstance = CSPrepGuideSingleTon.getInstance(getApplicationContext());
+
+        if (!Utilities.isNetworkAvailable(getApplicationContext())) {
+            Toast.makeText(getApplicationContext(), "Please check your network connection and try again", Toast.LENGTH_SHORT).show();
+        }
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -120,11 +125,15 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!txtEmail.getText().toString().equals("") && !txtPassword.getText().toString().equals("")) {
-                    mProgress.show();
-                    signIn(txtEmail.getText().toString(), txtPassword.getText().toString());
+                if (!Utilities.isNetworkAvailable(getApplicationContext())) {
+                    Toast.makeText(getApplicationContext(), "Please check your network connection and try again", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
+                    if (!txtEmail.getText().toString().equals("") && !txtPassword.getText().toString().equals("")) {
+                        mProgress.show();
+                        signIn(txtEmail.getText().toString(), txtPassword.getText().toString());
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -132,20 +141,24 @@ public class MainActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isRegisterFirstTime) {
-                    isRegisterFirstTime = false;
-//                    btnLogin.setVisibility(View.INVISIBLE);
-                    txtEmail.setText("");
-                    txtPassword.setText("");
-                    Toast.makeText(getApplicationContext(), "Enter your details and press register to create an account", Toast.LENGTH_SHORT).show();
+                if (!Utilities.isNetworkAvailable(getApplicationContext())) {
+                    Toast.makeText(getApplicationContext(), "Please check your network connection and try again", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (txtEmail.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
-                        Toast.makeText(getApplicationContext(), "Email and Password cannot be empty", Toast.LENGTH_SHORT).show();
+                    if (isRegisterFirstTime) {
+                        isRegisterFirstTime = false;
+//                    btnLogin.setVisibility(View.INVISIBLE);
+                        txtEmail.setText("");
+                        txtPassword.setText("");
+                        Toast.makeText(getApplicationContext(), "Enter your details and press register to create an account", Toast.LENGTH_SHORT).show();
                     } else {
-                        mProgress.show();
-                        registerUser(txtEmail.getText().toString(), txtPassword.getText().toString());
-                    }
+                        if (txtEmail.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
+                            Toast.makeText(getApplicationContext(), "Email and Password cannot be empty", Toast.LENGTH_SHORT).show();
+                        } else {
+                            mProgress.show();
+                            registerUser(txtEmail.getText().toString(), txtPassword.getText().toString());
+                        }
 
+                    }
                 }
             }
         });
@@ -153,36 +166,45 @@ public class MainActivity extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, RC_SIGN_IN);
+                if(!Utilities.isNetworkAvailable(getApplicationContext())){
+                    Toast.makeText(getApplicationContext(), "Please check your network connection and try again", Toast.LENGTH_SHORT).show();
+                }else{
+                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                    startActivityForResult(signInIntent, RC_SIGN_IN);
+                }
             }
         });
 
         btnForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String emailAddress = txtEmail.getText().toString();
-                if (emailAddress.equals("")) {
-                    Toast.makeText(getApplicationContext(), "Email address can not be empty", Toast.LENGTH_SHORT).show();
-                } else {
-                    mProgress.show();
-                    mAuth.sendPasswordResetEmail(emailAddress)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    mProgress.dismiss();
-                                    if (task.isSuccessful()) {
-                                        Log.d(TAG, "Email sent.");
-                                        txtEmail.setText("");
-                                        txtPassword.setText("");
+                if(!Utilities.isNetworkAvailable(getApplicationContext())){
+                    Toast.makeText(getApplicationContext(), "Please check your network connection and try again", Toast.LENGTH_SHORT).show();
+                }else{
+                    String emailAddress = txtEmail.getText().toString();
+                    if (emailAddress.equals("")) {
+                        Toast.makeText(getApplicationContext(), "Email address can not be empty", Toast.LENGTH_SHORT).show();
+                    } else {
+                        mProgress.show();
+                        mAuth.sendPasswordResetEmail(emailAddress)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        mProgress.dismiss();
+                                        if (task.isSuccessful()) {
+                                            Log.d(TAG, "Email sent.");
+                                            txtEmail.setText("");
+                                            txtPassword.setText("");
 //                                        btnLogin.setVisibility(View.VISIBLE);
-                                        Toast.makeText(getApplicationContext(), R.string.forgot_password_toast_text, Toast.LENGTH_LONG).show();
-                                    } else {
-                                        Toast.makeText(getApplicationContext(), "Please check if your email is valid. If the problem persists, Please try again later.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getApplicationContext(), R.string.forgot_password_toast_text, Toast.LENGTH_LONG).show();
+                                        } else {
+                                            Toast.makeText(getApplicationContext(), "Please check if your email is valid. If the problem persists, Please try again later.", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                }
-                            });
+                                });
+                    }
                 }
+
 
             }
         });
@@ -193,11 +215,15 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            Log.d(TAG, currentUser.getUid());
-            mProgress.show();
-            getUserDetailsFromFirebase(currentUser.getUid(), "", "", "");
+        if(!Utilities.isNetworkAvailable(getApplicationContext())){
+            Toast.makeText(getApplicationContext(), "Please check your network connection and try again", Toast.LENGTH_SHORT).show();
+        }else{
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser != null) {
+                Log.d(TAG, currentUser.getUid());
+                mProgress.show();
+                getUserDetailsFromFirebase(currentUser.getUid(), "", "", "");
+            }
         }
 //        updateUI(currentUser);
 
