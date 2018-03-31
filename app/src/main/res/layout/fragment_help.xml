@@ -9,13 +9,16 @@
         android:id="@+id/pageHeader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/help_section"
+        android:text="Help Section"
         android:textAlignment="center"
         android:textStyle="bold"
         android:textSize="25sp"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
 
 
         <TextView
@@ -23,53 +26,55 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="35dp"
-            android:text="We aim to create a platform that provides information about\nthe different disciplines in Computer Science and the jobs or\npositions available within each discipline in a particular\ncompany in which they want to get placed. This valuable\ninformation in the form of guide provided in our app\nwill help users to make and plan their career path. This will be\nuseful to fresh Computer Science graduates as well as\nprofessionals considering a career change to join the booming IT industries."/>
+            android:text="We aim to create a platform that provides information about the \ndifferent disciplines in Computer Science and the jobs or positions \navailable within each discipline in a particular company in which \nthey want to get placed. This valuable information \nin the form of guide provided in our app will help users\n to make and plan their career path. This will be useful \nto fresh Computer Science graduates as well as\nprofessionals considering a career change to join the booming IT industries." />
 
         <TextView
             android:id="@+id/permissionsApp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/permissions_required_for_the_app"
-            android:textSize="15sp"
+            android:layout_below="@id/appIntro"
             android:layout_marginTop="10dp"
-            android:layout_below="@id/appIntro"/>
+            android:text="@string/permissions_required_for_the_app"
+            android:textSize="15sp" />
+
         <TextView
             android:id="@+id/perm1"
-            android:layout_below="@id/permissionsApp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/permissionsApp"
             android:text="1.Camera \n2. Storage\nMake sure both permissions are granted"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/loginTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/login_help"
+            android:layout_below="@id/perm1"
             android:layout_marginTop="10dp"
-            android:layout_below="@id/perm1"/>
+            android:text="@string/login_help" />
 
         <TextView
             android:id="@+id/log1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/loginTxt"
-            android:text="1. New Password can be set using Forget Password Button.\n2. Login can be done with Google/Facebook"/>
+            android:text="1. New Password can be set using Forget Password Button.\n2. Login can be done with Google/Facebook" />
 
 
         <TextView
             android:id="@+id/cameraIssue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/camera_issue"
+            android:layout_below="@id/log1"
             android:layout_marginTop="10dp"
-            android:layout_below="@id/log1"/>
+            android:text="@string/camera_issue" />
+
         <TextView
             android:id="@+id/cam1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/cameraIssue"
-            android:text="If the application crashes on clicking upload, check whether\nCamera permissions are granted or not"/>
+            android:text="If the application crashes on clicking upload, check whether\nCamera permissions are granted or not" />
 
 
     </RelativeLayout>
