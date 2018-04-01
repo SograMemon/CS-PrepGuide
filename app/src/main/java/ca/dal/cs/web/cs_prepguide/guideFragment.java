@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,11 @@ public class guideFragment extends Fragment {
     private String mParam2;
     Activity parent = null;
     FragmentManager fmg = null;
+
+    FrameLayout simpleFrameLayout;
+    TabLayout tabLayout;
+
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -87,8 +94,53 @@ public class guideFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_guide, container, false);
+        View view = inflater.inflate(R.layout.fragment_guide, container, false);
+
+        simpleFrameLayout = (FrameLayout) view.findViewById(R.id.simpleFrameLayout);
+        tabLayout = (TabLayout) view.findViewById(R.id.simpleTabLayout);
+
+        TabLayout.Tab firstTab = tabLayout.newTab();
+        firstTab.setText("First");
+        tabLayout.addTab(firstTab);
+        TabLayout.Tab secondTab = tabLayout.newTab();
+        secondTab.setText("Second");
+        tabLayout.addTab(secondTab);
+//        TabLayout.Tab thirdTab = tabLayout.newTab();
+//        thirdTab.setText("Third");
+//        tabLayout.addTab(thirdTab);
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+                Fragment fragment = null;
+                switch (tab.getPosition()) {
+                    case 0:
+                        fragment = new FirstFragment();
+                        break;
+                    case 1:
+                        fragment = new SecondFragment();
+                        break;
+                }
+                FragmentManager fm = fmg;
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.simpleFrameLayout, fragment);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.commit();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -115,35 +167,26 @@ public class guideFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         void onFragmentInteraction(Uri uri);
     }
 
     public void onStart(){
         super.onStart();
-        System.out.println(getView());
-        ViewPager viewPager =  parent.findViewById(R.id.pager);
-        NavigationActivityCS.ViewPagerAdapter adapter = new NavigationActivityCS.ViewPagerAdapter(fmg);
-
-        // Add Fragments to adapter one by one
-        adapter.addFragment(new NavigationActivityCS.FragmentOne(), "SKILLS");
-        adapter.addFragment(new NavigationActivityCS.FragmentTwo(), "PREPARATION");
-        adapter.addFragment(new NavigationActivityCS.FragmentThree(), "LINKS");
-        adapter.addFragment(new NavigationActivityCS.FragmentFour(), "COMMENTS");
-        viewPager.setAdapter(adapter);
-
-        TabLayout tabLayout = parent.findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+//        System.out.println(getView());
+//        ViewPager viewPager =  parent.findViewById(R.id.pager);
+//        NavigationActivityCS.ViewPagerAdapter adapter = new NavigationActivityCS.ViewPagerAdapter(fmg);
+//
+//
+//        adapter.addFragment(new NavigationActivityCS.FragmentOne(), "SKILLS");
+//        adapter.addFragment(new NavigationActivityCS.FragmentTwo(), "PREPARATION");
+//        adapter.addFragment(new NavigationActivityCS.FragmentThree(), "LINKS");
+//        adapter.addFragment(new NavigationActivityCS.FragmentFour(), "COMMENTS");
+//        viewPager.setAdapter(adapter);
+//
+//        TabLayout tabLayout = parent.findViewById(R.id.tabs);
+//        tabLayout.setupWithViewPager(viewPager);
     }
 }
