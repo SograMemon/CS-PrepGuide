@@ -27,12 +27,12 @@ class FingerprintAuthenticationHandler extends FingerprintManager.Authentication
 
     private Context context;
 
-    private FingerprintAuthenticationHandler(Context context) {
+    FingerprintAuthenticationHandler(Context context) {
         this.context = context;
     }
 
     //Check for Authentication of the user
-    private void startAuthentication(FingerprintManager fingerprintManager, FingerprintManager.CryptoObject cryptoObject){
+    void startAuthentication(FingerprintManager fingerprintManager, FingerprintManager.CryptoObject cryptoObject){
         CancellationSignal cenCancellationSignal = new CancellationSignal();
         if(ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT)
                 !=PackageManager.PERMISSION_GRANTED)
