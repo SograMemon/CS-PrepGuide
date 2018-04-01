@@ -74,7 +74,7 @@ public class profileFragment extends Fragment {
     Button addSkill;
     ListView lvSkillList;
     private Button btnUpload;
-    private  static  final int CAMERA_REQUEST_CODE=1,READ_EXTERNAL_REQUEST_CODE=4;
+    private  static  final int CAMERA_REQUEST_CODE=1,GALLERY_REQUEST_CODE=2,READ_EXTERNAL_REQUEST_CODE=4;
     private StorageReference mStorage;
     public ProgressDialog mProgress;
     private ImageView ProfilePic;
@@ -122,6 +122,11 @@ public class profileFragment extends Fragment {
                 startActivityForResult(takePhotoIntent, CAMERA_REQUEST_CODE);
             }
         }
+    }
+
+    public void pickFromGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE);
     }
 
 
@@ -199,6 +204,7 @@ public class profileFragment extends Fragment {
                                     break;
                                 case -2:
                                     Toast.makeText(getApplicationContext(), "Gallery", Toast.LENGTH_SHORT).show();
+                                    pickFromGallery();
                                     break;
                                 case -3:
                                     Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
