@@ -1,16 +1,20 @@
 package ca.dal.cs.web.cs_prepguide;
 
+import android.*;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -68,7 +72,7 @@ public class profileFragment extends Fragment {
     Button addSkill;
     ListView lvSkillList;
     private Button btnUpload;
-    private  static  final int CAMERA_REQUEST_CODE=1;
+    private  static  final int CAMERA_REQUEST_CODE=1,READ_EXTERNAL_REQUEST_CODE=4;
     private StorageReference mStorage;
     public ProgressDialog mProgress;
     private ImageView ProfilePic;
@@ -156,6 +160,7 @@ public class profileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -178,6 +183,8 @@ public class profileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 try {
+                    //Getting Permissions for our app: Camera and Storage
+                    runtimePermission();
                     dispatchTakePhotoIntent();
                     //Intent intent1 =new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     //startActivityForResult(intent1,CAMERA_REQUEST_CODE);
@@ -351,6 +358,54 @@ public class profileFragment extends Fragment {
         }
 
     }
+
+    //REFERENCE for Runtime Permissions: https://developer.android.com/training/permissions/requesting.html
+    public void runtimePermission(){
+
+        //Checks if the Camera permission is given or not
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                android.Manifest.permission.CAMERA)== PackageManager.PERMISSION_DENIED)
+
+            //Requests runtime Camera permission to be granted from the user
+            ActivityCompat.requestPermissions(getActivity(), new String[] {android.Manifest.permission.CAMERA},
+                    CAMERA_REQUEST_CODE);
+
+        //Checks if the Storage permission is given or not
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                android.Manifest.permission.READ_EXTERNAL_STORAGE)==PackageManager.PERMISSION_DENIED)
+
+            //Requests runtime Storage permission to be granted from the user
+            ActivityCompat.requestPermissions(getActivity(), new String[] {android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                    READ_EXTERNAL_REQUEST_CODE);
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permission[], int[] permissionResult) {
+        switch (requestCode) {
+            case CAMERA_REQUEST_CODE:
+                if (permissionResult.length > 0 && permissionResult[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(),"Permission is Granted....Now your app can access Camera",
+                            Toast.LENGTH_LONG).show();
+
+                } else {
+                    Toast.makeText(getApplicationContext(),"Permission Canceled, Now your application cannot access CAMERA.",
+                            Toast.LENGTH_LONG).show();
+                }
+                break;
+
+
+            case READ_EXTERNAL_REQUEST_CODE:
+                if (permissionResult.length > 0 && permissionResult[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(),"Permission Granted, Now your application can access CAMERA AND STORAGE.",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),"Permission Canceled, Now your application cannot access CAMERA AND STORAGE",
+                            Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
+    }
+
 
 
     @Override
