@@ -2,10 +2,12 @@ package ca.dal.cs.web.cs_prepguide;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,14 +49,19 @@ public class guideFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private static final String TAG = "GuideFragment";
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     Activity parent = null;
     FragmentManager fmg = null;
-
     FrameLayout simpleFrameLayout;
     TabLayout tabLayout;
+    public ProgressDialog mProgress;
+
+
+    private DatabaseReference mDatabase, myRef1;
 
 
 
@@ -89,12 +103,17 @@ public class guideFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mProgress = new ProgressDialog(getActivity());
+        mProgress.setMessage("Loading...");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_guide, container, false);
+
+        mProgress.show();
+        getPostDetailsFromFirebase("post1");
 
         simpleFrameLayout = (FrameLayout) view.findViewById(R.id.simpleFrameLayout);
         tabLayout = (TabLayout) view.findViewById(R.id.simpleTabLayout);
@@ -188,5 +207,43 @@ public class guideFragment extends Fragment {
 //
 //        TabLayout tabLayout = parent.findViewById(R.id.tabs);
 //        tabLayout.setupWithViewPager(viewPager);
+    }
+
+    public void getPostDetailsFromFirebase(String postId){
+        final PostSingleTon postSingleToninstance = PostSingleTon.getInstance(getContext());
+
+        String currentPostId = "Posts/".concat(postId);
+        Log.d(TAG, "reference" + currentPostId);
+
+        final Post[] currentPost = new Post[1];
+
+        myRef1 = FirebaseDatabase.getInstance().getReference(currentPostId);
+        myRef1.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                currentPost[0] = dataSnapshot.getValue(Post.class);
+                if (currentPost[0] != null) {
+                    Log.d(TAG, "Current Post is: " + currentPost[0].toString());
+                    if (currentPost[0].getComments() == null) {
+                        currentPost[0].setComments(new ArrayList<Comment>());
+                    }
+                    postSingleToninstance.setPost(currentPost[0]);
+                    Log.d(TAG, "Post Value After creating singleton instance is: " + postSingleToninstance.getPost().toString());
+                }
+                mProgress.dismiss();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+//                mProgress.dismiss();
+                // Failed to read value
+                Toast.makeText(getContext(), "Error with Firebase database. please try later", Toast.LENGTH_SHORT).show();
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+
+        });
     }
 }
