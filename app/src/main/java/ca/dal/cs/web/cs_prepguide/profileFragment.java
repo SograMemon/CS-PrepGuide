@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -185,12 +187,35 @@ public class profileFragment extends Fragment {
                 try {
                     //Getting Permissions for our app: Camera and Storage
                     runtimePermission();
-                    dispatchTakePhotoIntent();
+
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+//                            Toast.makeText(getApplicationContext(), String.valueOf(which), Toast.LENGTH_SHORT).show();
+                            switch (which) {
+                                case -1:
+//                                    Toast.makeText(getApplicationContext(), "Camera", Toast.LENGTH_SHORT).show();
+                                    dispatchTakePhotoIntent();
+                                    break;
+                                case -2:
+                                    Toast.makeText(getApplicationContext(), "Gallery", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case -3:
+                                    Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
+                        }
+                    };
+                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+                    alertDialog.setTitle("Title");
+                    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Camera", dialogClickListener);
+                    alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Gallery", dialogClickListener);
+                    alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Cancel", dialogClickListener);
+                    alertDialog.show();
                     //Intent intent1 =new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     //startActivityForResult(intent1,CAMERA_REQUEST_CODE);
-                }
-                catch (Exception ex){
-                    Toast.makeText(getApplicationContext(),"Make sure Camera Permission is Granted in Settings for this App",Toast.LENGTH_LONG).show();
+                } catch (Exception ex) {
+                    Toast.makeText(getApplicationContext(), "Make sure Camera Permission is Granted in Settings for this App", Toast.LENGTH_LONG).show();
                 }
             }
         });
