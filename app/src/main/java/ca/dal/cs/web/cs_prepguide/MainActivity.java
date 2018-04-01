@@ -1,11 +1,22 @@
 package ca.dal.cs.web.cs_prepguide;
 
+import android.*;
+import android.app.KeyguardManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyPermanentlyInvalidatedException;
+import android.security.keystore.KeyProperties;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -42,7 +53,22 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ThrowOnExtraProperties;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,6 +86,15 @@ public class MainActivity extends AppCompatActivity {
     private boolean isRegisterFirstTime = true;
     CSPrepGuideSingleTon singleTonInstance;
     public ProgressDialog mProgress;
+
+    //FINGERPRINT REFERENCES
+    //1. https://www.youtube.com/watch?v=zYA5SJgWrLk
+    //2. https://developer.android.com/about/versions/marshmallow/android-6.0.html
+    private static final String KEY_NAME="FARAAZ";
+    private Cipher cipher;
+    private TextView textView;
+    private KeyStore mKeyStore;
+    private KeyGenerator mKeyGenerator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +123,49 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "fingerprint clicked", Toast.LENGTH_SHORT).show();
+                KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+                FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.USE_FINGERPRINT)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                if (!fingerprintManager.isHardwareDetected())
+                    Toast.makeText(getApplicationContext(), "Fingerprint authentication permission not enabled", Toast.LENGTH_SHORT).show();
+                else{
+                    // The line below prevents the false positive inspection from Android Studio noinspection ResourceType
+                    if(!fingerprintManager.hasEnrolledFingerprints()) {
+
+                        // This happens when no fingerprints are registered.
+                        Toast.makeText(getApplicationContext(),
+                                "Register at least one fingerprint: 'Settings=>Security->Fingerprint'",
+                                Toast.LENGTH_LONG).show();
+
+                    }else{
+
+                        if(!keyguardManager.isKeyguardSecure()){
+                            // Show a message that the user hasn't set up a fingerprint or lock screen.
+                            Toast.makeText(getApplicationContext(),
+                                    "Secure lock screen hasn't set up.\n"
+                                            + "Set up a fingerprint: 'Settings=>Security=>Fingerprint'",
+                                    Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        else
+                            createKey();
+
+                        if (initializeCipher()){
+                            FingerprintManager.CryptoObject cryptoObject = new FingerprintManager.CryptoObject(cipher);
+
+                            FingerprintAuthenticationHandler helper = new FingerprintAuthenticationHandler(getApplicationContext());
+
+                            helper.startAuthentication(fingerprintManager, cryptoObject);
+
+                        }
+                    }
+                }
+
+
             }
         });
 
@@ -219,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        
     }
 
     @Override
@@ -465,5 +544,76 @@ public class MainActivity extends AppCompatActivity {
         txtPassword.setText("");
         startActivity(intentFromLogin);
     }
+
+    private boolean initializeCipher() {
+
+        try {
+            cipher = Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/"
+                    + KeyProperties.BLOCK_MODE_CBC + "/"
+                    + KeyProperties.ENCRYPTION_PADDING_PKCS7);
+
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new RuntimeException("Failed to get an instance of Cipher", e);
+        }
+
+        try {
+            mKeyStore.load(null);
+            SecretKey key = (SecretKey) mKeyStore.getKey(KEY_NAME, null);
+
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+
+            return true;
+        } catch (KeyPermanentlyInvalidatedException e) {
+            return false;
+        } catch (KeyStoreException | CertificateException | UnrecoverableKeyException | IOException
+                | NoSuchAlgorithmException | InvalidKeyException ex) {
+            throw new RuntimeException("Initialize Cipher Failed", ex);
+        }
+
+    }
+
+
+    private void createKey() {
+
+        try {
+            mKeyStore = KeyStore.getInstance("AndroidKeyStore");
+        } catch (KeyStoreException e) {
+            throw new RuntimeException("Failed to get an instance of KeyStore", e);
+        }
+
+        KeyGenerator mKeyGenerator = null;
+
+        try {
+            mKeyGenerator = KeyGenerator
+                    .getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
+
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            throw new RuntimeException("Failed to get an instance of KeyGenerator", e);
+        }
+
+        try {
+            mKeyStore.load(null);
+            // Set the alias of the entry in Android KeyStore where the key will appear
+            // and the constrains (purposes) in the constructor of the Builder
+
+            KeyGenParameterSpec.Builder builder = new KeyGenParameterSpec.Builder(KEY_NAME,
+                    KeyProperties.PURPOSE_ENCRYPT |
+                            KeyProperties.PURPOSE_DECRYPT)
+                    .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                    // Require the user to authenticate with a fingerprint to authorize every use
+                    // of the key
+                    .setUserAuthenticationRequired(true)
+                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7);
+
+            mKeyGenerator.init(builder.build());
+            mKeyGenerator.generateKey();
+        } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException
+                | CertificateException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
 }
 
