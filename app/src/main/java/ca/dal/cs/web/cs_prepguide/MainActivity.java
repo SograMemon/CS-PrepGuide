@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button btnLogin, btnRegister, btnForgotPassword;
     private TextView txtEmail, txtPassword;
+    private ImageButton btnFingerPrint;
     private boolean isRegisterFirstTime = true;
     CSPrepGuideSingleTon singleTonInstance;
     public ProgressDialog mProgress;
@@ -80,6 +82,14 @@ public class MainActivity extends AppCompatActivity {
         txtEmail = findViewById(R.id.txtEmail);
         txtPassword = findViewById(R.id.txtPassword);
         btnForgotPassword = findViewById(R.id.btnForgotPassword);
+        btnFingerPrint = findViewById(R.id.btnFingerPrint);
+
+        btnFingerPrint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "fingerprint clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Set the dimensions of the sign-in button.
         SignInButton signInButton = findViewById(R.id.sign_in_button);
