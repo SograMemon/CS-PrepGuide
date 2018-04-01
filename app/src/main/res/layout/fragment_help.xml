@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="35dp"
-            android:text="We aim to create a platform that provides information about the \ndifferent disciplines in Computer Science and the jobs or positions \navailable within each discipline in a particular company in which \nthey want to get placed. This valuable information \nin the form of guide provided in our app will help users\n to make and plan their career path. This will be useful \nto fresh Computer Science graduates as well as\nprofessionals considering a career change to join the booming IT industries." />
+            android:text="  We aim to create a platform that provides information about the different disciplines in Computer Science and the jobs or positions available within each discipline in a particular company in which they want to get placed.\n\nThis valuable information in the form of guide provided in our app will help users to make and plan their career path.\n\nThis will be useful to fresh Computer Science graduates as well as professionals considering a career change to join the booming IT industries." />
 
         <TextView
             android:id="@+id/permissionsApp"
