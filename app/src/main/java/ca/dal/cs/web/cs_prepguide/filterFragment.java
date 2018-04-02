@@ -66,7 +66,7 @@ public class filterFragment extends Fragment {
     private Button btnApplyFilter;
     private Spinner spinnerCompany, spinnerType, spinnerStream;
     private ListView listView_jobs;
-    private EditText editText_addJob;
+    //private EditText editText_addJob;
 
     public DatabaseReference databaseJobs= FirebaseDatabase.getInstance().getReference("jobs");
 //    ListView jobList;
@@ -144,7 +144,7 @@ public class filterFragment extends Fragment {
         spinnerCompany= view.findViewById(R.id.spinner_company);
         spinnerType= view.findViewById(R.id.spinner_type);
         listView_jobs=(ListView)view.findViewById(R.id.ListView_jobs);
-        editText_addJob=(EditText)view.findViewById(R.id.edittext_addJob);
+        //editText_addJob=(EditText)view.findViewById(R.id.edittext_addJob);
         btnApplyFilter =  view.findViewById(R.id.btnApplyFilter);
         spinnerStream= view.findViewById(R.id.spinner_stream);
         spinnerCompany= view.findViewById(R.id.spinner_company);
@@ -185,12 +185,12 @@ public class filterFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String edt=null;
-                edt= editText_addJob.getText().toString();
-                if(edt.equalsIgnoreCase("")){
+                //edt= editText_addJob.getText().toString();
+                //if(edt.equalsIgnoreCase("")){
                     getJob();
-                }else {
-                    addJob();
-                }
+                //}else {
+                  //  addJob();
+                //}
 
 
             }
@@ -249,25 +249,25 @@ public class filterFragment extends Fragment {
         super.onStart();
     }
 
-    private void addJob(){
-        String title_job= editText_addJob.getText().toString().trim();
-        String jobStream= spinnerStream.getSelectedItem().toString();
-        String company=spinnerCompany.getSelectedItem().toString();
-        String type=spinnerType.getSelectedItem().toString();
-
-        if(!TextUtils.isEmpty(title_job)){
-            String id= databaseJobs.push().getKey();
-             job jobInstance= new job(id,title_job,jobStream, company, type);
-
-             databaseJobs.child(id).setValue(jobInstance);
-            Toast.makeText(getApplicationContext(), "Job added",
-                    Toast.LENGTH_SHORT).show();
-
-        }else{
-            Toast.makeText(getApplicationContext(), "Enter a job",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
+//    private void addJob(){
+//        //String title_job= editText_addJob.getText().toString().trim();
+//        String jobStream= spinnerStream.getSelectedItem().toString();
+//        String company=spinnerCompany.getSelectedItem().toString();
+//        String type=spinnerType.getSelectedItem().toString();
+//
+//       if(!TextUtils.isEmpty(title_job)){
+//           String id= databaseJobs.push().getKey();
+//            job jobInstance= new job(id,title_job,jobStream, company, type);
+//
+//           databaseJobs.child(id).setValue(jobInstance);
+//            Toast.makeText(getApplicationContext(), "Job added",
+//                    Toast.LENGTH_SHORT).show();
+//
+//        }else{
+//            Toast.makeText(getApplicationContext(), "Enter a job",
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
     private void getJob() {
         Query Qs = null;
@@ -327,73 +327,7 @@ public class filterFragment extends Fragment {
         jobList adapter = new jobList(getActivity(), jobList1);
         listView_jobs.setAdapter(adapter);
 
-//        if (jobStream.equalsIgnoreCase("all") || jobStream.equalsIgnoreCase("stream")) {
-//            if (company.equalsIgnoreCase("all") || company.equalsIgnoreCase("company")) {
-//                if (type.equalsIgnoreCase("all") || type.equalsIgnoreCase("position type")) {
-//                    //display all
-//                    Q = databaseJobs;
-//                } else {
-//                    Q = databaseJobs.orderByChild("jobType").equalTo(type);
-//                }
-//            } else if (type.equalsIgnoreCase("all") || type == null) {
-//                Q = databaseJobs.orderByChild("jobCompany").equalTo(company);
-//            } else {
-//                //Q when stream=all company=value and type=value
-//                Snapshot snapshot;
-//
-//            }
-//        } else if (company.equalsIgnoreCase("all") || company == null) {
-//            if (type.equalsIgnoreCase("all") || jobStream.equalsIgnoreCase("position type")) {
-//                Q = databaseJobs.orderByChild("jobStream").equalTo(jobStream);
-//            }
-//
-//
-//        }
-//
-//        if (jobStream.equalsIgnoreCase("all") || jobStream.equalsIgnoreCase("stream")) {
-//            Q = databaseJobs.orderByChild("jobType").startAt(type).endAt(type + "\uf0ff");
-//        }
 
-//        if(!jobStream.equalsIgnoreCase("All")){
-//            Qt = databaseJobs.orderByChild("jobStream").equalTo(jobStream);
-//        }else if(!company.equalsIgnoreCase("all")){
-//            Qt = databaseJobs.orderByChild("jobCompany").equalTo(company);
-//        }else if((!type.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all"))&& !jobStream.equalsIgnoreCase("all")){
-//
-//        }else{
-//            Qt = databaseJobs.orderByChild("jobType").equalTo(type);
-//        }
-
-
-
-
-//        Qt.addValueEventListener(new ValueEventListener() {
-//
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                jobList.clear();
-//                for (DataSnapshot jobSnapshot : dataSnapshot.getChildren()) {
-//                    job job1 = jobSnapshot.getValue(job.class);
-//                    if(!type.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all")){
-//                        if(job1.jobType==type && job1.jobCompany==company) {
-//                            jobList.add(job1);
-//                        }
-//                   }
-//
-//                }
-//                jobList adapter = new jobList(getActivity(), jobList);
-//                listView_jobs.setAdapter(adapter);
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                //getting Post failed log a message
-//                Log.w(TAG, "loadJob:onCanclled", databaseError.toException());
-//            }
-//        });
-//
-//
-//
 
    }
 

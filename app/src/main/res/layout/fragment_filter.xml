@@ -31,11 +31,12 @@
             android:layout_height="40dp">
         </Spinner>
 
-        <EditText
+        <!--<EditText
             android:id="@+id/edittext_addJob"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter job"/>
+            android:hint="Enter job"
+            android:visibility="invisible" /> -->
 
         <Button
             android:id="@+id/btnApplyFilter"
