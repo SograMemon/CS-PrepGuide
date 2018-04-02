@@ -125,6 +125,7 @@ public class profileFragment extends Fragment {
     }
 
     public void pickFromGallery() {
+        uri=android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE);
     }
@@ -200,10 +201,17 @@ public class profileFragment extends Fragment {
                             switch (which) {
                                 case -1:
 //                                    Toast.makeText(getApplicationContext(), "Camera", Toast.LENGTH_SHORT).show();
-                                    dispatchTakePhotoIntent();
+                                    try {
+                                        dispatchTakePhotoIntent();
+                                        String abc=photoURI.getLastPathSegment();
+                                         Log.d("segment",abc);
+
+                                    }catch (Exception ex){
+                                        Toast.makeText(getApplicationContext(), "Camera permissions turned off", Toast.LENGTH_SHORT).show();
+                                    }
                                     break;
                                 case -2:
-                                    Toast.makeText(getApplicationContext(), "Gallery", Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(getApplicationContext(), "Gallery", Toast.LENGTH_SHORT).show();
                                     pickFromGallery();
                                     break;
                                 case -3:
@@ -357,7 +365,7 @@ public class profileFragment extends Fragment {
             //Uri uri =  data.getData();
 
            /* if (uri != null) {*/
-            StorageReference filepath = mStorage.child("Photos");
+            StorageReference filepath = mStorage.child("Photos").child(photoURI.getLastPathSegment());
 
 
             filepath.putFile(photoURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -394,7 +402,7 @@ public class profileFragment extends Fragment {
             mProgress = new ProgressDialog(getActivity());
             mProgress.setMessage("Uploading Image...");
             mProgress.show();
-            StorageReference filepath = mStorage.child("Photos");
+            StorageReference filepath = mStorage.child("Photos").child(uri.getLastPathSegment());
 
             uri = data.getData();
 
@@ -403,6 +411,10 @@ public class profileFragment extends Fragment {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUri = taskSnapshot.getDownloadUrl();
                     Picasso.with(getApplicationContext()).load(downloadUri).fit().centerCrop().into(ProfilePic);
+
+                    singleTon.getAppUser().setImageUrl(downloadUri.toString());
+                    singleTon.addUserToFireBaseDB();
+
                     mProgress.dismiss();
                     Toast.makeText(getApplicationContext(), "Uploading Done!! .... ", Toast.LENGTH_LONG).show();
                 }
