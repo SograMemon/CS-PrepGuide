@@ -23,6 +23,7 @@ public class CommentsAdapter extends ArrayAdapter<Comment> {
     Context cntx;
     private ArrayList<Comment> CommentsList;
     CSPrepGuideSingleTon userSingleTon = CSPrepGuideSingleTon.getInstance(cntx);
+    PostSingleTon postSingleTonInstance = PostSingleTon.getInstance(cntx);
 
     public CommentsAdapter(@NonNull Context context, int layoutId, ArrayList<Comment> CommentsList) {
         super(context, layoutId, CommentsList);
@@ -77,6 +78,9 @@ public class CommentsAdapter extends ArrayAdapter<Comment> {
                         View parentRow = (View) v.getParent();
                         ListView listView = (ListView) parentRow.getParent().getParent().getParent();
                         currentPosition[0] = listView.getPositionForView(parentRow);
+                        CommentsList.get(currentPosition[0]).setCommentContent(editTxtComment.getText().toString());
+                        postSingleTonInstance.getPost().setComments(CommentsList);
+                        postSingleTonInstance.addCommentsToFireBaseDB();
                     }
                 }
             });
@@ -104,14 +108,15 @@ public class CommentsAdapter extends ArrayAdapter<Comment> {
                     int position1 = listView.getPositionForView(parentRow);
                     Toast.makeText(getContext(), "delete clicked"+String.valueOf(position1), Toast.LENGTH_SHORT).show();
                     CommentsList.remove(position1);
+                    postSingleTonInstance.addCommentsToFireBaseDB();
                     notifyDataSetChanged();
                 }
             });
 
-            if(i.getCommentedByUserName() == ""){
+            if(i.getCommentedByUserName().equals("")){
                 txtUserName.setText(i.getCommentedByUser());
             }else{
-                txtUserName.setText(i.getCommentedByUser());
+                txtUserName.setText(i.getCommentedByUserName());
             }
 
             editTxtComment.setText(i.getCommentContent());

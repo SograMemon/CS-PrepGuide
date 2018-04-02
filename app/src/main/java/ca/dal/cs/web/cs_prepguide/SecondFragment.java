@@ -43,6 +43,11 @@ public class SecondFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_second, container, false);
 
         lvComments = view.findViewById(R.id.lvComments);
+
+        //https://stackoverflow.com/questions/8162457/transparent-divider-in-a-listview
+        lvComments.setDivider(this.getResources().getDrawable(R.drawable.transparent_color));
+        lvComments.setDividerHeight(10);
+
         btnComment = view.findViewById(R.id.btnComment);
         edtTxtForComment = view.findViewById(R.id.edtTxtForComment);
 
@@ -51,7 +56,12 @@ public class SecondFragment extends Fragment {
             public void onClick(View v) {
                 String text = edtTxtForComment.getText().toString();
                 if(!text.isEmpty()){
-                    postSingleTonInstance.getPost().getComments().add(new Comment(text, userSingleTonInstance.getAppUser().getId(), userSingleTonInstance.getAppUser().getName(), postSingleTonInstance.getPost().getPostId()));
+                    String userName = userSingleTonInstance.getAppUser().getName();
+                    if(userName.isEmpty()){
+                        userName = userSingleTonInstance.getAppUser().getEmail();
+                    }
+                    postSingleTonInstance.getPost().getComments().add(new Comment(text, userSingleTonInstance.getAppUser().getId(), userName, postSingleTonInstance.getPost().getPostId()));
+                    postSingleTonInstance.addCommentsToFireBaseDB();
                     edtTxtForComment.setText("");
                     commentsAdapter.notifyDataSetChanged();
                 }

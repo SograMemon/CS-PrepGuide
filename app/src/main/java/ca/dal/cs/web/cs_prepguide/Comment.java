@@ -58,6 +58,7 @@ public class Comment {
         return "Comment{" +
                 "commentContent='" + commentContent + '\'' +
                 ", commentedByUser='" + commentedByUser + '\'' +
+                ", commentedByUserName='" + commentedByUserName + '\'' +
                 ", postId='" + postId + '\'' +
                 '}';
     }

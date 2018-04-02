@@ -1,6 +1,10 @@
 package ca.dal.cs.web.cs_prepguide;
 
 import android.content.Context;
+import android.util.Log;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -11,6 +15,8 @@ import java.util.ArrayList;
 public class PostSingleTon {
     private static Context mCtx;
     private static PostSingleTon mInstance;
+    private DatabaseReference mDatabase;
+    private static final String TAG = "PostSingleTon";
 
     private Post post;
 
@@ -36,6 +42,15 @@ public class PostSingleTon {
 
     public ArrayList<Comment> getComments(){
         return post.getComments();
+    }
+
+    public void addCommentsToFireBaseDB(){
+        if (post.getComments() != null) {
+//            String currentPostReference = "Posts/".concat(post.getPostId());
+//            Log.d(TAG, currentPostReference);
+            mDatabase = FirebaseDatabase.getInstance().getReference("Posts");
+            mDatabase.child(post.getPostId()).child("postComments").setValue(post.getComments());
+        }
     }
 
 }
