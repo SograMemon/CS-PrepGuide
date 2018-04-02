@@ -119,10 +119,10 @@ public class guideFragment extends Fragment {
         tabLayout = (TabLayout) view.findViewById(R.id.simpleTabLayout);
 
         TabLayout.Tab firstTab = tabLayout.newTab();
-        firstTab.setText("First");
+        firstTab.setText("Post");
         tabLayout.addTab(firstTab);
         TabLayout.Tab secondTab = tabLayout.newTab();
-        secondTab.setText("Second");
+        secondTab.setText("Comments");
         tabLayout.addTab(secondTab);
 //        TabLayout.Tab thirdTab = tabLayout.newTab();
 //        thirdTab.setText("Third");

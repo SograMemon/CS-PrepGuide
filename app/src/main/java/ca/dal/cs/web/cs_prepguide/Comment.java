@@ -7,15 +7,17 @@ package ca.dal.cs.web.cs_prepguide;
 public class Comment {
     String commentContent;
     String commentedByUser;
+    String commentedByUserName;
     String postId;
 
-    public Comment(){
+    public Comment() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Comment(String commentContent, String commentedByUser, String postId) {
+    public Comment(String commentContent, String commentedByUser, String commentedByUserName, String postId) {
         this.commentContent = commentContent;
         this.commentedByUser = commentedByUser;
+        this.commentedByUserName = commentedByUserName;
         this.postId = postId;
     }
 
@@ -41,6 +43,14 @@ public class Comment {
 
     public void setPostId(String postId) {
         this.postId = postId;
+    }
+
+    public String getCommentedByUserName() {
+        return commentedByUserName;
+    }
+
+    public void setCommentedByUserName(String commentedByUserName) {
+        this.commentedByUserName = commentedByUserName;
     }
 
     @Override
