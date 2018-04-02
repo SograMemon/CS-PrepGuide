@@ -7,9 +7,9 @@ import java.util.ArrayList;
  */
 
 public class Post {
-    String postContent;
-    String postId;
-    ArrayList<Comment> postComments = new ArrayList<>();
+    private String postContent;
+    private String postId;
+    private ArrayList<Comment> postComments = new ArrayList<>();
 
     public Post(){
         // Default constructor required for calls to DataSnapshot.getValue(User.class)

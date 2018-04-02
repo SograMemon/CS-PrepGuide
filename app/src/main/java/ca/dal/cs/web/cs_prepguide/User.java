@@ -85,6 +85,10 @@ public class User {
 //        this.skills.add(skill);
 //    }
 
+    public void addBookmarksToUser(String postId){
+        this.bookmarks.add(postId);
+    }
+
     @Override
     public String toString() {
         return "User{" +

@@ -44,9 +44,7 @@ public class bookmarksFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_bookmarks, container, false);
         listViewBookmarks = view.findViewById(R.id.listViewBookmarks);
         singleTonInstance = CSPrepGuideSingleTon.getInstance(getContext());
-//        bookmarksList = singleTon.getAppUser().getBookmarks();
-        bookmarksList = new ArrayList<>();
-        bookmarksList.add("a");
+        bookmarksList = singleTonInstance.getAppUser().getBookmarks();
         Log.w(TAG, singleTonInstance.getAppUser().toString());
         bookmarksAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, bookmarksList);
         listViewBookmarks.setAdapter(bookmarksAdapter);

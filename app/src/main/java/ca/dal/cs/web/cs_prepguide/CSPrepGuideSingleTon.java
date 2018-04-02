@@ -71,25 +71,10 @@ public class CSPrepGuideSingleTon {
         isUsingEmailAuthentication = usingEmailAuthentication;
     }
 
-
     public void addUserToFireBaseDB() {
         if (AppUser != null) {
             mDatabase = FirebaseDatabase.getInstance().getReference();
             mDatabase.child("users").child(AppUser.getId()).setValue(AppUser);
-//            FirebaseDatabase database = FirebaseDatabase.getInstance();
-//            DatabaseReference myRef = database.getReference("users");
-//            myRef.push(singleTonInstance.getAppUser());
-//            mDatabase.child("users").child("0").setValue(singleTonInstance.getAppUser());
-
-
-//            mDatabase.child("message").setValue("Hello");
-//            Log.d(TAG, "ADDED USER");
-
-            // Write a message to the database
-//            FirebaseDatabase database = FirebaseDatabase.getInstance();
-//            DatabaseReference myRef = database.getReference("message");
-//
-//            myRef.setValue("Hello, World!");
         }
     }
 
