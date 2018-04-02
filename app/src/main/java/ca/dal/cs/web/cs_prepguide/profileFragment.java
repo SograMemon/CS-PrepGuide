@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
@@ -24,15 +25,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v4.app.Fragment;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -86,6 +90,7 @@ public class profileFragment extends Fragment {
     private  EditText userName;
     private Button btnSave;
     private boolean clicked;
+    Switch fingerPrintSwitch;
 
     //CAMERA UPLOAD PHOTO REFERRED FROM: https://stackoverflow.com/questions/40710599/image-capture-with-camera-upload-to-firebase-uri-in-onactivityresult-is-nul
 
@@ -179,14 +184,40 @@ public class profileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_profile, container, false);
-        clicked =false;
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        clicked = false;
 
         mStorage = FirebaseStorage.getInstance().getReference();
         mProgress = new ProgressDialog(getApplicationContext());
 
-        ProfilePic= view.findViewById(R.id.ProfilePic);
+        ProfilePic = view.findViewById(R.id.ProfilePic);
         btnUpload = view.findViewById(R.id.btnUpload);
+
+        fingerPrintSwitch = view.findViewById(R.id.fingerPrintSwitch);
+        setFingerPrintSwitchState();
+
+        fingerPrintSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (singleTon.isUsingEmailAuthentication()) {
+                    mySharedPreferences cs_prepguide_preferences = new mySharedPreferences(getContext());
+                    if(isChecked){
+                        cs_prepguide_preferences.setEmailUsingSharedPreference(singleTon.getTempUser());
+                        cs_prepguide_preferences.setPasswordUsingSharedPreference(singleTon.getTempPassword());
+                        cs_prepguide_preferences.setIsUsingFingerPrint(true);
+                    }else{
+                        cs_prepguide_preferences.setIsUsingFingerPrint(false);
+                    }
+                }else {
+                    Toast.makeText(getApplicationContext(), "Fingerprint Authentication is available for registered users only",Toast.LENGTH_SHORT).show();
+                    fingerPrintSwitch.setChecked(false);
+                }
+            }
+        });
+
+
+
+
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -480,9 +511,17 @@ public class profileFragment extends Fragment {
     }
 
 
-
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
+    }
+
+    private void setFingerPrintSwitchState() {
+        mySharedPreferences mySharedPreferences = new mySharedPreferences(getApplicationContext());
+        if(mySharedPreferences.getIsUsingFingerPrint()){
+            fingerPrintSwitch.setChecked(true);
+        }else{
+            fingerPrintSwitch.setChecked(false);
+        }
     }
 }

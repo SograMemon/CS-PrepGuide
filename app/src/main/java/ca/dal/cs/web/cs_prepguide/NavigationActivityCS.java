@@ -74,9 +74,10 @@ public class NavigationActivityCS extends AppCompatActivity
 
         if(singleTonInstance.getAppUser() != null){
             txtNavUserId.setText(singleTonInstance.getAppUser().getEmail());
+            txtNavUserId.setText(singleTonInstance.getAppUser().getName());
             //        txtNavUserEmail.setText(user.getEmail());
 //            Log.d(TAG, String.valueOf(user.getDisplayName()));
-            txtNavUserEmail.setText("");
+            txtNavUserEmail.setText(singleTonInstance.getAppUser().getEmail());
         }
 
 
@@ -126,7 +127,7 @@ public class NavigationActivityCS extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.navigation_activity_c, menu);
+//        getMenuInflater().inflate(R.menu.navigation_activity_c, menu);
         return true;
     }
 
