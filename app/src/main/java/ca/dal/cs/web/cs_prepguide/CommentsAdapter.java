@@ -106,7 +106,7 @@ public class CommentsAdapter extends ArrayAdapter<Comment> {
                     View parentRow = (View) v.getParent();
                     ListView listView = (ListView) parentRow.getParent().getParent().getParent();
                     int position1 = listView.getPositionForView(parentRow);
-                    Toast.makeText(getContext(), "delete clicked"+String.valueOf(position1), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "delete clicked"+String.valueOf(position1), Toast.LENGTH_SHORT).show();
                     CommentsList.remove(position1);
                     postSingleTonInstance.addCommentsToFireBaseDB();
                     notifyDataSetChanged();

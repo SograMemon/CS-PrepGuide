@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
+import android.os.Handler;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
@@ -70,7 +71,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FingerPrintCallbacks{
 
     public static final String MESSAGE_FROM_LOGIN = "Message from login";
     private static final String TAG = "MainActivity";
@@ -95,14 +96,16 @@ public class MainActivity extends AppCompatActivity {
     private TextView textView;
     private KeyStore mKeyStore;
     private KeyGenerator mKeyGenerator;
+//    FingerprintAuthenticationHandler helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //https://stackoverflow.com/questions/14475109/remove-android-app-title-bar
         getSupportActionBar().hide();
         setContentView(R.layout.login_new_layout);
-
+//        helper = new FingerprintAuthenticationHandler(getApplicationContext(), this);
         singleTonInstance = CSPrepGuideSingleTon.getInstance(getApplicationContext());
 
         if (!Utilities.isNetworkAvailable(getApplicationContext())) {
@@ -157,10 +160,8 @@ public class MainActivity extends AppCompatActivity {
                         if (initializeCipher()){
                             FingerprintManager.CryptoObject cryptoObject = new FingerprintManager.CryptoObject(cipher);
 
-                            FingerprintAuthenticationHandler helper = new FingerprintAuthenticationHandler(getApplicationContext());
-
+                            FingerprintAuthenticationHandler helper = new FingerprintAuthenticationHandler(MainActivity.this);
                             helper.startAuthentication(fingerprintManager, cryptoObject);
-
                         }
                     }
                 }
@@ -168,6 +169,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        showHideFingerPrintButton();
+
 
         // Set the dimensions of the sign-in button.
         SignInButton signInButton = findViewById(R.id.sign_in_button);
@@ -353,17 +357,20 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void signIn(String email, String password) {
+    private void signIn(final String email, final String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
+                            singleTonInstance.setUsingEmailAuthentication(true);
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             Log.w(TAG, user.getUid());
                             Log.w(TAG, user.toString());
+                            singleTonInstance.setTempUser(email);
+                            singleTonInstance.setTempPassword(password);
                             getUserDetailsFromFirebase(user.getUid(), user.getEmail(), "", "");
                         } else {
                             mProgress.dismiss();
@@ -545,6 +552,16 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intentFromLogin);
     }
 
+    private void showHideFingerPrintButton() {
+        mySharedPreferences mySharedPreferences = new mySharedPreferences(getApplicationContext());
+        if(mySharedPreferences.getIsUsingFingerPrint()){
+            btnFingerPrint.setVisibility(View.VISIBLE);
+        }else{
+            btnFingerPrint.setVisibility(View.INVISIBLE);
+        }
+    }
+
+
     private boolean initializeCipher() {
 
         try {
@@ -615,5 +632,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onFingerPrintResult(String result) {
+        Log.d(TAG, result);
+//        Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+        if(result.equals("Success")){
+            mProgress.show();
+            mySharedPreferences mySharedPreferences = new mySharedPreferences(getApplicationContext());
+            signIn(mySharedPreferences.getEmailUsingSharedPreference(),mySharedPreferences.getPasswordUsingSharedPreference());
+        }else{
+            Toast.makeText(getApplicationContext(), "Fingerprint Authentication failed!", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
 

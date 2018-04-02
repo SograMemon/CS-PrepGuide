@@ -6,7 +6,6 @@ package ca.dal.cs.web.cs_prepguide;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.CancellationSignal;
@@ -26,9 +25,18 @@ import android.widget.Toast;
 class FingerprintAuthenticationHandler extends FingerprintManager.AuthenticationCallback{
 
     private Context context;
+    static private String fingerprint_result_code;
+
+    private FingerPrintCallbacks mListener;
 
     FingerprintAuthenticationHandler(Context context) {
         this.context = context;
+        if (context instanceof FingerPrintCallbacks) {
+            mListener = (FingerPrintCallbacks) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement FingerPrintCallbacks");
+        }
     }
 
     //Check for Authentication of the user
@@ -47,8 +55,10 @@ class FingerprintAuthenticationHandler extends FingerprintManager.Authentication
     public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result){
 
         super.onAuthenticationSucceeded(result);
-
+//        Toast.makeText(context, "Fingerprint Authentication Success!", Toast.LENGTH_SHORT).show();
         Log.d("FingerPrint", "success");
+        fingerprint_result_code = "Success";
+        mListener.onFingerPrintResult(fingerprint_result_code);
     }
 
 
@@ -56,8 +66,10 @@ class FingerprintAuthenticationHandler extends FingerprintManager.Authentication
     @Override
     public void onAuthenticationFailed(){
         super.onAuthenticationFailed();
-        //Toast.makeText(context, "Fingerprint Authentication failed!", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, "Fingerprint Authentication failed!", Toast.LENGTH_SHORT).show();
         Log.d("FingerPrint", "failure");
+        fingerprint_result_code = "Failure";
+        mListener.onFingerPrintResult(fingerprint_result_code);
     }
 
 }
