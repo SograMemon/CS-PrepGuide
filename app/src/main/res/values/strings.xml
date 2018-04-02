@@ -75,4 +75,7 @@
     <string name="help_section">HELP SECTION</string>
     <string name="login_help">Login Help</string>
     <string name="camera_issue">Camera Issue</string>
+    <string name="send">Send</string>
+    <string name="delete">delete</string>
+    <string name="editComment">edit</string>
 </resources>

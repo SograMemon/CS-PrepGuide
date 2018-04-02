@@ -24,21 +24,21 @@
                 android:layout_weight="0.5"
                 android:text="TextView"
                 android:textColor="#795548"
-                android:textSize="12sp" />
+                android:textSize="20sp" />
 
             <Button
                 android:id="@+id/btnEditComment"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_weight="0.25"
-                android:text="edit" />
+                android:layout_weight="0.20"
+                android:text="@string/editComment" />
 
             <Button
                 android:id="@+id/btnDeleteComment"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_weight="0.25"
-                android:text="delete" />
+                android:layout_weight="0.15"
+                android:text="@string/delete" />
         </LinearLayout>
 
         <EditText

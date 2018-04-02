@@ -17,26 +17,26 @@
 
             <TextView
                 android:id="@+id/txtUserName"
-                android:layout_width="280dp"
+                android:layout_width="240dp"
                 android:layout_height="40dp"
                 android:layout_weight="0.5"
                 android:text="TextView"
-                android:textColor="#7CB342"
-                android:textSize="12sp" />
+                android:textColor="#7B1FA2"
+                android:textSize="20sp" />
 
             <Button
                 android:id="@+id/btnEditComment"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_weight="0.25"
-                android:text="edit" />
+                android:text="@string/editComment" />
 
             <Button
                 android:id="@+id/btnDeleteComment"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_weight="0.25"
-                android:text="delete" />
+                android:layout_weight="0.50"
+                android:text="@string/delete" />
         </LinearLayout>
 
         <EditText
