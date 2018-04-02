@@ -79,7 +79,7 @@ public class profileFragment extends Fragment {
     public ProgressDialog mProgress;
     private ImageView ProfilePic;
     String mCurrentPhotoPath;
-    Uri photoURI;
+    Uri photoURI,uri;
     CSPrepGuideSingleTon singleTon = CSPrepGuideSingleTon.getInstance(getApplicationContext());
     private static final String TAG = "Profile Fragment";
     private TextView userEmail;
@@ -221,7 +221,7 @@ public class profileFragment extends Fragment {
                     //Intent intent1 =new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     //startActivityForResult(intent1,CAMERA_REQUEST_CODE);
                 } catch (Exception ex) {
-                    Toast.makeText(getApplicationContext(), "Make sure Camera Permission is Granted in Settings for this App", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Make sure Camera and Storage Permission is Granted in Settings for this App", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -271,8 +271,7 @@ public class profileFragment extends Fragment {
                     Toast.makeText(getApplicationContext(),"Please add a Skill",Toast.LENGTH_SHORT).show();
                 }
 
-                //toast to make user aware of the what's going on
-//                Toast.makeText(getApplicationContext(),"Skill Added Successfully",Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -358,7 +357,7 @@ public class profileFragment extends Fragment {
             //Uri uri =  data.getData();
 
            /* if (uri != null) {*/
-            StorageReference filepath = mStorage.child("Photos").child(photoURI.getLastPathSegment());
+            StorageReference filepath = mStorage.child("Photos");
 
 
             filepath.putFile(photoURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -387,6 +386,37 @@ public class profileFragment extends Fragment {
                 Log.v(TAG, "File URI is null");
             }*/
         }
+
+
+        //Gallery Request to upload an image
+        if (requestCode ==GALLERY_REQUEST_CODE && resultCode==RESULT_OK ) {
+
+            mProgress = new ProgressDialog(getActivity());
+            mProgress.setMessage("Uploading Image...");
+            mProgress.show();
+            StorageReference filepath = mStorage.child("Photos");
+
+            uri = data.getData();
+
+            filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Uri downloadUri = taskSnapshot.getDownloadUrl();
+                    Picasso.with(getApplicationContext()).load(downloadUri).fit().centerCrop().into(ProfilePic);
+                    mProgress.dismiss();
+                    Toast.makeText(getApplicationContext(), "Uploading Done!! .... ", Toast.LENGTH_LONG).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                    Toast.makeText(getApplicationContext(), "Failure while uploading!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+        }
+
 
     }
 
