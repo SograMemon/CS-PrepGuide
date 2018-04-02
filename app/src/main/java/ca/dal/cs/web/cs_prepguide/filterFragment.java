@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,15 +23,19 @@ import android.widget.Spinner;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
+import com.google.android.gms.games.snapshot.Snapshot;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.ContentValues.TAG;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
@@ -47,6 +52,7 @@ public class filterFragment extends Fragment {
     public static final String job_Title="jobtitle";
     public static final String job_ID="jobid";
     public static final String v="";
+    public int l=0;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -106,6 +112,7 @@ public class filterFragment extends Fragment {
     }
 
     private List<job> jobList;
+    private List<job> jobList1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -129,6 +136,7 @@ public class filterFragment extends Fragment {
 
         //listView_jobs= (ListView) parent.findViewById(R.id.list_job);
         jobList =new ArrayList<>();
+        jobList1= new ArrayList<>();
 
         // Inflate the layout for this fragment
         btnApplyFilter =  view.findViewById(R.id.btnApplyFilter);
@@ -176,7 +184,14 @@ public class filterFragment extends Fragment {
         btnApplyFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addJob();
+                String edt=null;
+                edt= editText_addJob.getText().toString();
+                if(edt.equalsIgnoreCase("")){
+                    getJob();
+                }else {
+                    addJob();
+                }
+
 
             }
         });
@@ -198,16 +213,17 @@ public class filterFragment extends Fragment {
                 jobList.clear();
 
 
-                for(DataSnapshot jobSnapshot: dataSnapshot.getChildren()){
+                for (DataSnapshot jobSnapshot : dataSnapshot.getChildren()) {
                     job job1 = jobSnapshot.getValue(job.class);
 
                     jobList.add(job1);
+                    l++;
                 }
 
                 jobList adapter = new jobList(getActivity(), jobList);
                 listView_jobs.setAdapter(adapter);
-            }
 
+            }
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -253,20 +269,133 @@ public class filterFragment extends Fragment {
         }
     }
 
-    private void getJob(){
-        String jobStream= spinnerStream.getSelectedItem().toString();
-        String company=spinnerCompany.getSelectedItem().toString();
-        String type=spinnerType.getSelectedItem().toString();
+    private void getJob() {
+        Query Qs = null;
+        Query Qc = null;
+        Query Qt = null;
+        String jobStream = spinnerStream.getSelectedItem().toString();
+        String company = spinnerCompany.getSelectedItem().toString();
+        String type = spinnerType.getSelectedItem().toString();
+        if(jobStream.equalsIgnoreCase("select stream")){
+            jobStream="all";
+        }
+        if(company.equalsIgnoreCase("company")){
+            company="all";
+        }
+        if(type.equalsIgnoreCase("position type")){
+            type="all";
+        }
+        jobList1.clear();
+       for(int i=0;i<jobList.size()-1;i++){
+           job job1=jobList.get(i);
+           if((jobStream.equalsIgnoreCase("all")&& company.equalsIgnoreCase("all"))&& type.equalsIgnoreCase("all")){
+               jobList1.add(job1);
+           }else if((!jobStream.equalsIgnoreCase("all")&& company.equalsIgnoreCase("all"))&& type.equalsIgnoreCase("all")){
+               if(job1.jobStream.equalsIgnoreCase(jobStream)){
+                   jobList1.add(job1);
+               }
+           }else if((jobStream.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all"))&& type.equalsIgnoreCase("all")){
+               if(job1.jobCompany.equalsIgnoreCase(company)){
+                   jobList1.add(job1);
+               }
+           }else if((jobStream.equalsIgnoreCase("all")&& company.equalsIgnoreCase("all"))&& !type.equalsIgnoreCase("all")){
+               if(job1.jobType.equalsIgnoreCase(type)){
+                   jobList1.add(job1);
+               }
+           }else if((!jobStream.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all"))&& type.equalsIgnoreCase("all")){
+               if(job1.jobStream.equalsIgnoreCase(jobStream)&& job1.jobCompany.equalsIgnoreCase(company)){
+                   jobList1.add(job1);
+               }
+           }else if((jobStream.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all"))&& !type.equalsIgnoreCase("all")){
+               if(job1.jobType.equalsIgnoreCase(type)&& job1.jobCompany.equalsIgnoreCase(company)){
+                   jobList1.add(job1);
+               }
+           }else if((!jobStream.equalsIgnoreCase("all")&& company.equalsIgnoreCase("all"))&& !type.equalsIgnoreCase("all")){
+               if(job1.jobStream.equalsIgnoreCase(jobStream)&& job1.jobType.equalsIgnoreCase(type)){
+                   jobList1.add(job1);
+               }
+           }else if((!jobStream.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all"))&& !type.equalsIgnoreCase("all")){
+               if((job1.jobStream.equalsIgnoreCase(jobStream)&& job1.jobCompany.equalsIgnoreCase(company))&& job1.jobType.equalsIgnoreCase(type)){
+                   jobList1.add(job1);
+               }
+           }
 
-    }
 
-//    // TODO: Rename method, update argument and hook method into UI event
+
+
+       }
+        jobList adapter = new jobList(getActivity(), jobList1);
+        listView_jobs.setAdapter(adapter);
+
+//        if (jobStream.equalsIgnoreCase("all") || jobStream.equalsIgnoreCase("stream")) {
+//            if (company.equalsIgnoreCase("all") || company.equalsIgnoreCase("company")) {
+//                if (type.equalsIgnoreCase("all") || type.equalsIgnoreCase("position type")) {
+//                    //display all
+//                    Q = databaseJobs;
+//                } else {
+//                    Q = databaseJobs.orderByChild("jobType").equalTo(type);
+//                }
+//            } else if (type.equalsIgnoreCase("all") || type == null) {
+//                Q = databaseJobs.orderByChild("jobCompany").equalTo(company);
+//            } else {
+//                //Q when stream=all company=value and type=value
+//                Snapshot snapshot;
 //
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
+//            }
+//        } else if (company.equalsIgnoreCase("all") || company == null) {
+//            if (type.equalsIgnoreCase("all") || jobStream.equalsIgnoreCase("position type")) {
+//                Q = databaseJobs.orderByChild("jobStream").equalTo(jobStream);
+//            }
+//
+//
 //        }
-//    }
+//
+//        if (jobStream.equalsIgnoreCase("all") || jobStream.equalsIgnoreCase("stream")) {
+//            Q = databaseJobs.orderByChild("jobType").startAt(type).endAt(type + "\uf0ff");
+//        }
+
+//        if(!jobStream.equalsIgnoreCase("All")){
+//            Qt = databaseJobs.orderByChild("jobStream").equalTo(jobStream);
+//        }else if(!company.equalsIgnoreCase("all")){
+//            Qt = databaseJobs.orderByChild("jobCompany").equalTo(company);
+//        }else if((!type.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all"))&& !jobStream.equalsIgnoreCase("all")){
+//
+//        }else{
+//            Qt = databaseJobs.orderByChild("jobType").equalTo(type);
+//        }
+
+
+
+
+//        Qt.addValueEventListener(new ValueEventListener() {
+//
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                jobList.clear();
+//                for (DataSnapshot jobSnapshot : dataSnapshot.getChildren()) {
+//                    job job1 = jobSnapshot.getValue(job.class);
+//                    if(!type.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all")){
+//                        if(job1.jobType==type && job1.jobCompany==company) {
+//                            jobList.add(job1);
+//                        }
+//                   }
+//
+//                }
+//                jobList adapter = new jobList(getActivity(), jobList);
+//                listView_jobs.setAdapter(adapter);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                //getting Post failed log a message
+//                Log.w(TAG, "loadJob:onCanclled", databaseError.toException());
+//            }
+//        });
+//
+//
+//
+
+   }
 
     @Override
     public void onAttach(Context context) {
