@@ -222,8 +222,7 @@ public class profileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 try {
-                    //Getting Permissions for our app: Camera and Storage
-                    runtimePermission();
+
 
                     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                         @Override
@@ -233,12 +232,14 @@ public class profileFragment extends Fragment {
                                 case -1:
 //                                    Toast.makeText(getApplicationContext(), "Camera", Toast.LENGTH_SHORT).show();
                                     try {
+                                        //Getting Permissions for our app: Camera
+                                        runtimePermission();
                                         dispatchTakePhotoIntent();
                                         String abc=photoURI.getLastPathSegment();
-                                         Log.d("segment",abc);
+                                         //Log.d("segment",abc);
 
                                     }catch (Exception ex){
-                                        Toast.makeText(getApplicationContext(), "Camera permissions turned off", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(getApplicationContext(), "Camera permissions turned off", Toast.LENGTH_SHORT).show();
                                     }
                                     break;
                                 case -2:
@@ -279,7 +280,7 @@ public class profileFragment extends Fragment {
         userName = view.findViewById(R.id.userName);
         btnSave = view.findViewById(R.id.btnSave);
 
-        String emailID ="EMAIL : "+singleTon.getAppUser().getEmail();
+        String emailID =singleTon.getAppUser().getEmail();
         //Setting the retrieved Email ID of the user
         userEmail.setText(emailID);
         userName.setEnabled(false);
@@ -296,7 +297,7 @@ public class profileFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if(skillsEdit.equals("") || skillsEdit!=null) {
+                if(skillsEdit.getText().equals("") | skillsEdit!=null) {
                     skillsList.add(skillsEdit.getText().toString());
 
                     //making the edittext field blank
@@ -474,13 +475,13 @@ public class profileFragment extends Fragment {
             ActivityCompat.requestPermissions(getActivity(), new String[] {android.Manifest.permission.CAMERA},
                     CAMERA_REQUEST_CODE);
 
-        //Checks if the Storage permission is given or not
+        /*//Checks if the Storage permission is given or not
         if (ContextCompat.checkSelfPermission(getApplicationContext(),
                 android.Manifest.permission.READ_EXTERNAL_STORAGE)==PackageManager.PERMISSION_DENIED)
 
             //Requests runtime Storage permission to be granted from the user
             ActivityCompat.requestPermissions(getActivity(), new String[] {android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                    READ_EXTERNAL_REQUEST_CODE);
+                    READ_EXTERNAL_REQUEST_CODE);*/
 
     }
     @Override
@@ -498,7 +499,7 @@ public class profileFragment extends Fragment {
                 break;
 
 
-            case READ_EXTERNAL_REQUEST_CODE:
+            /*case READ_EXTERNAL_REQUEST_CODE:
                 if (permissionResult.length > 0 && permissionResult[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(getApplicationContext(),"Permission Granted, Now your application can access CAMERA AND STORAGE.",
                             Toast.LENGTH_LONG).show();
@@ -506,7 +507,7 @@ public class profileFragment extends Fragment {
                     Toast.makeText(getApplicationContext(),"Permission Canceled, Now your application cannot access CAMERA AND STORAGE",
                             Toast.LENGTH_LONG).show();
                 }
-                break;
+                break;*/
         }
     }
 
