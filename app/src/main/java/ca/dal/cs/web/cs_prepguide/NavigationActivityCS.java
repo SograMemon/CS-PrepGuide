@@ -171,6 +171,8 @@ public class NavigationActivityCS extends AppCompatActivity
                 // This line will logout user from facebook
                 // Instead do not logout user and handle this on login screen
                 LoginManager.getInstance().logOut();
+                Intent intentFromLogin = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intentFromLogin);
                 finish();
                 break;
 

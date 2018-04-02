@@ -122,49 +122,52 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
         btnForgotPassword = findViewById(R.id.btnForgotPassword);
         btnFingerPrint = findViewById(R.id.btnFingerPrint);
 
+
+        KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+        FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.USE_FINGERPRINT)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        if (!fingerprintManager.isHardwareDetected())
+            Toast.makeText(getApplicationContext(), "Fingerprint authentication permission not enabled", Toast.LENGTH_SHORT).show();
+        else{
+            // The line below prevents the false positive inspection from Android Studio noinspection ResourceType
+            if(!fingerprintManager.hasEnrolledFingerprints()) {
+
+                // This happens when no fingerprints are registered.
+                Toast.makeText(getApplicationContext(),
+                        "Register at least one fingerprint: 'Settings=>Security->Fingerprint'",
+                        Toast.LENGTH_LONG).show();
+
+            }else{
+
+                if(!keyguardManager.isKeyguardSecure()){
+                    // Show a message that the user hasn't set up a fingerprint or lock screen.
+                    Toast.makeText(getApplicationContext(),
+                            "Secure lock screen hasn't set up.\n"
+                                    + "Set up a fingerprint: 'Settings=>Security=>Fingerprint'",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                else
+                    createKey();
+
+                if (initializeCipher()){
+                    FingerprintManager.CryptoObject cryptoObject = new FingerprintManager.CryptoObject(cipher);
+
+                    FingerprintAuthenticationHandler helper = new FingerprintAuthenticationHandler(MainActivity.this);
+                    helper.startAuthentication(fingerprintManager, cryptoObject);
+                }
+            }
+        }
+
         btnFingerPrint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "fingerprint clicked", Toast.LENGTH_SHORT).show();
-                KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
-                FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+                //Toast.makeText(getApplicationContext(), "fingerprint clicked", Toast.LENGTH_SHORT).show();
 
-                if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.USE_FINGERPRINT)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-                if (!fingerprintManager.isHardwareDetected())
-                    Toast.makeText(getApplicationContext(), "Fingerprint authentication permission not enabled", Toast.LENGTH_SHORT).show();
-                else{
-                    // The line below prevents the false positive inspection from Android Studio noinspection ResourceType
-                    if(!fingerprintManager.hasEnrolledFingerprints()) {
-
-                        // This happens when no fingerprints are registered.
-                        Toast.makeText(getApplicationContext(),
-                                "Register at least one fingerprint: 'Settings=>Security->Fingerprint'",
-                                Toast.LENGTH_LONG).show();
-
-                    }else{
-
-                        if(!keyguardManager.isKeyguardSecure()){
-                            // Show a message that the user hasn't set up a fingerprint or lock screen.
-                            Toast.makeText(getApplicationContext(),
-                                    "Secure lock screen hasn't set up.\n"
-                                            + "Set up a fingerprint: 'Settings=>Security=>Fingerprint'",
-                                    Toast.LENGTH_LONG).show();
-                            return;
-                        }
-                        else
-                            createKey();
-
-                        if (initializeCipher()){
-                            FingerprintManager.CryptoObject cryptoObject = new FingerprintManager.CryptoObject(cipher);
-
-                            FingerprintAuthenticationHandler helper = new FingerprintAuthenticationHandler(MainActivity.this);
-                            helper.startAuthentication(fingerprintManager, cryptoObject);
-                        }
-                    }
-                }
 
 
             }
@@ -550,6 +553,7 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
         txtEmail.setText("");
         txtPassword.setText("");
         startActivity(intentFromLogin);
+        finish();
     }
 
     private void showHideFingerPrintButton() {
