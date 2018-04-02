@@ -47,7 +47,9 @@ public class FirstFragment extends Fragment {
         mValueView = view.findViewById(R.id.textView);
 
 
-        String postdetails = PostSingletonInstance.getPost( ).getPostContent( );
+        String postdetails = PostSingletonInstance.getPost( ).getPostContent( ).replace("/n","\n"); ;
+
+
         mValueView.setText(postdetails);
                 return view;
     }
