@@ -3,7 +3,6 @@ package ca.dal.cs.web.cs_prepguide;
 import android.content.Context;
 import android.util.Log;
 
-
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
