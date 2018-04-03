@@ -48,9 +48,13 @@ public class FirstFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String currentPost = PostSingletonInstance.getPost().getPostId();
-                userSingleTonInstance.getAppUser().addBookmarksToUser(currentPost);
-                userSingleTonInstance.addUserToFireBaseDB();
-                Toast.makeText(getContext(), "Successfully added to bookmarks", Toast.LENGTH_SHORT).show();
+                if(!userSingleTonInstance.getAppUser().getBookmarks().contains(currentPost)){
+                    userSingleTonInstance.getAppUser().addBookmarksToUser(currentPost);
+                    userSingleTonInstance.addUserToFireBaseDB();
+                    Toast.makeText(getContext(), "Successfully added to bookmarks", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(getContext(), "This job is already present in your bookmarks", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
