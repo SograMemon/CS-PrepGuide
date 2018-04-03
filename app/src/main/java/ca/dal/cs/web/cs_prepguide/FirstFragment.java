@@ -6,6 +6,8 @@ package ca.dal.cs.web.cs_prepguide;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +24,14 @@ public class FirstFragment extends Fragment {
     private TextView mValueView;
     private Button btnBookmark;
 
+<<<<<<< Updated upstream
     PostSingleTon PostSingletonInstance;
     CSPrepGuideSingleTon userSingleTonInstance;
 
+=======
+   PostSingleTon PostSingletonInstance;
+    CSPrepGuideSingleTon userSingleTonInstance;
+>>>>>>> Stashed changes
     public FirstFragment() {
 
     }
@@ -32,6 +39,16 @@ public class FirstFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+<<<<<<< Updated upstream
+=======
+
+
+        PostSingletonInstance = PostSingleTon.getInstance(getContext());
+        userSingleTonInstance = CSPrepGuideSingleTon.getInstance(getContext());
+
+
+
+>>>>>>> Stashed changes
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +56,7 @@ public class FirstFragment extends Fragment {
         PostSingletonInstance = PostSingleTon.getInstance(getContext());
         userSingleTonInstance = CSPrepGuideSingleTon.getInstance(getContext());
 
+<<<<<<< Updated upstream
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_first, container, false);
         mValueView = view.findViewById(R.id.textView);
@@ -56,6 +74,23 @@ public class FirstFragment extends Fragment {
 
         String postdetails = PostSingletonInstance.getPost().getPostContent().replace("/n","\n"); ;
         mValueView.setText(postdetails);
+=======
+
+
+
+        View view = inflater.inflate(R.layout.fragment_first, container, false);
+        mValueView = view.findViewById(R.id.textView);
+
+
+
+        String postdetails = PostSingletonInstance.getPost( ).getPostContent( ); ;
+
+        Spanned sp = Html.fromHtml(postdetails);
+
+
+
+       mValueView.setText(sp);
+>>>>>>> Stashed changes
                 return view;
     }
 
