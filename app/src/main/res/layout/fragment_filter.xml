@@ -14,21 +14,47 @@
         android:orientation="vertical"
         tools:context="ca.dal.cs.web.cs_prepguide.filter">
 
-        <Spinner
-            android:id="@+id/spinner_stream"
+        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp">
-        </Spinner>
+            android:layout_height="wrap_content"
+            android:text="Select Stream"
+            android:layout_marginStart="20dp"/>
 
         <Spinner
-            android:id="@+id/spinner_company"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp">
+            android:id="@+id/spinner_stream"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp">
         </Spinner>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Company"
+            android:layout_marginStart="20dp"/>
+        <Spinner
+            android:id="@+id/spinner_company"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp">
+        </Spinner>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Position"
+            android:layout_marginStart="20dp"/>
+
         <Spinner
             android:id="@+id/spinner_type"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp">
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp">
         </Spinner>
 
         <!--<EditText
@@ -43,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:text="@string/btnapplyFilter" />
 
         <ListView

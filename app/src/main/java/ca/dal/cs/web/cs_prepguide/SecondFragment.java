@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -18,7 +20,8 @@ import java.util.ArrayList;
 public class SecondFragment extends Fragment {
 
     ListView lvComments;
-    Button btnComment;
+    //Button btnComment;
+    ImageButton btnComment;
     EditText edtTxtForComment;
 //    ArrayList<Comment> commentsArrayList = new ArrayList<>();
     CommentsAdapter commentsAdapter;
@@ -48,8 +51,9 @@ public class SecondFragment extends Fragment {
         lvComments.setDivider(this.getResources().getDrawable(R.drawable.transparent_color));
         lvComments.setDividerHeight(10);
 
-        btnComment = view.findViewById(R.id.btnComment);
+        //btnComment = view.findViewById(R.id.btnComment);
         edtTxtForComment = view.findViewById(R.id.edtTxtForComment);
+        btnComment = view.findViewById(R.id.btnComment);
 
         btnComment.setOnClickListener(new View.OnClickListener() {
             @Override
