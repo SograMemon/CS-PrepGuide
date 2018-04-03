@@ -61,7 +61,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="name">NAME :</string>
+    <string name="name">Name: </string>
     <string name="btnSave"><![CDATA[EDIT & SAVE]]></string>
     <string name="add_skill">ADD Skill</string>
     <string name="enter_your_technical_skills">Enter Your Technical Skills</string>
