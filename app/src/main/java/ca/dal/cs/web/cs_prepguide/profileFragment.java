@@ -253,7 +253,7 @@ public class profileFragment extends Fragment {
                         }
                     };
                     AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                    alertDialog.setTitle("Title");
+                    alertDialog.setTitle("Choose an Option!");
                     alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Camera", dialogClickListener);
                     alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Gallery", dialogClickListener);
                     alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Cancel", dialogClickListener);

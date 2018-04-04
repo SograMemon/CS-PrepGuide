@@ -19,11 +19,13 @@ import android.view.MenuItem;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.Fragment;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,7 @@ public class NavigationActivityCS extends AppCompatActivity
     FragmentManager fmg = null;
     private FirebaseAuth mAuth;
     TextView txtNavUserId, txtNavUserEmail;
+    ImageView userImageView;
     private static final String TAG = "NavigationActivity";
     CSPrepGuideSingleTon singleTonInstance;
 
@@ -70,6 +73,7 @@ public class NavigationActivityCS extends AppCompatActivity
         View navigationHeaderView = navigationView.getHeaderView(0);
         txtNavUserEmail = navigationHeaderView.findViewById(R.id.txtNavUserEmail);
         txtNavUserId = navigationHeaderView.findViewById(R.id.txtNavUserId);
+        userImageView = navigationHeaderView.findViewById(R.id.imgNavUserPic);
 //        txtNavUserId.setText(user.getUid());
 
         if(singleTonInstance.getAppUser() != null){
@@ -78,6 +82,7 @@ public class NavigationActivityCS extends AppCompatActivity
             //        txtNavUserEmail.setText(user.getEmail());
 //            Log.d(TAG, String.valueOf(user.getDisplayName()));
             txtNavUserEmail.setText(singleTonInstance.getAppUser().getEmail());
+            Picasso.with(getApplicationContext()).load(Uri.parse(singleTonInstance.getAppUser().getImageUrl())).fit().centerCrop().into(userImageView);
         }
 
 

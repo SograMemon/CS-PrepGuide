@@ -106,7 +106,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:text="@string/register"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:background="@drawable/button_rounded"
+                android:textColor="@color/colorWhite"
+                android:layout_marginRight="15dp"/>
 
             <Button
                 android:id="@+id/btnLogin"
@@ -114,7 +117,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:text="@string/login"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:background="@drawable/button_rounded"
+                android:textColor="@color/colorWhite"
+                />
 
         </LinearLayout>
 
