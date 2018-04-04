@@ -18,6 +18,7 @@ public class job {
     String matchSkillNo=" ";
     Double jobLatitude;
     Double jobLongitude;
+    String jobPostId;
     Float distance;
 
     public job(){
@@ -30,10 +31,6 @@ public class job {
         this.jobType= jobType;
         this.jobId= jobId;
         this.jobSkills=jobSkills;
-
-
-
-
     }
 
     public String getJobType() {
@@ -105,6 +102,14 @@ public class job {
 
     public void setDistance(Float distance) {
         this.distance = distance;
+    }
+
+    public String getJobPostId() {
+        return jobPostId;
+    }
+
+    public void setJobPostId(String jobPostId) {
+        this.jobPostId = jobPostId;
     }
 
     public void setFilter(String filterVal){

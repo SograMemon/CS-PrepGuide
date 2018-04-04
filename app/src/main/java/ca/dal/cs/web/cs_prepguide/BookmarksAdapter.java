@@ -58,7 +58,7 @@ public class BookmarksAdapter extends ArrayAdapter<String>{
                     View parentRow = (View) v.getParent();
                     ListView listView = (ListView) parentRow.getParent();
                     int position1 = listView.getPositionForView(parentRow);
-                    Toast.makeText(getContext(), "delete clicked"+String.valueOf(position1), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "delete clicked"+String.valueOf(position1), Toast.LENGTH_SHORT).show();
                     bookmarksList.remove(position1);
                     userSingleTon.addUserToFireBaseDB();
                     notifyDataSetChanged();
@@ -72,7 +72,8 @@ public class BookmarksAdapter extends ArrayAdapter<String>{
 //                    Toast.makeText(getContext(), "list view clicked", Toast.LENGTH_SHORT).show();
                     ListView listView = (ListView) finalConvertView.getParent();
                     int position1 = listView.getPositionForView(listView);
-                    Toast.makeText(getContext(), "list view clicked"+bookmarksList.get(position), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "list view clicked"+bookmarksList.get(position), Toast.LENGTH_SHORT).show();
+                    userSingleTon.setCurrentPostId(bookmarksList.get(position));
                     guideNavigationInterfaceObject.testGuideNavigation();
                 }
             });
