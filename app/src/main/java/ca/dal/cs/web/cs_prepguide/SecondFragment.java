@@ -81,4 +81,9 @@ public class SecondFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        getActivity().setTitle("Guide View");
+    }
 }

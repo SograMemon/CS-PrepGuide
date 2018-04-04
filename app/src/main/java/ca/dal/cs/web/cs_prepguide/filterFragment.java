@@ -390,6 +390,7 @@ public class filterFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        getActivity().setTitle("Filter Jobs");
     }
 
 //    private void addJob(){

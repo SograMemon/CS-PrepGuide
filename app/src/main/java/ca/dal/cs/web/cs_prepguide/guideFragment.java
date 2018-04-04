@@ -201,7 +201,7 @@ public class guideFragment extends Fragment {
 
     public void onStart(){
         super.onStart();
-
+        getActivity().setTitle("Guide View");
     }
 
    /* public void getPostDetailsFromFirebase(String postId){

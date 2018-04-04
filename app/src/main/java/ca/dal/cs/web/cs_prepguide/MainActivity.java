@@ -453,6 +453,7 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
                                 personPhoto = user.getPhotoUrl().toString();
                             }
                             mProgress.show();
+                            singleTonInstance.setUsingEmailAuthentication(false);
                             getUserDetailsFromFirebase(user.getUid(), user.getEmail(), user.getDisplayName(), personPhoto);
 
 //                            updateUI(user);
@@ -492,6 +493,7 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
                             }else{
                                 personPhoto = user.getPhotoUrl().toString();
                             }
+                            singleTonInstance.setUsingEmailAuthentication(false);
                             mProgress.show();
                             getUserDetailsFromFirebase(user.getUid(), user.getEmail(), user.getDisplayName(), personPhoto);
 //                            Log.d(TAG, "user after facebook login" + singleTonInstance.getAppUser().toString());

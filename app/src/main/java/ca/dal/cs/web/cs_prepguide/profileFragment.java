@@ -91,6 +91,7 @@ public class profileFragment extends Fragment {
     private Button btnSave;
     private boolean clicked;
     Switch fingerPrintSwitch;
+    CSPrepGuideSingleTon csPrepGuideSingleTonInstance;
 
     //CAMERA UPLOAD PHOTO REFERRED FROM: https://stackoverflow.com/questions/40710599/image-capture-with-camera-upload-to-firebase-uri-in-onactivityresult-is-nul
 
@@ -194,8 +195,13 @@ public class profileFragment extends Fragment {
         btnUpload = view.findViewById(R.id.btnUpload);
 
         fingerPrintSwitch = view.findViewById(R.id.fingerPrintSwitch);
-        setFingerPrintSwitchState();
+        fingerPrintSwitch.setChecked(false);
 
+        csPrepGuideSingleTonInstance = new CSPrepGuideSingleTon(getContext());
+        if(csPrepGuideSingleTonInstance.isUsingEmailAuthentication()){
+            setFingerPrintSwitchState();
+        }
+        
         fingerPrintSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -515,6 +521,7 @@ public class profileFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        getActivity().setTitle("Profile");
         if(singleTon.getAppUser().getName().isEmpty()){
             Toast.makeText(getContext(), "Please add a name to your account", Toast.LENGTH_LONG).show();
         }

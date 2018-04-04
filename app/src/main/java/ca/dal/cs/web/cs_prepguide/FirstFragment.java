@@ -63,6 +63,12 @@ public class FirstFragment extends Fragment {
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        getActivity().setTitle("Guide View");
+    }
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         PostSingletonInstance = PostSingleTon.getInstance(getContext());

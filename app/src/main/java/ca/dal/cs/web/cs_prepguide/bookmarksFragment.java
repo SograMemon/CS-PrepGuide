@@ -117,4 +117,10 @@ public class bookmarksFragment extends Fragment implements guideNavigationInterf
                 .commit();
 
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getActivity().setTitle("Bookmarks");
+    }
 }
