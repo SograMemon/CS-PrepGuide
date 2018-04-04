@@ -9,6 +9,15 @@ import java.util.ArrayList;
 public class Post {
     private String postContent;
     private String postId;
+
+    public ArrayList<Comment> getPostComments() {
+        return postComments;
+    }
+
+    public void setPostComments(ArrayList<Comment> postComments) {
+        this.postComments = postComments;
+    }
+
     private ArrayList<Comment> postComments = new ArrayList<>();
 
     public Post(){
