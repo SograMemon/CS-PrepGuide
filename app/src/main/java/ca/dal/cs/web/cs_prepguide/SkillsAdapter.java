@@ -50,7 +50,7 @@ public class SkillsAdapter extends ArrayAdapter<String> {
                     View parentRow = (View) v.getParent();
                     ListView listView = (ListView) parentRow.getParent();
                     int position1 = listView.getPositionForView(parentRow);
-                    Toast.makeText(getContext(), "delete clicked" + String.valueOf(position1), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "delete clicked" + String.valueOf(position1), Toast.LENGTH_SHORT).show();
                     skillsList.remove(position1);
                     userSingleTon.addUserToFireBaseDB();
                     notifyDataSetChanged();

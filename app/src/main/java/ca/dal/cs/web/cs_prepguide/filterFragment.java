@@ -171,7 +171,7 @@ public class filterFragment extends Fragment {
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(getApplicationContext(), String.valueOf(which), Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), String.valueOf(which), Toast.LENGTH_SHORT).show();
                         switch (which) {
                             case -1:
                                 // Based on Location
@@ -223,8 +223,9 @@ public class filterFragment extends Fragment {
 
                 job job1= jobList.get(i);
                 //job1.setFilter(filterType);
-                mListener.onFilterClicked(job1.getJobId(),job1.getJobTitle());
-
+                CSPrepGuideSingleTon csPrepGuideSingleTonInstance = new CSPrepGuideSingleTon(getContext());
+                csPrepGuideSingleTonInstance.setCurrentPostId(job1.jobPostId);
+                mListener.onFilterClicked(job1.jobPostId,job1.getJobId());
             }
         });
 

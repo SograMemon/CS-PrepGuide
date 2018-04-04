@@ -41,7 +41,12 @@ public class PostSingleTon {
     }
 
     public ArrayList<Comment> getComments(){
-        return post.getComments();
+        if(post.getComments()!= null){
+            return post.getComments();
+        }else{
+            return new ArrayList<Comment>();
+        }
+
     }
 
     public void addCommentsToFireBaseDB(){

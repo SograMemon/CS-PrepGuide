@@ -17,6 +17,8 @@ public class CSPrepGuideSingleTon {
 
     private User AppUser;
 
+    private String currentPostId = "post1";
+
     public String getTempUser() {
         return tempUser;
     }
@@ -76,6 +78,14 @@ public class CSPrepGuideSingleTon {
             mDatabase = FirebaseDatabase.getInstance().getReference();
             mDatabase.child("users").child(AppUser.getId()).setValue(AppUser);
         }
+    }
+
+    public String getCurrentPostId() {
+        return currentPostId;
+    }
+
+    public void setCurrentPostId(String currentPostId) {
+        this.currentPostId = currentPostId;
     }
 
 }

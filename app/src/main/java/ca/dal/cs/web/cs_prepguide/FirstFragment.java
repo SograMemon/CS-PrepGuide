@@ -97,7 +97,7 @@ public class FirstFragment extends Fragment {
 
 
 
-        getPostDetailsFromFirebase("post1");
+        getPostDetailsFromFirebase(userSingleTonInstance.getCurrentPostId());
 
 
 
