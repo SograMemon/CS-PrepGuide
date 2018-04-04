@@ -1,12 +1,18 @@
 package ca.dal.cs.web.cs_prepguide;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -25,6 +32,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.games.snapshot.Snapshot;
 import com.google.firebase.database.ChildEventListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +44,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -66,8 +78,11 @@ public class filterFragment extends Fragment {
 //    Activity parent = null;
 
     private Button btnApplyFilter;
+//    private ImageButton imgBtnLocationFilter;
     private Spinner spinnerCompany, spinnerType, spinnerStream;
     private ListView listView_jobs;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private static final int LOCATION_REQUEST_CODE = 8888;
     //private EditText editText_addJob;
 
     public DatabaseReference databaseJobs= FirebaseDatabase.getInstance().getReference("jobs");
@@ -80,14 +95,9 @@ public class filterFragment extends Fragment {
     private boolean flag=false;
     private filterFragmentInterface mListener;
 
-    public  filterFragment() {
+    public filterFragment() {
     }
 
-//    @SuppressLint("ValidFragment")
-//    public filterFragment(Activity parent) {
-//        // Required empty public constructor
-//        this.parent = parent;
-//    }
 
     /**
      * Use this factory method to create a new instance of
@@ -108,17 +118,17 @@ public class filterFragment extends Fragment {
     }
 
     private List<job> jobList;
-    private List<job> jobList1;
     private List<job> jobListSetSpinner;
+    private List<job> jobList1, jobListBasedOnLocation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
     @Override
@@ -135,6 +145,7 @@ public class filterFragment extends Fragment {
         //listView_jobs= (ListView) parent.findViewById(R.id.list_job);
         jobList =new ArrayList<>();
         jobList1= new ArrayList<>();
+        jobListBasedOnLocation = new ArrayList<>();
 
 
         // Inflate the layout for this fragment
@@ -148,33 +159,56 @@ public class filterFragment extends Fragment {
         spinnerStream= view.findViewById(R.id.spinner_stream);
         spinnerCompany= view.findViewById(R.id.spinner_company);
         spinnerType= view.findViewById(R.id.spinner_type);
+//        imgBtnLocationFilter = view.findViewById(R.id.imgBtnLocationFilter);
 
         String typeInitial;
         String companyInitial;
 
-
-
-
-
         btnApplyFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String edt=null;
-                //edt= editText_addJob.getText().toString();
-                //if(edt.equalsIgnoreCase("")){
-                    getJob();
-                //}else {
-                  //  addJob();
-                //}
-
-                //suggestJob();
-
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(getApplicationContext(), String.valueOf(which), Toast.LENGTH_SHORT).show();
+                        switch (which) {
+                            case -1:
+                                // Based on Location
+                                getLocation();
+                                break;
+                            case -2:
+                                // Based on suggestions
+                                suggestJob();
+                                break;
+                            case -3:
+                                // General filter
+                                String edt = null;
+                                //edt= editText_addJob.getText().toString();
+                                //if(edt.equalsIgnoreCase("")){
+                                getJob();
+                                //}else {
+                                //  addJob();
+                                //}
+                                break;
+                        }
+                    }
+                };
+                AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+                alertDialog.setTitle("Title");
+                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "By Location", dialogClickListener);
+                alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "By Skills", dialogClickListener);
+                alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "General", dialogClickListener);
+                alertDialog.show();
 
             }
         });
 
-
-
+//        imgBtnLocationFilter.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                getLocation();
+//            }
+//        });
 
         listView_jobs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -233,26 +267,111 @@ public class filterFragment extends Fragment {
 
 
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
 
-
         return view;
     }
-    // TODO: Rename method, update argument and hook method into UI event
 
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
+    private void getLocation() {
+        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+        } else {
+
+            Location test = new Location("Test");
+            test.setLongitude(-122.0840);
+            test.setLatitude(37.4220);
+
+            Location test1 = new Location("Test1");
+            test.setLongitude(-121.0840);
+            test.setLatitude(36.4220);
+
+            Log.d("test location", String.valueOf(Math.round(test.distanceTo(test1))));
+
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                // Logic to handle location object
+                                Log.d("test", String.valueOf(location.getLatitude()) + String.valueOf(location.getLongitude()));
+                                Toast.makeText(getApplicationContext(), String.valueOf(location.getLatitude()) + "" + String.valueOf(location.getLongitude()), Toast.LENGTH_LONG).show();
+                                filterJobsBasedOnLocation(location);
+                            }else{
+                                Toast.makeText(getApplicationContext(), "Could not get your location, please try later", Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                    });
+        }
+    }
+
+    private void filterJobsBasedOnLocation(Location location) {
+        ArrayList<Float> temp = new ArrayList();
+
+        for(int i=0; i<jobList.size(); i++){
+            Log.d(TAG, jobList.get(i).toString());
+            job currentJob = jobList.get(i);
+
+            Location currentJobLocation = new Location("currentJobLocation");
+            if(currentJob.getJobLatitude() != null && currentJob.getJobLongitude() != null){
+                currentJobLocation.setLongitude(currentJob.getJobLatitude());
+                currentJobLocation.setLatitude(currentJob.getJobLongitude());
+
+                float distance =location.distanceTo(currentJobLocation);
+                currentJob.setDistance(distance);
+                jobListBasedOnLocation.add(currentJob);
+            }else{
+                currentJob.setDistance(Float.MAX_VALUE);
+                jobListBasedOnLocation.add(currentJob);
+            }
+        }
+
+        Collections.sort(jobListBasedOnLocation, new Comparator<job>() {
+            @Override
+            public int compare(job o1, job o2) {
+                return Float.compare(o1.getDistance(), o2.getDistance());
+            }
+        });
+
+        Log.d(TAG, jobListBasedOnLocation.toString());
+
+        for(int i=0; i< jobListBasedOnLocation.size(); i++){
+            job tempJob = jobListBasedOnLocation.get(i);
+            if(tempJob == null){
+                jobListBasedOnLocation.remove(i);
+            }
+        }
+
+
+        jobList adapter = new jobList(getActivity(), jobListBasedOnLocation);
+        listView_jobs.setAdapter(adapter);
+    }
+
+//    private void formLocationFilteredJobArray(job currentJob, float distance){
+//        for(int i=0; i< jobListBasedOnLocation.length)
 //    }
 
 
     @Override
-    public void onStart(){
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 8888) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLocation();
+            } else {
+                Toast.makeText(getApplicationContext(), "Please give permission to access location",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    @Override
+    public void onStart() {
         super.onStart();
     }
 

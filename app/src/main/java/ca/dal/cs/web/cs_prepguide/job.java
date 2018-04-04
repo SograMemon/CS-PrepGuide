@@ -15,6 +15,9 @@ public class job {
     String jobType;
     String jobSkills;
     String matchSkillNo=" ";
+    Double jobLatitude;
+    Double jobLongitude;
+    Float distance;
 
     public job(){
 
@@ -58,5 +61,61 @@ public class job {
     }
     public String getMatchSkill(){return matchSkillNo;}
 
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
+    }
 
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
+    public void setJobStream(String jobStream) {
+        this.jobStream = jobStream;
+    }
+
+    public void setJobCompany(String jobCompany) {
+        this.jobCompany = jobCompany;
+    }
+
+    public void setJobType(String jobType) {
+        this.jobType = jobType;
+    }
+
+    public Double getJobLatitude() {
+        return jobLatitude;
+    }
+
+    public void setJobLatitude(Double jobLatitude) {
+        this.jobLatitude = jobLatitude;
+    }
+
+    public Double getJobLongitude() {
+        return jobLongitude;
+    }
+
+    public void setJobLongitude(Double jobLongitude) {
+        this.jobLongitude = jobLongitude;
+    }
+
+    public Float getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Float distance) {
+        this.distance = distance;
+    }
+
+    @Override
+    public String toString() {
+        return "job{" +
+                "jobId='" + jobId + '\'' +
+                ", jobTitle='" + jobTitle + '\'' +
+                ", jobStream='" + jobStream + '\'' +
+                ", jobCompany='" + jobCompany + '\'' +
+                ", jobType='" + jobType + '\'' +
+                ", jobLatitude=" + jobLatitude +
+                ", jobLongitude=" + jobLongitude +
+                ", distance=" + distance +
+                '}';
+    }
 }

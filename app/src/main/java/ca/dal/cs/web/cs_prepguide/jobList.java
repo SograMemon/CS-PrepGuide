@@ -40,18 +40,22 @@ public class jobList extends ArrayAdapter<job> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         LayoutInflater inflater= context.getLayoutInflater();
         View listViewItem = inflater.inflate(list_layout,null,true);
-        TextView textViewTitle = (TextView) listViewItem.findViewById(id.txt_title);
-        TextView textViewStream = (TextView) listViewItem.findViewById(id.txt_stream);
-        TextView textViewType = (TextView) listViewItem.findViewById(id.txt_type);
-        TextView textViewCompany = (TextView) listViewItem.findViewById(id.txt_Company);
-        TextView textViewMatchSkill = (TextView) listViewItem.findViewById(id.txt_match);
+
         job job1= jobList.get(position);
 
-        textViewCompany.setText(job1.getJobCompany());
-        textViewStream.setText(job1.getJobStream());
-        textViewTitle.setText(job1.getJobTitle());
-        textViewType.setText(job1.getJobType());
-        textViewMatchSkill.setText(job1.getMatchSkill());
+        if(job1.jobId != null){
+            TextView textViewTitle = (TextView) listViewItem.findViewById(id.txt_title);
+            TextView textViewStream = (TextView) listViewItem.findViewById(id.txt_stream);
+            TextView textViewType = (TextView) listViewItem.findViewById(id.txt_type);
+            TextView textViewCompany = (TextView) listViewItem.findViewById(id.txt_Company);
+            TextView textViewMatchSkill = (TextView) listViewItem.findViewById(id.txt_match);
+
+            textViewCompany.setText(job1.getJobCompany());
+            textViewStream.setText(job1.getJobStream());
+            textViewTitle.setText(job1.getJobTitle());
+            textViewType.setText(job1.getJobType());
+            textViewMatchSkill.setText(job1.getMatchSkill());
+        }
 
         return listViewItem;
 
