@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Post {
     private String postContent;
     private String postId;
+    private String postName;
 
     public ArrayList<Comment> getPostComments() {
         return postComments;
@@ -54,6 +55,14 @@ public class Post {
 
     public void addComment(Comment comment){
         this.postComments.add(comment);
+    }
+
+    public String getPostName() {
+        return postName;
+    }
+
+    public void setPostName(String postName) {
+        this.postName = postName;
     }
 
     @Override

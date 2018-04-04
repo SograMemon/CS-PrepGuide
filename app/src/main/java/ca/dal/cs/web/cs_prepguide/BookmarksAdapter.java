@@ -47,10 +47,22 @@ public class BookmarksAdapter extends ArrayAdapter<String>{
         TextView txtBookmarks;
         ImageButton imgBtnDelete;
 
-        if(i!= null){
+        if (i != null) {
             txtBookmarks = convertView.findViewById(R.id.txtBookmarks);
             imgBtnDelete = convertView.findViewById(R.id.imgBtnDelete);
-            txtBookmarks.setText(i);
+
+            String temp;
+
+            if (bookmarksList.get(position).equals("post1")) {
+                temp = "Data Scientist - Microsoft";
+            } else if (bookmarksList.get(position).equals("post2")) {
+                temp = "Software Developer- Microsoft";
+            } else {
+                temp = "Software Architect - Microsoft";
+            }
+
+
+            txtBookmarks.setText(temp);
 //            View bookmarksLinerLayout = convertView;
             imgBtnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
