@@ -71,6 +71,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 public class MainActivity extends AppCompatActivity implements FingerPrintCallbacks{
 
     public static final String MESSAGE_FROM_LOGIN = "Message from login";
@@ -123,45 +125,50 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
         btnFingerPrint = findViewById(R.id.btnFingerPrint);
 
 
-        KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
-        FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
+        mySharedPreferences mySharedPreferences = new mySharedPreferences(getApplicationContext());
+        if(mySharedPreferences.getIsUsingFingerPrint()){
+            KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+            FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
 
-        if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.USE_FINGERPRINT)
-                != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        if (!fingerprintManager.isHardwareDetected())
-            Toast.makeText(getApplicationContext(), "Fingerprint authentication permission not enabled", Toast.LENGTH_SHORT).show();
-        else{
-            // The line below prevents the false positive inspection from Android Studio noinspection ResourceType
-            if(!fingerprintManager.hasEnrolledFingerprints()) {
+            if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.USE_FINGERPRINT)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            if (!fingerprintManager.isHardwareDetected())
+                Toast.makeText(getApplicationContext(), "Fingerprint authentication permission not enabled", Toast.LENGTH_SHORT).show();
+            else{
+                // The line below prevents the false positive inspection from Android Studio noinspection ResourceType
+                if(!fingerprintManager.hasEnrolledFingerprints()) {
 
-                // This happens when no fingerprints are registered.
-                Toast.makeText(getApplicationContext(),
-                        "Register at least one fingerprint: 'Settings=>Security->Fingerprint'",
-                        Toast.LENGTH_LONG).show();
-
-            }else{
-
-                if(!keyguardManager.isKeyguardSecure()){
-                    // Show a message that the user hasn't set up a fingerprint or lock screen.
+                    // This happens when no fingerprints are registered.
                     Toast.makeText(getApplicationContext(),
-                            "Secure lock screen hasn't set up.\n"
-                                    + "Set up a fingerprint: 'Settings=>Security=>Fingerprint'",
+                            "Register at least one fingerprint: 'Settings=>Security->Fingerprint'",
                             Toast.LENGTH_LONG).show();
-                    return;
-                }
-                else
-                    createKey();
 
-                if (initializeCipher()){
-                    FingerprintManager.CryptoObject cryptoObject = new FingerprintManager.CryptoObject(cipher);
+                }else{
 
-                    FingerprintAuthenticationHandler helper = new FingerprintAuthenticationHandler(MainActivity.this);
-                    helper.startAuthentication(fingerprintManager, cryptoObject);
+                    if(!keyguardManager.isKeyguardSecure()){
+                        // Show a message that the user hasn't set up a fingerprint or lock screen.
+                        Toast.makeText(getApplicationContext(),
+                                "Secure lock screen hasn't set up.\n"
+                                        + "Set up a fingerprint: 'Settings=>Security=>Fingerprint'",
+                                Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    else
+                        createKey();
+
+                    if (initializeCipher()){
+                        FingerprintManager.CryptoObject cryptoObject = new FingerprintManager.CryptoObject(cipher);
+
+                        FingerprintAuthenticationHandler helper = new FingerprintAuthenticationHandler(MainActivity.this);
+                        helper.startAuthentication(fingerprintManager, cryptoObject);
+                    }
                 }
             }
         }
+
+        /**/
 
         btnFingerPrint.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -574,7 +581,8 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
                     + KeyProperties.ENCRYPTION_PADDING_PKCS7);
 
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new RuntimeException("Failed to get an instance of Cipher", e);
+            //throw new RuntimeException("Failed to get an instance of Cipher", e);
+            Toast.makeText(getApplicationContext(),"Failed to get an instance of Cipher", Toast.LENGTH_SHORT).show();
         }
 
         try {
