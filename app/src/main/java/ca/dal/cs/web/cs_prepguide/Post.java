@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Post {
     private String postContent;
     private String postId;
+    private String postLink;
     private String postName;
 
     public ArrayList<Comment> getPostComments() {
@@ -40,9 +41,15 @@ public class Post {
     public String getPostContent() {
         return postContent;
     }
+    public String getPostLink() {
+        return postLink;
+    }
 
     public void setPostContent(String postContent) {
         this.postContent = postContent;
+    }
+    public void setPostLink(String postLink) {
+        this.postLink = postLink;
     }
 
     public ArrayList<Comment> getComments() {

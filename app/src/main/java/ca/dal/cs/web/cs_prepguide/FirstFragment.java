@@ -5,10 +5,17 @@ package ca.dal.cs.web.cs_prepguide;
  */
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.Spanned;
+
+import android.text.method.LinkMovementMethod;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +26,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 
 import java.util.ArrayList;
 import java.util.zip.Inflater;
@@ -39,6 +48,7 @@ public class FirstFragment extends Fragment {
     private DatabaseReference mDatabaseLike;
     private DatabaseReference mDatabase, myRef1;
     public ProgressDialog mProgress;
+    private TextView nvalueView;
 
 
 
@@ -82,7 +92,9 @@ public class FirstFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_first, container, false);
         mValueView = view.findViewById(R.id.textView);
         btnBookmark = view.findViewById(R.id.btnBookmark);
-        mValueView = mValueView.findViewById(R.id.textView);
+
+        nvalueView=view.findViewById(R.id.textView10);
+
 
 
 
@@ -135,19 +147,18 @@ public class FirstFragment extends Fragment {
                         currentPost[0].setComments(new ArrayList<Comment>());
                     }
 
-                    mValueView = mValueView.findViewById(R.id.textView);
-
-
-
-
-                    String postdetails = currentPost[0].getPostContent( ); ;
-
-                    Spanned sp = Html.fromHtml(postdetails);
                     postSingleToninstance.setPost(currentPost[0]);
+                    String postdetails = currentPost[0].getPostContent( ); ;
+                    String postlink = currentPost[0].getPostLink( );
+                   // Spanned data = Html.fromHtml(postlink);
+
+                  mValueView.setText(Html.fromHtml(postdetails));
+                    nvalueView.setText(Html.fromHtml(postlink));
+
+                    nvalueView.setMovementMethod(LinkMovementMethod.getInstance());
 
 
-                    mValueView.setText(sp);
-                   Log.d(TAG, "Post Value After creating singleton instance is: " + postSingleToninstance.getPost().toString());
+                 Log.d(TAG, "Post Value After creating singleton instance is: " + postSingleToninstance.getPost().toString());
                 }
                 mProgress.dismiss();
 
