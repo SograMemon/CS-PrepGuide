@@ -13,16 +13,20 @@ public class job {
     String jobStream;
     String jobCompany;
     String jobType;
+    String jobSkills;
+    String matchSkillNo=" ";
 
     public job(){
 
     }
-    public job(String jobId,String jobTitle, String jobStream, String jobCompany, String jobType){
+    public job(String jobId,String jobTitle, String jobStream, String jobCompany, String jobType, String jobSkills){
         this.jobCompany= jobCompany;
         this.jobTitle= jobTitle;
         this.jobStream= jobStream;
         this.jobType= jobType;
         this.jobId= jobId;
+        this.jobSkills=jobSkills;
+
 
 
     }
@@ -46,6 +50,13 @@ public class job {
     public String getJobCompany() {
         return jobCompany;
     }
+    public String getJobSkills() {
+        return jobSkills;
+    }
+    public void setMatchSkillNo(String matchSkillNo){
+        this.matchSkillNo=matchSkillNo;
+    }
+    public String getMatchSkill(){return matchSkillNo;}
 
 
 }

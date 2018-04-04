@@ -7,14 +7,25 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="170dp"
+            android:foregroundGravity="left"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="right">
 
         <TextView
             android:id="@+id/txt_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="15dp"
+            android:padding="6dp"
             android:text="TextView"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
             android:visibility="visible" />
@@ -25,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_title"
             android:gravity="bottom"
-            android:padding="15dp"
+            android:padding="6dp"
             android:text="TextView" />
 
         <TextView
@@ -34,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_type"
             android:gravity="bottom"
-            android:padding="15dp"
+            android:padding="6dp"
             android:text="TextView" />
 
         <TextView
@@ -43,7 +54,14 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_Company"
             android:gravity="bottom"
-            android:padding="15dp"
-            android:text="TextView" />
+            android:padding="6dp"
+            android:text="TextView"/>
+        <TextView
+            android:id="@+id/txt_match"
+            android:padding="6dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
     </LinearLayout>
 </FrameLayout>

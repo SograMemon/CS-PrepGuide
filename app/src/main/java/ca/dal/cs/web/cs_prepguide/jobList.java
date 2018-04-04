@@ -44,13 +44,14 @@ public class jobList extends ArrayAdapter<job> {
         TextView textViewStream = (TextView) listViewItem.findViewById(id.txt_stream);
         TextView textViewType = (TextView) listViewItem.findViewById(id.txt_type);
         TextView textViewCompany = (TextView) listViewItem.findViewById(id.txt_Company);
-
+        TextView textViewMatchSkill = (TextView) listViewItem.findViewById(id.txt_match);
         job job1= jobList.get(position);
 
         textViewCompany.setText(job1.getJobCompany());
         textViewStream.setText(job1.getJobStream());
         textViewTitle.setText(job1.getJobTitle());
         textViewType.setText(job1.getJobType());
+        textViewMatchSkill.setText(job1.getMatchSkill());
 
         return listViewItem;
 

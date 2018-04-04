@@ -33,9 +33,12 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
+import static ca.dal.cs.web.cs_prepguide.R.layout.spinner_dropdown_item;
+import static ca.dal.cs.web.cs_prepguide.R.layout.spinner_item;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
@@ -52,7 +55,6 @@ public class filterFragment extends Fragment {
     public static final String job_Title="jobtitle";
     public static final String job_ID="jobid";
     public static final String v="";
-    public int l=0;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -69,19 +71,13 @@ public class filterFragment extends Fragment {
     //private EditText editText_addJob;
 
     public DatabaseReference databaseJobs= FirebaseDatabase.getInstance().getReference("jobs");
-//    ListView jobList;
 
-//    //to store skills in arraylist variable
-//    ArrayList<String> jobList = new ArrayList<String>();
-//
-//    //setting up the listview
-//    ArrayAdapter<String> jobListAdapter;
 
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private boolean flag=false;
     private filterFragmentInterface mListener;
 
     public  filterFragment() {
@@ -113,6 +109,7 @@ public class filterFragment extends Fragment {
 
     private List<job> jobList;
     private List<job> jobList1;
+    private List<job> jobListSetSpinner;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,15 +125,17 @@ public class filterFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         final View view = inflater.inflate(R.layout.fragment_filter, container, false);
 //        System.out.println(getView());
 
         System.out.println(getView());
-        final String jobsList[]= { "google", "Apple", "Android"};
+
 
         //listView_jobs= (ListView) parent.findViewById(R.id.list_job);
         jobList =new ArrayList<>();
         jobList1= new ArrayList<>();
+
 
         // Inflate the layout for this fragment
         btnApplyFilter =  view.findViewById(R.id.btnApplyFilter);
@@ -149,35 +148,11 @@ public class filterFragment extends Fragment {
         spinnerStream= view.findViewById(R.id.spinner_stream);
         spinnerCompany= view.findViewById(R.id.spinner_company);
         spinnerType= view.findViewById(R.id.spinner_type);
-//        jobList = parent.findViewById(R.id.jobList);
+
+        String typeInitial;
+        String companyInitial;
 
 
-        ArrayAdapter<CharSequence> streamAdapter= ArrayAdapter.createFromResource(getActivity(),
-                R.array.stream_array, R.layout.spinner_dropdown_item);
-        spinnerStream.setAdapter(streamAdapter);
-
-        ArrayAdapter<CharSequence> companyAdapter= ArrayAdapter.createFromResource(getActivity(),
-                R.array.company_array, R.layout.spinner_dropdown_item);
-        spinnerCompany.setAdapter(companyAdapter);
-
-        ArrayAdapter<CharSequence> typeAdapter= ArrayAdapter.createFromResource(getActivity(),
-                R.array.type_array, R.layout.spinner_dropdown_item);
-        spinnerType.setAdapter(typeAdapter);
-
-        //ArrayAdapter<CharSequence> jobAdapter= ArrayAdapter.createFromResource(getActivity(),
-        //    R.array.jobList, android.R.layout.simple_expandable_list_item_1);
-        //listView_jobs.setAdapter(jobAdapter);
-
-//        btnApplyFilter.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mListener.onFilterClicked("Hello","World", "from Filter Fragment");
-//            }
-//        });
-
-//        ArrayAdapter<CharSequence> jobListAdapter= ArrayAdapter.createFromResource(getActivity(),
-//                R.array.jobList, R.layout.activity_filter);
-//        jobList.setAdapter(jobListAdapter);
 
 
 
@@ -192,9 +167,14 @@ public class filterFragment extends Fragment {
                   //  addJob();
                 //}
 
+                //suggestJob();
+
 
             }
         });
+
+
+
 
         listView_jobs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -206,22 +186,51 @@ public class filterFragment extends Fragment {
             }
         });
 
+
         databaseJobs.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 jobList.clear();
-
-
                 for (DataSnapshot jobSnapshot : dataSnapshot.getChildren()) {
                     job job1 = jobSnapshot.getValue(job.class);
 
                     jobList.add(job1);
-                    l++;
+                    //streamIntial = streamIntial+","+job1.jobStream;
+
                 }
 
                 jobList adapter = new jobList(getActivity(), jobList);
                 listView_jobs.setAdapter(adapter);
+                String[] sArry, cArry, tArry;
+
+                sArry=setStreamSpinners();
+                final List<String> streamList= new ArrayList<>(Arrays.asList(sArry));
+                final ArrayAdapter<String> stringArrayAdapter;
+                stringArrayAdapter = new ArrayAdapter<String>(getActivity(),
+                        R.layout.spinner_dropdown_item, streamList);
+                stringArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
+                spinnerStream.setAdapter(stringArrayAdapter);
+
+                cArry=setCompanySpinners();
+                final List<String> companyList= new ArrayList<>(Arrays.asList(cArry));
+                final ArrayAdapter<String> stringArrayAdapterC;
+                stringArrayAdapterC = new ArrayAdapter<String>(getActivity(),
+                        R.layout.spinner_dropdown_item, companyList);
+                stringArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
+                spinnerCompany.setAdapter(stringArrayAdapterC);
+
+                tArry=setTypeSpinners();
+                final List<String> typeList= new ArrayList<>(Arrays.asList(tArry));
+                final ArrayAdapter<String> stringArrayAdapterT;
+                stringArrayAdapterT = new ArrayAdapter<String>(getActivity(),
+                        R.layout.spinner_dropdown_item, typeList);
+                stringArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
+                spinnerType.setAdapter(stringArrayAdapterT);
+
+
+
+
 
             }
             @Override
@@ -229,8 +238,6 @@ public class filterFragment extends Fragment {
 
             }
         });
-
-
 
 
         return view;
@@ -269,25 +276,25 @@ public class filterFragment extends Fragment {
 //        }
 //    }
 
+
     private void getJob() {
-        Query Qs = null;
-        Query Qc = null;
-        Query Qt = null;
+
         String jobStream = spinnerStream.getSelectedItem().toString();
         String company = spinnerCompany.getSelectedItem().toString();
         String type = spinnerType.getSelectedItem().toString();
         if(jobStream.equalsIgnoreCase("select stream")){
             jobStream="all";
         }
-        if(company.equalsIgnoreCase("company")){
+        if(company.equalsIgnoreCase("Select company")){
             company="all";
         }
-        if(type.equalsIgnoreCase("position type")){
+        if(type.equalsIgnoreCase("Select position type")){
             type="all";
         }
         jobList1.clear();
        for(int i=0;i<jobList.size()-1;i++){
            job job1=jobList.get(i);
+           //int l = job1.jobSkills.length;
            if((jobStream.equalsIgnoreCase("all")&& company.equalsIgnoreCase("all"))&& type.equalsIgnoreCase("all")){
                jobList1.add(job1);
            }else if((!jobStream.equalsIgnoreCase("all")&& company.equalsIgnoreCase("all"))&& type.equalsIgnoreCase("all")){
@@ -342,12 +349,112 @@ public class filterFragment extends Fragment {
         }
     }
 
+    public String[] setStreamSpinners() {
+
+        String streamIntial;
+        streamIntial ="Select Stream,All";
+
+        for (int i = 0; i < jobList.size() - 1; i++) {
+            job job1 = jobList.get(i);
+            if (!streamIntial.contains(job1.jobStream)) {
+                streamIntial = streamIntial + "," + job1.jobStream;
+            }
+        }
+        String[] streamArry = null;
+        streamArry = streamIntial.split(",");
+        return streamArry;
+    }
+
+    public String[] setCompanySpinners() {
+
+        String companyIntial;
+        companyIntial ="Select Company,All";
+
+        for (int i = 0; i < jobList.size() - 1; i++) {
+            job job1 = jobList.get(i);
+            if (!companyIntial.contains(job1.jobCompany)) {
+                companyIntial = companyIntial + "," + job1.jobCompany;
+            }
+        }
+        String[] Arry = null;
+        Arry = companyIntial.split(",");
+        return Arry;
+    }
+    public String[] setTypeSpinners() {
+
+        String typeIntial;
+        typeIntial ="Select Position Type,All";
+
+        for (int i = 0; i < jobList.size() - 1; i++) {
+            job job1 = jobList.get(i);
+            if (!typeIntial.contains(job1.jobType)) {
+                typeIntial = typeIntial + "," + job1.jobType;
+            }
+        }
+        String[] Arry = null;
+        Arry = typeIntial.split(",");
+        return Arry;
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
 
+    public void suggestJob() {
+        CSPrepGuideSingleTon userSingleTonInstance;
+        userSingleTonInstance = CSPrepGuideSingleTon.getInstance(getContext());
+        ArrayList<String> userSkill = userSingleTonInstance.getAppUser().getSkills();
+        job job1;
+        String userSkillStr;
+        int[] matchSkills = new int[jobList.size()];
+        for (int i = 0; i < jobList.size()-1; i++) {
+            job1 = jobList.get(i);
+            matchSkills[i] = 0;
+            for (int j = 0; j < userSkill.size(); j++) {
+                userSkillStr = userSkill.get(j);
+                if (job1.jobSkills != null) {
+                    if (job1.jobSkills.contains(userSkill.get(j))) {
+                        matchSkills[i]++;
+                    }
+                }
+            }
+        }
+
+        jobList1.clear();
+        String orderedSuggetion = "0";
+        String head,tail;
+        char c;
+        int index, incertIndex = 0; 
+        int incertVal = 0;
+        for (int i = 1; i < matchSkills.length; i++) {
+            incertIndex=-1;
+            for (int j = 0; j < orderedSuggetion.length(); j++) {
+                index = Integer.parseInt(String.valueOf(orderedSuggetion.charAt(j)));
+                incertVal=i;
+                if (matchSkills[i] > matchSkills[index] || matchSkills[i]==matchSkills[index]) {
+                    incertIndex = j;
+                } else if (matchSkills[i] != 0) {
+                    incertIndex = j+1;
+                }
+
+            }
+            if(incertIndex!=-1) {
+                orderedSuggetion = orderedSuggetion.substring(0, incertIndex) + incertVal + orderedSuggetion.substring(incertIndex, orderedSuggetion.length());
+            }
+        }
+
+        for(int i=0;i<orderedSuggetion.length();i++){
+            index=Integer.parseInt(String.valueOf(orderedSuggetion.charAt(i)));
+            job job2=jobList.get(index);
+            job2.setMatchSkillNo("No. of matching skills: "+matchSkills[index]);
+            jobList1.add(job2);
+        }
+
+        jobList adapter = new jobList(getActivity(), jobList1);
+        listView_jobs.setAdapter(adapter);
+    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
