@@ -5,5 +5,6 @@
     <color name="colorAccent">#009688</color>
     <color name="colorWhite">#FFFF</color>
     <color name="colorBlue">#009688</color>
+    <color name="colorTextBox">#ECEFF1</color>
     <drawable name="transparent_color">#00000000</drawable>
 </resources>

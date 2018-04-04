@@ -77,12 +77,7 @@ public class NavigationActivityCS extends AppCompatActivity
 //        txtNavUserId.setText(user.getUid());
 
         if(singleTonInstance.getAppUser() != null){
-            txtNavUserId.setText(singleTonInstance.getAppUser().getEmail());
-            txtNavUserId.setText(singleTonInstance.getAppUser().getName());
-            //        txtNavUserEmail.setText(user.getEmail());
-//            Log.d(TAG, String.valueOf(user.getDisplayName()));
-            txtNavUserEmail.setText(singleTonInstance.getAppUser().getEmail());
-            Picasso.with(getApplicationContext()).load(Uri.parse(singleTonInstance.getAppUser().getImageUrl())).fit().centerCrop().into(userImageView);
+            onUserDetailsChanged();
         }
 
 
@@ -215,6 +210,17 @@ public class NavigationActivityCS extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onUserDetailsChanged() {
+        txtNavUserId.setText(singleTonInstance.getAppUser().getEmail());
+        txtNavUserId.setText(singleTonInstance.getAppUser().getName());
+        //        txtNavUserEmail.setText(user.getEmail());
+//            Log.d(TAG, String.valueOf(user.getDisplayName()));
+        txtNavUserEmail.setText(singleTonInstance.getAppUser().getEmail());
+        Picasso.with(getApplicationContext()).load(Uri.parse(singleTonInstance.getAppUser().getImageUrl())).fit().centerCrop().into(userImageView);
 
     }
 

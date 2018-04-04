@@ -201,7 +201,7 @@ public class profileFragment extends Fragment {
         if(csPrepGuideSingleTonInstance.isUsingEmailAuthentication()){
             setFingerPrintSwitchState();
         }
-        
+
         fingerPrintSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -327,6 +327,7 @@ public class profileFragment extends Fragment {
 
                 if(!clicked) {
                     singleTon.getAppUser().setName(userName.getText().toString());
+                    mListener.onUserDetailsChanged();
                     userName.setEnabled(false);
                     btnSave.setText(getResources().getText(R.string.edit));
                     singleTon.addUserToFireBaseDB();
@@ -337,6 +338,7 @@ public class profileFragment extends Fragment {
                 else {
 
                     singleTon.getAppUser().setName(userName.getText().toString());
+                    mListener.onUserDetailsChanged();
                     userName.setEnabled(true);
                     btnSave.setText(getResources().getText(R.string.save));
                     singleTon.addUserToFireBaseDB();
@@ -388,6 +390,7 @@ public class profileFragment extends Fragment {
     public interface profileFragmentInterface {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void onUserDetailsChanged();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -418,7 +421,7 @@ public class profileFragment extends Fragment {
 
                     mProgress.dismiss();
                     Toast.makeText(getApplicationContext(), "Uploading Done!! .... ", Toast.LENGTH_LONG).show();
-
+                    mListener.onUserDetailsChanged();
 
                 }
             }).addOnFailureListener(new OnFailureListener() {

@@ -201,7 +201,7 @@ public class filterFragment extends Fragment {
                     }
                 };
                 AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                alertDialog.setTitle("Title");
+                alertDialog.setTitle("Choose an option");
                 alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "By Location", dialogClickListener);
                 alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "By Skills", dialogClickListener);
                 alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "General", dialogClickListener);
