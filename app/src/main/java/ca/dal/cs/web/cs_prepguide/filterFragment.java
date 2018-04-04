@@ -120,6 +120,7 @@ public class filterFragment extends Fragment {
     private List<job> jobList;
     private List<job> jobListSetSpinner;
     private List<job> jobList1, jobListBasedOnLocation;
+    private String filterType="spinner";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -174,18 +175,24 @@ public class filterFragment extends Fragment {
                         switch (which) {
                             case -1:
                                 // Based on Location
+                                filterType="location";
                                 getLocation();
+
                                 break;
                             case -2:
                                 // Based on suggestions
+                                filterType="skills";
                                 suggestJob();
+
                                 break;
                             case -3:
                                 // General filter
                                 String edt = null;
                                 //edt= editText_addJob.getText().toString();
                                 //if(edt.equalsIgnoreCase("")){
+                                filterType="spinner";
                                 getJob();
+
                                 //}else {
                                 //  addJob();
                                 //}
@@ -215,6 +222,7 @@ public class filterFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 job job1= jobList.get(i);
+                //job1.setFilter(filterType);
                 mListener.onFilterClicked(job1.getJobId(),job1.getJobTitle());
 
             }
@@ -228,7 +236,7 @@ public class filterFragment extends Fragment {
                 jobList.clear();
                 for (DataSnapshot jobSnapshot : dataSnapshot.getChildren()) {
                     job job1 = jobSnapshot.getValue(job.class);
-
+                    job1.setFilter(filterType);
                     jobList.add(job1);
                     //streamIntial = streamIntial+","+job1.jobStream;
 
@@ -308,7 +316,9 @@ public class filterFragment extends Fragment {
                         }
 
                     });
+
         }
+
     }
 
     private void filterJobsBasedOnLocation(Location location) {
@@ -324,10 +334,15 @@ public class filterFragment extends Fragment {
                 currentJobLocation.setLatitude(currentJob.getJobLongitude());
 
                 float distance =location.distanceTo(currentJobLocation);
+                distance=distance/1000;
+                distance=Math.round(distance);
                 currentJob.setDistance(distance);
+                currentJob.setFilter(filterType);
                 jobListBasedOnLocation.add(currentJob);
+
             }else{
                 currentJob.setDistance(Float.MAX_VALUE);
+                currentJob.setFilter(filterType);
                 jobListBasedOnLocation.add(currentJob);
             }
         }
@@ -415,33 +430,42 @@ public class filterFragment extends Fragment {
            job job1=jobList.get(i);
            //int l = job1.jobSkills.length;
            if((jobStream.equalsIgnoreCase("all")&& company.equalsIgnoreCase("all"))&& type.equalsIgnoreCase("all")){
+               job1.setFilter(filterType);
                jobList1.add(job1);
            }else if((!jobStream.equalsIgnoreCase("all")&& company.equalsIgnoreCase("all"))&& type.equalsIgnoreCase("all")){
+               job1.setFilter(filterType);
                if(job1.jobStream.equalsIgnoreCase(jobStream)){
+                   job1.setFilter(filterType);
                    jobList1.add(job1);
                }
            }else if((jobStream.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all"))&& type.equalsIgnoreCase("all")){
                if(job1.jobCompany.equalsIgnoreCase(company)){
+                   job1.setFilter(filterType);
                    jobList1.add(job1);
                }
            }else if((jobStream.equalsIgnoreCase("all")&& company.equalsIgnoreCase("all"))&& !type.equalsIgnoreCase("all")){
                if(job1.jobType.equalsIgnoreCase(type)){
+                   job1.setFilter(filterType);
                    jobList1.add(job1);
                }
            }else if((!jobStream.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all"))&& type.equalsIgnoreCase("all")){
                if(job1.jobStream.equalsIgnoreCase(jobStream)&& job1.jobCompany.equalsIgnoreCase(company)){
+                   job1.setFilter(filterType);
                    jobList1.add(job1);
                }
            }else if((jobStream.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all"))&& !type.equalsIgnoreCase("all")){
                if(job1.jobType.equalsIgnoreCase(type)&& job1.jobCompany.equalsIgnoreCase(company)){
+                   job1.setFilter(filterType);
                    jobList1.add(job1);
                }
            }else if((!jobStream.equalsIgnoreCase("all")&& company.equalsIgnoreCase("all"))&& !type.equalsIgnoreCase("all")){
                if(job1.jobStream.equalsIgnoreCase(jobStream)&& job1.jobType.equalsIgnoreCase(type)){
+                   job1.setFilter(filterType);
                    jobList1.add(job1);
                }
            }else if((!jobStream.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all"))&& !type.equalsIgnoreCase("all")){
                if((job1.jobStream.equalsIgnoreCase(jobStream)&& job1.jobCompany.equalsIgnoreCase(company))&& job1.jobType.equalsIgnoreCase(type)){
+                   job1.setFilter(filterType);
                    jobList1.add(job1);
                }
            }
@@ -534,7 +558,8 @@ public class filterFragment extends Fragment {
             for (int j = 0; j < userSkill.size(); j++) {
                 userSkillStr = userSkill.get(j);
                 if (job1.jobSkills != null) {
-                    if (job1.jobSkills.contains(userSkill.get(j))) {
+                    String jobSkillLower=job1.getJobSkills().toLowerCase();
+                    if (jobSkillLower.contains(userSkill.get(j).toLowerCase())) {
                         matchSkills[i]++;
                     }
                 }
@@ -567,7 +592,8 @@ public class filterFragment extends Fragment {
         for(int i=0;i<orderedSuggetion.length();i++){
             index=Integer.parseInt(String.valueOf(orderedSuggetion.charAt(i)));
             job job2=jobList.get(index);
-            job2.setMatchSkillNo("No. of matching skills: "+matchSkills[index]);
+            job2.setMatchSkillNo(" "+matchSkills[index]);
+            job2.setFilter(filterType);
             jobList1.add(job2);
         }
 
