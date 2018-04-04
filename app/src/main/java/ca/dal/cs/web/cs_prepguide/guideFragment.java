@@ -103,8 +103,8 @@ public class guideFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        mProgress = new ProgressDialog(getActivity());
-        mProgress.setMessage("Loading...");
+      //  mProgress = new ProgressDialog(getActivity());
+      //  mProgress.setMessage("Loading...");
     }
 
     @Override
@@ -112,8 +112,8 @@ public class guideFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_guide, container, false);
 
-        mProgress.show();
-        getPostDetailsFromFirebase("post1");
+       // mProgress.show();
+
 
         simpleFrameLayout = (FrameLayout) view.findViewById(R.id.simpleFrameLayout);
         tabLayout = (TabLayout) view.findViewById(R.id.simpleTabLayout);
@@ -159,6 +159,13 @@ public class guideFragment extends Fragment {
             }
         });
 
+        // DELETE
+       FragmentManager fm = fmg;
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.simpleFrameLayout, new FirstFragment());
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.commit();
+
         return view;
     }
 
@@ -194,22 +201,10 @@ public class guideFragment extends Fragment {
 
     public void onStart(){
         super.onStart();
-//        System.out.println(getView());
-//        ViewPager viewPager =  parent.findViewById(R.id.pager);
-//        NavigationActivityCS.ViewPagerAdapter adapter = new NavigationActivityCS.ViewPagerAdapter(fmg);
-//
-//
-//        adapter.addFragment(new NavigationActivityCS.FragmentOne(), "SKILLS");
-//        adapter.addFragment(new NavigationActivityCS.FragmentTwo(), "PREPARATION");
-//        adapter.addFragment(new NavigationActivityCS.FragmentThree(), "LINKS");
-//        adapter.addFragment(new NavigationActivityCS.FragmentFour(), "COMMENTS");
-//        viewPager.setAdapter(adapter);
-//
-//        TabLayout tabLayout = parent.findViewById(R.id.tabs);
-//        tabLayout.setupWithViewPager(viewPager);
+
     }
 
-    public void getPostDetailsFromFirebase(String postId){
+   /* public void getPostDetailsFromFirebase(String postId){
         final PostSingleTon postSingleToninstance = PostSingleTon.getInstance(getContext());
 
         String currentPostId = "Posts/".concat(postId);
@@ -217,7 +212,7 @@ public class guideFragment extends Fragment {
 
         final Post[] currentPost = new Post[1];
 
-        myRef1 = FirebaseDatabase.getInstance().getReference(currentPostId);
+       *//* myRef1 = FirebaseDatabase.getInstance().getReference(currentPostId);
         myRef1.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
@@ -231,10 +226,10 @@ public class guideFragment extends Fragment {
                         currentPost[0].setComments(new ArrayList<Comment>());
                     }
                     postSingleToninstance.setPost(currentPost[0]);
-                    Log.d(TAG, "Post Value After creating singleton instance is: " + postSingleToninstance.getPost().toString());
+                   Log.d(TAG, "Post Value After creating singleton instance is: " + postSingleToninstance.getPost().toString());
                 }
                 mProgress.dismiss();
-            }
+            }*//*
 
             @Override
             public void onCancelled(DatabaseError error) {
@@ -245,5 +240,5 @@ public class guideFragment extends Fragment {
             }
 
         });
-    }
+    }*/
 }

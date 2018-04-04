@@ -4,27 +4,46 @@ package ca.dal.cs.web.cs_prepguide;
  * Created by bhanu on 4/1/2018.
  */
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 import java.util.zip.Inflater;
 
+import static android.content.ContentValues.TAG;
 
 
 public class FirstFragment extends Fragment {
     private TextView mValueView;
     private Button btnBookmark;
+    private ImageButton mLikeBtn;
+    private boolean mProcessLike=false;
+    private DatabaseReference mDatabaseLike;
+    private DatabaseReference mDatabase, myRef1;
+    public ProgressDialog mProgress;
 
-    PostSingleTon PostSingletonInstance;
+
+
+
+   PostSingleTon PostSingletonInstance;
     CSPrepGuideSingleTon userSingleTonInstance;
 
     public FirstFragment() {
@@ -34,6 +53,14 @@ public class FirstFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        PostSingletonInstance = PostSingleTon.getInstance(getContext());
+        userSingleTonInstance = CSPrepGuideSingleTon.getInstance(getContext());
+
+
+
+
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,11 +68,18 @@ public class FirstFragment extends Fragment {
         PostSingletonInstance = PostSingleTon.getInstance(getContext());
         userSingleTonInstance = CSPrepGuideSingleTon.getInstance(getContext());
 
-        // Inflate the layout for this fragment
+        mProgress = new ProgressDialog(getActivity());
+      //  mProgress.setMessage("Loading...");
+        mProgress.show();
+
+
         View view = inflater.inflate(R.layout.fragment_first, container, false);
         mValueView = view.findViewById(R.id.textView);
         btnBookmark = view.findViewById(R.id.btnBookmark);
         mValueView = mValueView.findViewById(R.id.textView);
+
+
+
 
         btnBookmark.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,11 +95,68 @@ public class FirstFragment extends Fragment {
             }
         });
 
-        String postdetails = PostSingletonInstance.getPost().getPostContent().replace("/n","\n"); ;
-        Spanned data = Html.fromHtml(postdetails);
-        mValueView.setText(data);
+
+
+        getPostDetailsFromFirebase("post1");
+
+
+
+
+
+
                 return view;
     }
+
+
+    public void getPostDetailsFromFirebase(String postId){
+        final PostSingleTon postSingleToninstance = PostSingleTon.getInstance(getContext());
+
+        String currentPostId = "Posts/".concat(postId);
+        Log.d(TAG, "reference" + currentPostId);
+
+        final Post[] currentPost = new Post[1];
+
+        myRef1 = FirebaseDatabase.getInstance().getReference(currentPostId);
+        myRef1.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                currentPost[0] = dataSnapshot.getValue(Post.class);
+                if (currentPost[0] != null) {
+                    Log.d(TAG, "Current Post is: " + currentPost[0].toString());
+                    if (currentPost[0].getComments() == null) {
+                        currentPost[0].setComments(new ArrayList<Comment>());
+                    }
+
+                    mValueView = mValueView.findViewById(R.id.textView);
+
+
+
+
+                    String postdetails = currentPost[0].getPostContent( ); ;
+
+                    Spanned sp = Html.fromHtml(postdetails);
+                    postSingleToninstance.setPost(currentPost[0]);
+
+
+                    mValueView.setText(sp);
+                   Log.d(TAG, "Post Value After creating singleton instance is: " + postSingleToninstance.getPost().toString());
+                }
+                mProgress.dismiss();
+
+            }
+
+        @Override
+        public void onCancelled(DatabaseError error) {
+               mProgress.dismiss();
+            // Failed to read value
+            Toast.makeText(getContext(), "Error with Firebase database. please try later", Toast.LENGTH_SHORT).show();
+            Log.w(TAG, "Failed to read value.", error.toException());
+        }
+
+    });
+}
 
 
 }
