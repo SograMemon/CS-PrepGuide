@@ -418,15 +418,7 @@ public class filterFragment extends Fragment {
         String jobStream = spinnerStream.getSelectedItem().toString();
         String company = spinnerCompany.getSelectedItem().toString();
         String type = spinnerType.getSelectedItem().toString();
-        if(jobStream.equalsIgnoreCase("select stream")){
-            jobStream="all";
-        }
-        if(company.equalsIgnoreCase("Select company")){
-            company="all";
-        }
-        if(type.equalsIgnoreCase("Select position type")){
-            type="all";
-        }
+
         jobList1.clear();
        for(int i=0;i<jobList.size()-1;i++){
            job job1=jobList.get(i);
@@ -497,7 +489,7 @@ public class filterFragment extends Fragment {
     public String[] setStreamSpinners() {
 
         String streamIntial;
-        streamIntial ="Select Stream,All";
+        streamIntial ="All";
 
         for (int i = 0; i < jobList.size() - 1; i++) {
             job job1 = jobList.get(i);
@@ -513,7 +505,7 @@ public class filterFragment extends Fragment {
     public String[] setCompanySpinners() {
 
         String companyIntial;
-        companyIntial ="Select Company,All";
+        companyIntial ="All";
 
         for (int i = 0; i < jobList.size() - 1; i++) {
             job job1 = jobList.get(i);
@@ -528,7 +520,7 @@ public class filterFragment extends Fragment {
     public String[] setTypeSpinners() {
 
         String typeIntial;
-        typeIntial ="Select Position Type,All";
+        typeIntial ="All";
 
         for (int i = 0; i < jobList.size() - 1; i++) {
             job job1 = jobList.get(i);
