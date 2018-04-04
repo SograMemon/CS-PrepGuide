@@ -60,7 +60,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="name">Name: </string>
     <string name="btnSave"><![CDATA[EDIT & SAVE]]></string>
-    <string name="add_skill">ADD Skill</string>
+    <string name="add_skill">Add</string>
     <string name="enter_your_technical_skills">Enter Your Technical Skills</string>
     <string name="upload_photo">upload photo</string>
     <string name="edit">Edit</string>
