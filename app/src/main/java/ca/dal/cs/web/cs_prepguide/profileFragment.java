@@ -288,7 +288,7 @@ public class profileFragment extends Fragment {
 
 
         addSkill= view.findViewById(R.id.addSkill);
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,skillsList);
+        adapter = new SkillsAdapter(getActivity(), android.R.layout.simple_list_item_1,skillsList);
 
 
         lvSkillList.setAdapter(adapter);

@@ -282,15 +282,15 @@ public class filterFragment extends Fragment {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
         } else {
 
-            Location test = new Location("Test");
-            test.setLongitude(-122.0840);
-            test.setLatitude(37.4220);
+//            Location test = new Location("Test");
+//            test.setLongitude(-122.0840);
+//            test.setLatitude(37.4220);
+//
+//            Location test1 = new Location("Test1");
+//            test.setLongitude(-121.0840);
+//            test.setLatitude(36.4220);
 
-            Location test1 = new Location("Test1");
-            test.setLongitude(-121.0840);
-            test.setLatitude(36.4220);
-
-            Log.d("test location", String.valueOf(Math.round(test.distanceTo(test1))));
+//            Log.d("test location", String.valueOf(Math.round(test.distanceTo(test1))));
 
             mFusedLocationClient.getLastLocation()
                     .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
@@ -300,7 +300,7 @@ public class filterFragment extends Fragment {
                             if (location != null) {
                                 // Logic to handle location object
                                 Log.d("test", String.valueOf(location.getLatitude()) + String.valueOf(location.getLongitude()));
-                                Toast.makeText(getApplicationContext(), String.valueOf(location.getLatitude()) + "" + String.valueOf(location.getLongitude()), Toast.LENGTH_LONG).show();
+//                                Toast.makeText(getApplicationContext(), String.valueOf(location.getLatitude()) + "" + String.valueOf(location.getLongitude()), Toast.LENGTH_LONG).show();
                                 filterJobsBasedOnLocation(location);
                             }else{
                                 Toast.makeText(getApplicationContext(), "Could not get your location, please try later", Toast.LENGTH_LONG).show();
