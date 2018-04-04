@@ -10,10 +10,12 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="150dp"
-            android:layout_height="170dp"
-            android:foregroundGravity="left"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/logo"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:foregroundGravity="left"
+            android:layout_gravity="center_vertical"/>
 
     <LinearLayout
         android:layout_width="match_parent"
