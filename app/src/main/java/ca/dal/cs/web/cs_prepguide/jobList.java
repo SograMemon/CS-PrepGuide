@@ -54,7 +54,7 @@ public class jobList extends ArrayAdapter<job> {
             textViewStream.setText(job1.getJobStream());
             textViewTitle.setText(job1.getJobTitle());
             textViewType.setText(job1.getJobType());
-            textViewMatchSkill.setText(job1.getMatchSkill());
+            textViewMatchSkill.setText(job1.getJobFilter());
         }
 
         return listViewItem;

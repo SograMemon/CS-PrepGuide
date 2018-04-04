@@ -14,6 +14,7 @@ public class job {
     String jobCompany;
     String jobType;
     String jobSkills;
+    String jobFilter;
     String matchSkillNo=" ";
     Double jobLatitude;
     Double jobLongitude;
@@ -29,6 +30,7 @@ public class job {
         this.jobType= jobType;
         this.jobId= jobId;
         this.jobSkills=jobSkills;
+
 
 
 
@@ -103,6 +105,19 @@ public class job {
 
     public void setDistance(Float distance) {
         this.distance = distance;
+    }
+
+    public void setFilter(String filterVal){
+        if(filterVal.equalsIgnoreCase("location")){
+            this.jobFilter="Distance from current location: "+this.distance+" km";
+        }else if(filterVal.equalsIgnoreCase("skills")){
+            this.jobFilter="No. of matched skills: "+this.matchSkillNo;
+        }else{
+            this.jobFilter=" ";
+        }
+    }
+    public String getJobFilter(){
+        return this.jobFilter;
     }
 
     @Override

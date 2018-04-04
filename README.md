@@ -158,3 +158,10 @@ We have started with the development of the application and currently working on
 ## Sources
 
 ##### [1] stackoverflow.com. "Image capture with camera & upload to Firebase (Uri in onActivityResult() is null)". [Online].[Available](https://stackoverflow.com/questions/40710599/image-capture-withhttps://jbt.github.io/markdown-editor/emoji/smirk.png-camera-upload-to-firebase-uri-in-onactivityresult-is-nul).[Accessed on: 17th March 2018].
+
+## References
+
+Logo Images from:
+https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128
+https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128
+
