@@ -87,10 +87,11 @@
                     android:id="@+id/userName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:hint="Your name here"
                     android:inputType="textPersonName"
                     android:textColor="#FFF"
-                    android:textSize="20sp"
-                    android:layout_gravity="center_horizontal"/>
+                    android:textSize="20sp" />
 
                 <Button
                     android:id="@+id/btnSave"

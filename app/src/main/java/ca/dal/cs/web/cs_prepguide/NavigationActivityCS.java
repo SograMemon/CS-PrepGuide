@@ -110,7 +110,12 @@ public class NavigationActivityCS extends AppCompatActivity
 //            manager.beginTransaction()
 //                    .add(R.id.fragment_container, firstFragment)
 //                    .commit();
-            displaySelectedScreen(R.id.nav_filter_jobs);
+
+            if(singleTonInstance.getAppUser().getName().isEmpty()){
+                displaySelectedScreen(R.id.nav_profile);
+            }else{
+                displaySelectedScreen(R.id.nav_filter_jobs);
+            }
         }
     }
 

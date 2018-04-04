@@ -515,6 +515,9 @@ public class profileFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        if(singleTon.getAppUser().getName().isEmpty()){
+            Toast.makeText(getContext(), "Please add a name to your account", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void setFingerPrintSwitchState() {
