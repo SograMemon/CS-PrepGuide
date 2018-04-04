@@ -6,6 +6,8 @@ package ca.dal.cs.web.cs_prepguide;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +45,7 @@ public class FirstFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_first, container, false);
         mValueView = view.findViewById(R.id.textView);
         btnBookmark = view.findViewById(R.id.btnBookmark);
+        mValueView = mValueView.findViewById(R.id.textView);
 
         btnBookmark.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +62,8 @@ public class FirstFragment extends Fragment {
         });
 
         String postdetails = PostSingletonInstance.getPost().getPostContent().replace("/n","\n"); ;
-        mValueView.setText(postdetails);
+        Spanned data = Html.fromHtml(postdetails);
+        mValueView.setText(data);
                 return view;
     }
 
