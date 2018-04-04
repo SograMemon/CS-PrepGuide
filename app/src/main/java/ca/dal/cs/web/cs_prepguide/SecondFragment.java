@@ -64,7 +64,10 @@ public class SecondFragment extends Fragment {
                     if(userName.isEmpty()){
                         userName = userSingleTonInstance.getAppUser().getEmail();
                     }
-                    postSingleTonInstance.getPost().getComments().add(new Comment(text, userSingleTonInstance.getAppUser().getId(), userName, postSingleTonInstance.getPost().getPostId()));
+                    ArrayList<Comment> tempCommentsList = new ArrayList<>();
+                    tempCommentsList = postSingleTonInstance.getPost().getComments();
+                    tempCommentsList.add(new Comment(text, userSingleTonInstance.getAppUser().getId(), userName, postSingleTonInstance.getPost().getPostId()));
+                    postSingleTonInstance.getPost().setComments(tempCommentsList);
                     postSingleTonInstance.addCommentsToFireBaseDB();
                     edtTxtForComment.setText("");
                     commentsAdapter.notifyDataSetChanged();

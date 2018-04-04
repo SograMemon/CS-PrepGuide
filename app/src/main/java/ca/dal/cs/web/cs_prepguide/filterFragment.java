@@ -323,13 +323,14 @@ public class filterFragment extends Fragment {
 
     private void filterJobsBasedOnLocation(Location location) {
         ArrayList<Float> temp = new ArrayList();
+        jobListBasedOnLocation.clear();
 
         for(int i=0; i<jobList.size(); i++){
             Log.d(TAG, jobList.get(i).toString());
             job currentJob = jobList.get(i);
 
             Location currentJobLocation = new Location("currentJobLocation");
-            if(currentJob.getJobLatitude() != null && currentJob.getJobLongitude() != null){
+            if(currentJob.getJobLatitude() != null && currentJob.getJobLongitude() != null && currentJob.jobId != null){
                 currentJobLocation.setLongitude(currentJob.getJobLatitude());
                 currentJobLocation.setLatitude(currentJob.getJobLongitude());
 
