@@ -96,10 +96,10 @@ public class GuideFragment extends Fragment {
                 Fragment fragment = null;
                 switch (tab.getPosition()) {
                     case 0:
-                        fragment = new FirstFragment();
+                        fragment = new PostFragment();
                         break;
                     case 1:
-                        fragment = new SecondFragment();
+                        fragment = new CommentsFragment();
                         break;
                 }
                 FragmentManager fm = fmg;
@@ -123,7 +123,7 @@ public class GuideFragment extends Fragment {
         // DELETE
         FragmentManager fm = fmg;
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.simpleFrameLayout, new FirstFragment());
+        ft.replace(R.id.simpleFrameLayout, new PostFragment());
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commit();
 

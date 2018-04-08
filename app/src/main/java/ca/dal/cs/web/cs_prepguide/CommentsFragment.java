@@ -17,18 +17,16 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class SecondFragment extends Fragment {
+public class CommentsFragment extends Fragment {
 
     ListView lvComments;
-    //Button btnComment;
     ImageButton btnComment;
     EditText edtTxtForComment;
-//    ArrayList<Comment> commentsArrayList = new ArrayList<>();
     CommentsAdapter commentsAdapter;
     PostSingleTon postSingleTonInstance;
     CSPrepGuideSingleTon userSingleTonInstance;
 
-    public SecondFragment() {
+    public CommentsFragment() {
 // Required empty public constructor
     }
 
@@ -42,16 +40,14 @@ public class SecondFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment_second
-        View view =  inflater.inflate(R.layout.fragment_second, container, false);
+        // Inflate the layout for this fragment_comments
+        View view =  inflater.inflate(R.layout.fragment_comments, container, false);
 
         lvComments = view.findViewById(R.id.lvComments);
 
         //https://stackoverflow.com/questions/8162457/transparent-divider-in-a-listview
         lvComments.setDivider(this.getResources().getDrawable(R.drawable.transparent_color));
         lvComments.setDividerHeight(10);
-
-        //btnComment = view.findViewById(R.id.btnComment);
         edtTxtForComment = view.findViewById(R.id.edtTxtForComment);
         btnComment = view.findViewById(R.id.btnComment);
 
