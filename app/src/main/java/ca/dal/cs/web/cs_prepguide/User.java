@@ -6,8 +6,15 @@ import java.util.ArrayList;
  * Created by vamshikrishnamoogala on 2018-03-21.
  */
 
+
+/**
+ * User Model for storing details about the user
+ */
 public class User {
 
+    /**
+     * User Details
+     */
     private String name;
     private String id;
     private String email;
@@ -15,10 +22,18 @@ public class User {
     private ArrayList<String> skills;
     private ArrayList<String> bookmarks;
 
-    public User(){
+    /**
+     * Empty Constructor
+     */
+    public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
+        // to retrieve details from Firebase
     }
 
+
+    /**
+     * Constructor
+     */
     public User(String name, String id, String email, String imageUrl, ArrayList<String> skills, ArrayList<String> bookmarks) {
         this.name = name;
         this.id = id;
@@ -28,6 +43,9 @@ public class User {
         this.bookmarks = bookmarks;
     }
 
+    /**
+     * Getters and Setters
+     */
     public String getName() {
         return this.name;
     }
@@ -76,19 +94,24 @@ public class User {
         this.bookmarks = bookmarks;
     }
 
-    public void addSkilltoUser(String skill){
+
+    /**
+     * Method to add a skill to the user skills
+     */
+    public void addSkilltoUser(String skill) {
         this.skills.add(skill);
     }
 
-//    public void removeSkillFromUser(String skill){
-//        this.skills.remove(this.skills.indexOf(skill));
-//        this.skills.add(skill);
-//    }
-
-    public void addBookmarksToUser(String postId){
+    /**
+     * Method to add a bookmark to the user bookmarks
+     */
+    public void addBookmarksToUser(String postId) {
         this.bookmarks.add(postId);
     }
 
+    /**
+     * toString Method
+     */
     @Override
     public String toString() {
         return "User{" +

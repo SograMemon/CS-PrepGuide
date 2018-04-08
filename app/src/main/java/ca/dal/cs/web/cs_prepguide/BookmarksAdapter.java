@@ -1,11 +1,9 @@
 package ca.dal.cs.web.cs_prepguide;
 
-//import android.app.Fragment;
-//import android.app.FragmentManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-        import android.view.LayoutInflater;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -13,16 +11,27 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-        import java.util.ArrayList;
+import java.util.ArrayList;
 
-public class BookmarksAdapter extends ArrayAdapter<String>{
+/**
+ * Adapter for Listview that shows user bookmarks in bookmarks page
+ */
+public class BookmarksAdapter extends ArrayAdapter<String> {
     Context cntx;
     private ArrayList<String> bookmarksList;
+
+    // singleTon instance to retrieve and update user details
     CSPrepGuideSingleTon userSingleTon = CSPrepGuideSingleTon.getInstance(cntx);
+
+    // GuideNavigationInterface object to call the method navigateToGuideFragment to navigate the user
+    // from bookmarks page to Guides page
     GuideNavigationInterface guideNavigationInterfaceObject;
 
+    /**
+     * Constructor
+     */
     public BookmarksAdapter(@NonNull Context context, int resource, @NonNull ArrayList<String> bookmarksList, GuideNavigationInterface guideNavigationInterfaceObject) {
-        super(context, resource,bookmarksList);
+        super(context, resource, bookmarksList);
         this.cntx = cntx;
         this.bookmarksList = bookmarksList;
         this.guideNavigationInterfaceObject = guideNavigationInterfaceObject;
@@ -39,6 +48,7 @@ public class BookmarksAdapter extends ArrayAdapter<String>{
 
         String i = bookmarksList.get(position);
 
+        //UI Components
         TextView txtBookmarks;
         ImageButton imgBtnDelete;
 
@@ -48,6 +58,7 @@ public class BookmarksAdapter extends ArrayAdapter<String>{
 
             String temp;
 
+            // Name mapping for guides based on postId
             if (bookmarksList.get(position).equals("post1")) {
                 temp = "Data Scientist - Microsoft";
             } else if (bookmarksList.get(position).equals("post2")) {
@@ -55,33 +66,36 @@ public class BookmarksAdapter extends ArrayAdapter<String>{
             } else {
                 temp = "Software Architect - Microsoft";
             }
-
-
             txtBookmarks.setText(temp);
-//            View bookmarksLinerLayout = convertView;
+
+
+            // Method to delete bookmarks from user details
             imgBtnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     View parentRow = (View) v.getParent();
                     ListView listView = (ListView) parentRow.getParent();
                     int position1 = listView.getPositionForView(parentRow);
-//                    Toast.makeText(getContext(), "delete clicked"+String.valueOf(position1), Toast.LENGTH_SHORT).show();
                     bookmarksList.remove(position1);
+
+                    // Push the changes to firebase
                     userSingleTon.addUserToFireBaseDB();
+
+                    // Update the listview
                     notifyDataSetChanged();
                 }
             });
 
+
             final View finalConvertView = convertView;
+            // Method to navigate the user to guide page on clicking a bookmark
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Toast.makeText(getContext(), "list view clicked", Toast.LENGTH_SHORT).show();
                     ListView listView = (ListView) finalConvertView.getParent();
                     int position1 = listView.getPositionForView(listView);
-//                    Toast.makeText(getContext(), "list view clicked"+bookmarksList.get(position), Toast.LENGTH_SHORT).show();
                     userSingleTon.setCurrentPostId(bookmarksList.get(position));
-                    guideNavigationInterfaceObject.testGuideNavigation();
+                    guideNavigationInterfaceObject.navigateToGuideFragment();
                 }
             });
         }

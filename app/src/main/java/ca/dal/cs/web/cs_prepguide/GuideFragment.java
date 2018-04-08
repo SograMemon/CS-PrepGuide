@@ -36,41 +36,29 @@ import java.util.List;
 
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link guideFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link guideFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment that contains guide view
  */
-public class GuideFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
+public class GuideFragment extends Fragment {
+
+    // Tag for logging
     private static final String TAG = "GuideFragment";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    // Using to get the fragment support manager from parent activity
     Activity parent = null;
     FragmentManager fmg = null;
+
     FrameLayout simpleFrameLayout;
     TabLayout tabLayout;
     public ProgressDialog mProgress;
 
-
     private DatabaseReference mDatabase, myRef1;
-
-
-
-    private OnFragmentInteractionListener mListener;
 
     public GuideFragment() {
         // Required empty public constructor
     }
 
+    // Using to get the fragment support manager from parent activity
     @SuppressLint("ValidFragment")
     public GuideFragment(Activity parent, FragmentManager fmg) {
         // Required empty public constructor
@@ -78,33 +66,9 @@ public class GuideFragment extends Fragment {
         this.fmg = fmg;
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment guideFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static GuideFragment newInstance(String param1, String param2) {
-        GuideFragment fragment = new GuideFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-      //  mProgress = new ProgressDialog(getActivity());
-      //  mProgress.setMessage("Loading...");
     }
 
     @Override
@@ -112,7 +76,7 @@ public class GuideFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_guide, container, false);
 
-       // mProgress.show();
+        // mProgress.show();
 
 
         simpleFrameLayout = (FrameLayout) view.findViewById(R.id.simpleFrameLayout);
@@ -124,9 +88,6 @@ public class GuideFragment extends Fragment {
         TabLayout.Tab secondTab = tabLayout.newTab();
         secondTab.setText("Comments");
         tabLayout.addTab(secondTab);
-//        TabLayout.Tab thirdTab = tabLayout.newTab();
-//        thirdTab.setText("Third");
-//        tabLayout.addTab(thirdTab);
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -160,7 +121,7 @@ public class GuideFragment extends Fragment {
         });
 
         // DELETE
-       FragmentManager fm = fmg;
+        FragmentManager fm = fmg;
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.simpleFrameLayout, new FirstFragment());
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -169,76 +130,15 @@ public class GuideFragment extends Fragment {
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
 
-    public interface OnFragmentInteractionListener {
-
-        void onFragmentInteraction(Uri uri);
-    }
-
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         getActivity().setTitle("Guide View");
     }
-
-   /* public void getPostDetailsFromFirebase(String postId){
-        final PostSingleTon postSingleToninstance = PostSingleTon.getInstance(getContext());
-
-        String currentPostId = "Posts/".concat(postId);
-        Log.d(TAG, "reference" + currentPostId);
-
-        final Post[] currentPost = new Post[1];
-
-       *//* myRef1 = FirebaseDatabase.getInstance().getReference(currentPostId);
-        myRef1.addListenerForSingleValueEvent(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                currentPost[0] = dataSnapshot.getValue(Post.class);
-                if (currentPost[0] != null) {
-                    Log.d(TAG, "Current Post is: " + currentPost[0].toString());
-                    if (currentPost[0].getComments() == null) {
-                        currentPost[0].setComments(new ArrayList<Comment>());
-                    }
-                    postSingleToninstance.setPost(currentPost[0]);
-                   Log.d(TAG, "Post Value After creating singleton instance is: " + postSingleToninstance.getPost().toString());
-                }
-                mProgress.dismiss();
-            }*//*
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-//                mProgress.dismiss();
-                // Failed to read value
-                Toast.makeText(getContext(), "Error with Firebase database. please try later", Toast.LENGTH_SHORT).show();
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-
-        });
-    }*/
 }

@@ -46,14 +46,14 @@ public class BookmarksFragment extends Fragment implements GuideNavigationInterf
         singleTonInstance = CSPrepGuideSingleTon.getInstance(getContext());
         bookmarksList = singleTonInstance.getAppUser().getBookmarks();
         Log.w(TAG, singleTonInstance.getAppUser().toString());
-        bookmarksAdapter = new BookmarksAdapter(getActivity() , R.layout.bookmarks_and_skills_list_layout, bookmarksList, this);
+        bookmarksAdapter = new BookmarksAdapter(getActivity(), R.layout.bookmarks_and_skills_list_layout, bookmarksList, this);
         listViewBookmarks.setAdapter(bookmarksAdapter);
 
         listViewBookmarks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, ""+position + bookmarksList.get(position));
-                Toast.makeText(getContext(), "list clicked"+ String.valueOf(position), Toast.LENGTH_LONG).show();
+                Log.d(TAG, "" + position + bookmarksList.get(position));
+                Toast.makeText(getContext(), "list clicked" + String.valueOf(position), Toast.LENGTH_LONG).show();
                 mListener.bookmarksItemClicked(position, bookmarksList.get(position));
             }
         });
@@ -61,12 +61,6 @@ public class BookmarksFragment extends Fragment implements GuideNavigationInterf
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
 
     @Override
     public void onAttach(Context context) {
@@ -86,8 +80,13 @@ public class BookmarksFragment extends Fragment implements GuideNavigationInterf
     }
 
     @Override
-    public void testGuideNavigation() {
-        changeToFragment();
+    public void navigateToGuideFragment() {
+        FragmentManager fmg1 = (getActivity()).getSupportFragmentManager();
+        Fragment fragment = new GuideFragment(getActivity(), fmg1);
+        fmg1.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null) //https://stackoverflow.com/questions/25153364/implementing-back-button-in-android-fragment-activity
+                .commit();
     }
 
     /**
@@ -101,18 +100,7 @@ public class BookmarksFragment extends Fragment implements GuideNavigationInterf
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface bookmarksFragmentInterface {
-        // TODO: Update argument type and name
         void bookmarksItemClicked(int position, String id);
-    }
-
-    public void changeToFragment(){
-        FragmentManager fmg1 =  (getActivity()).getSupportFragmentManager();
-        Fragment fragment = new GuideFragment(getActivity(), fmg1);
-        fmg1.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null) //https://stackoverflow.com/questions/25153364/implementing-back-button-in-android-fragment-activity
-                .commit();
-
     }
 
     @Override

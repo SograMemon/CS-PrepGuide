@@ -4,16 +4,28 @@ package ca.dal.cs.web.cs_prepguide;
  * Created by vamshikrishnamoogala on 2018-04-01.
  */
 
+/**
+ * Comments Model for storing comments about a post( Here the Guide for a job)
+ */
 public class Comment {
+    /**
+     * Comment Details
+     */
     String commentContent;
     String commentedByUser;
     String commentedByUserName;
     String postId;
 
+    /**
+     * Empty Constructor
+     */
     public Comment() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
+    /**
+     * Constructor
+     */
     public Comment(String commentContent, String commentedByUser, String commentedByUserName, String postId) {
         this.commentContent = commentContent;
         this.commentedByUser = commentedByUser;
@@ -21,6 +33,9 @@ public class Comment {
         this.postId = postId;
     }
 
+    /**
+     * Getters and Setters
+     */
     public String getCommentContent() {
         return commentContent;
     }
@@ -53,6 +68,9 @@ public class Comment {
         this.commentedByUserName = commentedByUserName;
     }
 
+    /**
+     * toString Method
+     */
     @Override
     public String toString() {
         return "Comment{" +

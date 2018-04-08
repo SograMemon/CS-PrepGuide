@@ -6,30 +6,37 @@ import java.util.ArrayList;
  * Created by vamshikrishnamoogala on 2018-04-01.
  */
 
+/**
+ * Post Model for storing details about a post( Here the Guide for a job)
+ */
 public class Post {
+    /**
+     * Post Details
+     */
     private String postContent;
     private String postId;
     private String postLink;
     private String postName;
-
-    public ArrayList<Comment> getPostComments() {
-        return postComments;
-    }
-
-    public void setPostComments(ArrayList<Comment> postComments) {
-        this.postComments = postComments;
-    }
-
     private ArrayList<Comment> postComments = new ArrayList<>();
 
-    public Post(){
+    /**
+     * Empty Constructor
+     */
+    public Post() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
+        // to retrieve details from Firebase
     }
 
+    /**
+     * Constructor
+     */
     public Post(String postContent) {
         this.postContent = postContent;
     }
 
+    /**
+     * Getters and Setters
+     */
     public String getPostId() {
         return postId;
     }
@@ -41,6 +48,7 @@ public class Post {
     public String getPostContent() {
         return postContent;
     }
+
     public String getPostLink() {
         return postLink;
     }
@@ -48,6 +56,7 @@ public class Post {
     public void setPostContent(String postContent) {
         this.postContent = postContent;
     }
+
     public void setPostLink(String postLink) {
         this.postLink = postLink;
     }
@@ -60,7 +69,7 @@ public class Post {
         this.postComments = comments;
     }
 
-    public void addComment(Comment comment){
+    public void addComment(Comment comment) {
         this.postComments.add(comment);
     }
 
@@ -72,6 +81,17 @@ public class Post {
         this.postName = postName;
     }
 
+    public ArrayList<Comment> getPostComments() {
+        return postComments;
+    }
+
+    public void setPostComments(ArrayList<Comment> postComments) {
+        this.postComments = postComments;
+    }
+
+    /**
+     * toString Method
+     */
     @Override
     public String toString() {
         return "Post{" +

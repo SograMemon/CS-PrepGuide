@@ -40,82 +40,50 @@ import static android.content.ContentValues.TAG;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
+ * This class will handle all the logic related to the filter jobs screen in the app
+ * <p>
+ * <p>
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link FilterFragment.filterFragmentInterface} interface
  * to handle interaction events.
- * Use the {@link FilterFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class FilterFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    public static final String job_Title="jobtitle";
-    public static final String job_ID="jobid";
-    public static final String v="";
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    public static final String job_Title = "jobtitle";
+    public static final String job_ID = "jobid";
+    public static final String v = "";
 
-    public static final String STREAM="STREAM";
-    public static final String COMPANY="COMPANY";
-    public static final String TYPE="TYPE";
+    public static final String STREAM = "STREAM";
+    public static final String COMPANY = "COMPANY";
+    public static final String TYPE = "TYPE";
 
-//    Activity parent = null;
 
     private Button btnApplyFilter;
-//    private ImageButton imgBtnLocationFilter;
     private Spinner spinnerCompany, spinnerType, spinnerStream;
     private ListView listView_jobs;
     private FusedLocationProviderClient mFusedLocationClient;
     private static final int LOCATION_REQUEST_CODE = 8888;
     //private EditText editText_addJob;
 
-    public DatabaseReference databaseJobs= FirebaseDatabase.getInstance().getReference("jobs");
+    public DatabaseReference databaseJobs = FirebaseDatabase.getInstance().getReference("jobs");
 
-
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private boolean flag=false;
+    private boolean flag = false;
     private filterFragmentInterface mListener;
 
     public FilterFragment() {
     }
 
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment filterFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FilterFragment newInstance(String param1, String param2) {
-        FilterFragment fragment = new FilterFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     private List<Job> jobList;
     private List<Job> jobListSetSpinner;
     private List<Job> jobList1, jobListBasedOnLocation;
-    private String filterType="spinner";
+    private String filterType = "spinner";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -130,22 +98,25 @@ public class FilterFragment extends Fragment {
 
 
         //listView_jobs= (ListView) parent.findViewById(R.id.list_job);
-        jobList =new ArrayList<>();
-        jobList1= new ArrayList<>();
+        jobList = new ArrayList<>();
+        jobList1 = new ArrayList<>();
+
+        //Stores the jobs based on location
         jobListBasedOnLocation = new ArrayList<>();
 
 
+        // UI components
         // Inflate the layout for this fragment
-        btnApplyFilter =  view.findViewById(R.id.btnApplyFilter);
-        spinnerStream= view.findViewById(R.id.spinner_stream);
-        spinnerCompany= view.findViewById(R.id.spinner_company);
-        spinnerType= view.findViewById(R.id.spinner_type);
-        listView_jobs=(ListView)view.findViewById(R.id.ListView_jobs);
+        btnApplyFilter = view.findViewById(R.id.btnApplyFilter);
+        spinnerStream = view.findViewById(R.id.spinner_stream);
+        spinnerCompany = view.findViewById(R.id.spinner_company);
+        spinnerType = view.findViewById(R.id.spinner_type);
+        listView_jobs = (ListView) view.findViewById(R.id.ListView_jobs);
         //editText_addJob=(EditText)view.findViewById(R.id.edittext_addJob);
-        btnApplyFilter =  view.findViewById(R.id.btnApplyFilter);
-        spinnerStream= view.findViewById(R.id.spinner_stream);
-        spinnerCompany= view.findViewById(R.id.spinner_company);
-        spinnerType= view.findViewById(R.id.spinner_type);
+        btnApplyFilter = view.findViewById(R.id.btnApplyFilter);
+        spinnerStream = view.findViewById(R.id.spinner_stream);
+        spinnerCompany = view.findViewById(R.id.spinner_company);
+        spinnerType = view.findViewById(R.id.spinner_type);
 //        imgBtnLocationFilter = view.findViewById(R.id.imgBtnLocationFilter);
 
         String typeInitial;
@@ -157,17 +128,16 @@ public class FilterFragment extends Fragment {
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-//                            Toast.makeText(getApplicationContext(), String.valueOf(which), Toast.LENGTH_SHORT).show();
                         switch (which) {
                             case -1:
                                 // Based on Location
-                                filterType="location";
+                                filterType = "location";
                                 getLocation();
 
                                 break;
                             case -2:
                                 // Based on suggestions
-                                filterType="skills";
+                                filterType = "skills";
                                 suggestJob();
 
                                 break;
@@ -176,7 +146,7 @@ public class FilterFragment extends Fragment {
                                 String edt = null;
                                 //edt= editText_addJob.getText().toString();
                                 //if(edt.equalsIgnoreCase("")){
-                                filterType="spinner";
+                                filterType = "spinner";
                                 getJob();
 
                                 //}else {
@@ -196,22 +166,16 @@ public class FilterFragment extends Fragment {
             }
         });
 
-//        imgBtnLocationFilter.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getLocation();
-//            }
-//        });
 
         listView_jobs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                Job job1= jobList.get(i);
+                Job job1 = jobList.get(i);
                 //job1.setFilter(filterType);
                 CSPrepGuideSingleTon csPrepGuideSingleTonInstance = new CSPrepGuideSingleTon(getContext());
                 csPrepGuideSingleTonInstance.setCurrentPostId(job1.jobPostId);
-                mListener.onFilterClicked(job1.jobPostId,job1.getJobId());
+                mListener.onFilterClicked(job1.jobPostId, job1.getJobId());
             }
         });
 
@@ -233,32 +197,29 @@ public class FilterFragment extends Fragment {
                 listView_jobs.setAdapter(adapter);
                 String[] sArry, cArry, tArry;
 
-                sArry=setStreamSpinners();
-                final List<String> streamList= new ArrayList<>(Arrays.asList(sArry));
+                sArry = setStreamSpinners();
+                final List<String> streamList = new ArrayList<>(Arrays.asList(sArry));
                 final ArrayAdapter<String> stringArrayAdapter;
                 stringArrayAdapter = new ArrayAdapter<String>(getActivity(),
                         R.layout.spinner_dropdown_item, streamList);
                 stringArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
                 spinnerStream.setAdapter(stringArrayAdapter);
 
-                cArry=setCompanySpinners();
-                final List<String> companyList= new ArrayList<>(Arrays.asList(cArry));
+                cArry = setCompanySpinners();
+                final List<String> companyList = new ArrayList<>(Arrays.asList(cArry));
                 final ArrayAdapter<String> stringArrayAdapterC;
                 stringArrayAdapterC = new ArrayAdapter<String>(getActivity(),
                         R.layout.spinner_dropdown_item, companyList);
                 stringArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
                 spinnerCompany.setAdapter(stringArrayAdapterC);
 
-                tArry=setTypeSpinners();
-                final List<String> typeList= new ArrayList<>(Arrays.asList(tArry));
+                tArry = setTypeSpinners();
+                final List<String> typeList = new ArrayList<>(Arrays.asList(tArry));
                 final ArrayAdapter<String> stringArrayAdapterT;
                 stringArrayAdapterT = new ArrayAdapter<String>(getActivity(),
                         R.layout.spinner_dropdown_item, typeList);
                 stringArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
                 spinnerType.setAdapter(stringArrayAdapterT);
-
-
-
 
 
             }
@@ -276,17 +237,6 @@ public class FilterFragment extends Fragment {
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
         } else {
-
-//            Location test = new Location("Test");
-//            test.setLongitude(-122.0840);
-//            test.setLatitude(37.4220);
-//
-//            Location test1 = new Location("Test1");
-//            test.setLongitude(-121.0840);
-//            test.setLatitude(36.4220);
-
-//            Log.d("test location", String.valueOf(Math.round(test.distanceTo(test1))));
-
             mFusedLocationClient.getLastLocation()
                     .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
                         @Override
@@ -295,9 +245,8 @@ public class FilterFragment extends Fragment {
                             if (location != null) {
                                 // Logic to handle location object
                                 Log.d("test", String.valueOf(location.getLatitude()) + String.valueOf(location.getLongitude()));
-//                                Toast.makeText(getApplicationContext(), String.valueOf(location.getLatitude()) + "" + String.valueOf(location.getLongitude()), Toast.LENGTH_LONG).show();
                                 filterJobsBasedOnLocation(location);
-                            }else{
+                            } else {
                                 Toast.makeText(getApplicationContext(), "Could not get your location, please try later", Toast.LENGTH_LONG).show();
                             }
                         }
@@ -312,23 +261,23 @@ public class FilterFragment extends Fragment {
         ArrayList<Float> temp = new ArrayList();
         jobListBasedOnLocation.clear();
 
-        for(int i=0; i<jobList.size(); i++){
+        for (int i = 0; i < jobList.size(); i++) {
             Log.d(TAG, jobList.get(i).toString());
             Job currentJob = jobList.get(i);
 
             Location currentJobLocation = new Location("currentJobLocation");
-            if(currentJob.getJobLatitude() != null && currentJob.getJobLongitude() != null && currentJob.jobId != null){
+            if (currentJob.getJobLatitude() != null && currentJob.getJobLongitude() != null && currentJob.jobId != null) {
                 currentJobLocation.setLongitude(currentJob.getJobLatitude());
                 currentJobLocation.setLatitude(currentJob.getJobLongitude());
 
-                float distance =location.distanceTo(currentJobLocation);
-                distance=distance/1000;
-                distance=Math.round(distance);
+                float distance = location.distanceTo(currentJobLocation);
+                distance = distance / 1000;
+                distance = Math.round(distance);
                 currentJob.setDistance(distance);
                 currentJob.setFilter(filterType);
                 jobListBasedOnLocation.add(currentJob);
 
-            }else{
+            } else {
                 currentJob.setDistance(Float.MAX_VALUE);
                 currentJob.setFilter(filterType);
                 jobListBasedOnLocation.add(currentJob);
@@ -344,9 +293,9 @@ public class FilterFragment extends Fragment {
 
         Log.d(TAG, jobListBasedOnLocation.toString());
 
-        for(int i=0; i< jobListBasedOnLocation.size(); i++){
+        for (int i = 0; i < jobListBasedOnLocation.size(); i++) {
             Job tempJob = jobListBasedOnLocation.get(i);
-            if(tempJob == null){
+            if (tempJob == null) {
                 jobListBasedOnLocation.remove(i);
             }
         }
@@ -407,60 +356,57 @@ public class FilterFragment extends Fragment {
         String type = spinnerType.getSelectedItem().toString();
 
         jobList1.clear();
-       for(int i=0;i<jobList.size()-1;i++){
-           Job job1=jobList.get(i);
-           //int l = job1.jobSkills.length;
-           if((jobStream.equalsIgnoreCase("all")&& company.equalsIgnoreCase("all"))&& type.equalsIgnoreCase("all")){
-               job1.setFilter(filterType);
-               jobList1.add(job1);
-           }else if((!jobStream.equalsIgnoreCase("all")&& company.equalsIgnoreCase("all"))&& type.equalsIgnoreCase("all")){
-               job1.setFilter(filterType);
-               if(job1.jobStream.equalsIgnoreCase(jobStream)){
-                   job1.setFilter(filterType);
-                   jobList1.add(job1);
-               }
-           }else if((jobStream.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all"))&& type.equalsIgnoreCase("all")){
-               if(job1.jobCompany.equalsIgnoreCase(company)){
-                   job1.setFilter(filterType);
-                   jobList1.add(job1);
-               }
-           }else if((jobStream.equalsIgnoreCase("all")&& company.equalsIgnoreCase("all"))&& !type.equalsIgnoreCase("all")){
-               if(job1.jobType.equalsIgnoreCase(type)){
-                   job1.setFilter(filterType);
-                   jobList1.add(job1);
-               }
-           }else if((!jobStream.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all"))&& type.equalsIgnoreCase("all")){
-               if(job1.jobStream.equalsIgnoreCase(jobStream)&& job1.jobCompany.equalsIgnoreCase(company)){
-                   job1.setFilter(filterType);
-                   jobList1.add(job1);
-               }
-           }else if((jobStream.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all"))&& !type.equalsIgnoreCase("all")){
-               if(job1.jobType.equalsIgnoreCase(type)&& job1.jobCompany.equalsIgnoreCase(company)){
-                   job1.setFilter(filterType);
-                   jobList1.add(job1);
-               }
-           }else if((!jobStream.equalsIgnoreCase("all")&& company.equalsIgnoreCase("all"))&& !type.equalsIgnoreCase("all")){
-               if(job1.jobStream.equalsIgnoreCase(jobStream)&& job1.jobType.equalsIgnoreCase(type)){
-                   job1.setFilter(filterType);
-                   jobList1.add(job1);
-               }
-           }else if((!jobStream.equalsIgnoreCase("all")&& !company.equalsIgnoreCase("all"))&& !type.equalsIgnoreCase("all")){
-               if((job1.jobStream.equalsIgnoreCase(jobStream)&& job1.jobCompany.equalsIgnoreCase(company))&& job1.jobType.equalsIgnoreCase(type)){
-                   job1.setFilter(filterType);
-                   jobList1.add(job1);
-               }
-           }
+        for (int i = 0; i < jobList.size() - 1; i++) {
+            Job job1 = jobList.get(i);
+            //int l = job1.jobSkills.length;
+            if ((jobStream.equalsIgnoreCase("all") && company.equalsIgnoreCase("all")) && type.equalsIgnoreCase("all")) {
+                job1.setFilter(filterType);
+                jobList1.add(job1);
+            } else if ((!jobStream.equalsIgnoreCase("all") && company.equalsIgnoreCase("all")) && type.equalsIgnoreCase("all")) {
+                job1.setFilter(filterType);
+                if (job1.jobStream.equalsIgnoreCase(jobStream)) {
+                    job1.setFilter(filterType);
+                    jobList1.add(job1);
+                }
+            } else if ((jobStream.equalsIgnoreCase("all") && !company.equalsIgnoreCase("all")) && type.equalsIgnoreCase("all")) {
+                if (job1.jobCompany.equalsIgnoreCase(company)) {
+                    job1.setFilter(filterType);
+                    jobList1.add(job1);
+                }
+            } else if ((jobStream.equalsIgnoreCase("all") && company.equalsIgnoreCase("all")) && !type.equalsIgnoreCase("all")) {
+                if (job1.jobType.equalsIgnoreCase(type)) {
+                    job1.setFilter(filterType);
+                    jobList1.add(job1);
+                }
+            } else if ((!jobStream.equalsIgnoreCase("all") && !company.equalsIgnoreCase("all")) && type.equalsIgnoreCase("all")) {
+                if (job1.jobStream.equalsIgnoreCase(jobStream) && job1.jobCompany.equalsIgnoreCase(company)) {
+                    job1.setFilter(filterType);
+                    jobList1.add(job1);
+                }
+            } else if ((jobStream.equalsIgnoreCase("all") && !company.equalsIgnoreCase("all")) && !type.equalsIgnoreCase("all")) {
+                if (job1.jobType.equalsIgnoreCase(type) && job1.jobCompany.equalsIgnoreCase(company)) {
+                    job1.setFilter(filterType);
+                    jobList1.add(job1);
+                }
+            } else if ((!jobStream.equalsIgnoreCase("all") && company.equalsIgnoreCase("all")) && !type.equalsIgnoreCase("all")) {
+                if (job1.jobStream.equalsIgnoreCase(jobStream) && job1.jobType.equalsIgnoreCase(type)) {
+                    job1.setFilter(filterType);
+                    jobList1.add(job1);
+                }
+            } else if ((!jobStream.equalsIgnoreCase("all") && !company.equalsIgnoreCase("all")) && !type.equalsIgnoreCase("all")) {
+                if ((job1.jobStream.equalsIgnoreCase(jobStream) && job1.jobCompany.equalsIgnoreCase(company)) && job1.jobType.equalsIgnoreCase(type)) {
+                    job1.setFilter(filterType);
+                    jobList1.add(job1);
+                }
+            }
 
 
-
-
-       }
+        }
         JobList adapter = new JobList(getActivity(), jobList1);
         listView_jobs.setAdapter(adapter);
 
 
-
-   }
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -476,7 +422,7 @@ public class FilterFragment extends Fragment {
     public String[] setStreamSpinners() {
 
         String streamIntial;
-        streamIntial ="All";
+        streamIntial = "All";
 
         for (int i = 0; i < jobList.size() - 1; i++) {
             Job job1 = jobList.get(i);
@@ -492,7 +438,7 @@ public class FilterFragment extends Fragment {
     public String[] setCompanySpinners() {
 
         String companyIntial;
-        companyIntial ="All";
+        companyIntial = "All";
 
         for (int i = 0; i < jobList.size() - 1; i++) {
             Job job1 = jobList.get(i);
@@ -504,10 +450,11 @@ public class FilterFragment extends Fragment {
         Arry = companyIntial.split(",");
         return Arry;
     }
+
     public String[] setTypeSpinners() {
 
         String typeIntial;
-        typeIntial ="All";
+        typeIntial = "All";
 
         for (int i = 0; i < jobList.size() - 1; i++) {
             Job job1 = jobList.get(i);
@@ -533,13 +480,13 @@ public class FilterFragment extends Fragment {
         Job job1;
         String userSkillStr;
         int[] matchSkills = new int[jobList.size()];
-        for (int i = 0; i < jobList.size()-1; i++) {
+        for (int i = 0; i < jobList.size() - 1; i++) {
             job1 = jobList.get(i);
             matchSkills[i] = 0;
             for (int j = 0; j < userSkill.size(); j++) {
                 userSkillStr = userSkill.get(j);
                 if (job1.jobSkills != null) {
-                    String jobSkillLower=job1.getJobSkills().toLowerCase();
+                    String jobSkillLower = job1.getJobSkills().toLowerCase();
                     if (jobSkillLower.contains(userSkill.get(j).toLowerCase())) {
                         matchSkills[i]++;
                     }
@@ -549,31 +496,31 @@ public class FilterFragment extends Fragment {
 
         jobList1.clear();
         String orderedSuggetion = "0";
-        String head,tail;
+        String head, tail;
         char c;
-        int index, incertIndex = 0; 
+        int index, incertIndex = 0;
         int incertVal = 0;
         for (int i = 1; i < matchSkills.length; i++) {
-            incertIndex=-1;
+            incertIndex = -1;
             for (int j = 0; j < orderedSuggetion.length(); j++) {
                 index = Integer.parseInt(String.valueOf(orderedSuggetion.charAt(j)));
-                incertVal=i;
-                if (matchSkills[i] > matchSkills[index] || matchSkills[i]==matchSkills[index]) {
+                incertVal = i;
+                if (matchSkills[i] > matchSkills[index] || matchSkills[i] == matchSkills[index]) {
                     incertIndex = j;
                 } else if (matchSkills[i] != 0) {
-                    incertIndex = j+1;
+                    incertIndex = j + 1;
                 }
 
             }
-            if(incertIndex!=-1) {
+            if (incertIndex != -1) {
                 orderedSuggetion = orderedSuggetion.substring(0, incertIndex) + incertVal + orderedSuggetion.substring(incertIndex, orderedSuggetion.length());
             }
         }
 
-        for(int i=0;i<orderedSuggetion.length();i++){
-            index=Integer.parseInt(String.valueOf(orderedSuggetion.charAt(i)));
-            Job job2=jobList.get(index);
-            job2.setMatchSkillNo(" "+matchSkills[index]);
+        for (int i = 0; i < orderedSuggetion.length(); i++) {
+            index = Integer.parseInt(String.valueOf(orderedSuggetion.charAt(i)));
+            Job job2 = jobList.get(index);
+            job2.setMatchSkillNo(" " + matchSkills[index]);
             job2.setFilter(filterType);
             jobList1.add(job2);
         }
@@ -581,6 +528,7 @@ public class FilterFragment extends Fragment {
         JobList adapter = new JobList(getActivity(), jobList1);
         listView_jobs.setAdapter(adapter);
     }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

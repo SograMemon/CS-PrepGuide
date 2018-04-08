@@ -11,37 +11,34 @@ import java.util.ArrayList;
  * Created by vamshikrishnamoogala on 2018-03-23.
  */
 
+/**
+ * SingleTon class to manage details about the user
+ * also includes logic to update details about user to Firebase
+ */
 public class CSPrepGuideSingleTon {
     private static Context mCtx;
     private static CSPrepGuideSingleTon mInstance;
 
     private User AppUser;
 
+    // Default post id
+    // Used to navigate the user to this post if user navigates to post screen for the first time
     private String currentPostId = "post1";
 
-    public String getTempUser() {
-        return tempUser;
-    }
-
-    public void setTempUser(String tempUser) {
-        this.tempUser = tempUser;
-    }
-
-    public String getTempPassword() {
-        return tempPassword;
-    }
-
-    public void setTempPassword(String tempPassword) {
-        this.tempPassword = tempPassword;
-    }
-
-    private String tempUser = "";
-    private String tempPassword = "";
+    // Storing details for using fingerprint authentication
+    // If user opts for fingerprint authentication,
+    // these details will be stored on the device using shared preferences
+    private String userEmailForFingerPrintAuthentication = "";
+    private String userPasswordForFingerPrintAuthentication = "";
 
     private boolean isUsingEmailAuthentication = false;
 
+    // Firebase database reference
     private DatabaseReference mDatabase;
 
+    /**
+     * Constructor
+     */
     public CSPrepGuideSingleTon(Context context) {
         mCtx = context.getApplicationContext();
     }
@@ -61,6 +58,9 @@ public class CSPrepGuideSingleTon {
         AppUser = user;
     }
 
+    /**
+     * Getters and Setters to get details about the current user
+     */
     public User getAppUser() {
         return AppUser;
     }
@@ -73,11 +73,20 @@ public class CSPrepGuideSingleTon {
         isUsingEmailAuthentication = usingEmailAuthentication;
     }
 
-    public void addUserToFireBaseDB() {
-        if (AppUser != null) {
-            mDatabase = FirebaseDatabase.getInstance().getReference();
-            mDatabase.child("users").child(AppUser.getId()).setValue(AppUser);
-        }
+    public String getUserEmailForFingerPrintAuthentication() {
+        return userEmailForFingerPrintAuthentication;
+    }
+
+    public void setUserEmailForFingerPrintAuthentication(String userEmailForFingerPrintAuthentication) {
+        this.userEmailForFingerPrintAuthentication = userEmailForFingerPrintAuthentication;
+    }
+
+    public String getUserPasswordForFingerPrintAuthentication() {
+        return userPasswordForFingerPrintAuthentication;
+    }
+
+    public void setUserPasswordForFingerPrintAuthentication(String userPasswordForFingerPrintAuthentication) {
+        this.userPasswordForFingerPrintAuthentication = userPasswordForFingerPrintAuthentication;
     }
 
     public String getCurrentPostId() {
@@ -87,5 +96,17 @@ public class CSPrepGuideSingleTon {
     public void setCurrentPostId(String currentPostId) {
         this.currentPostId = currentPostId;
     }
+
+
+    /**
+     * Method to upload user data to Firebase when changes are made
+     */
+    public void addUserToFireBaseDB() {
+        if (AppUser != null) {
+            mDatabase = FirebaseDatabase.getInstance().getReference();
+            mDatabase.child("users").child(AppUser.getId()).setValue(AppUser);
+        }
+    }
+
 
 }

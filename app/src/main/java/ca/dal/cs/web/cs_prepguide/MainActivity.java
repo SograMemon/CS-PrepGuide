@@ -61,22 +61,38 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
-public class MainActivity extends AppCompatActivity implements FingerPrintCallbacks{
+import static com.facebook.FacebookSdk.getApplicationContext;
 
-    public static final String MESSAGE_FROM_LOGIN = "Message from login";
+/**
+ * This Activity is used for handling user login using email and social media
+ * this activity also contains fingerprint login logic
+ */
+public class MainActivity extends AppCompatActivity implements FingerPrintCallbacks {
+
+    // Tag for logging
     private static final String TAG = "MainActivity";
+
+    // Tag for Google sign in result
     private static final int RC_SIGN_IN = 9001;
 
+    // Callback for facebook login
     CallbackManager mCallbackManager;
+
+    //Firebase instances for database and authentication
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase, myRef1;
 
+    // Declaring UI components
     private Button btnLogin, btnRegister, btnForgotPassword;
     private TextView txtEmail, txtPassword;
     private ImageButton btnFingerPrint;
-    private boolean isRegisterFirstTime = true;
-    CSPrepGuideSingleTon singleTonInstance;
     public ProgressDialog mProgress;
+
+    // To keep track of user pressing the register button first time to show a specific toast
+    private boolean isRegisterFirstTime = true;
+
+    // Single Instance for managing user data (login, profile, bookmarks)
+    CSPrepGuideSingleTon singleTonInstance;
 
     /**
      * FINGERPRINT REFERENCES
@@ -88,25 +104,32 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
     private TextView textView;
     private KeyStore mKeyStore;
     private KeyGenerator mKeyGenerator;
-//    FingerprintAuthenticationHandler helper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //https://stackoverflow.com/questions/14475109/remove-android-app-title-bar
+
+        // Hiding the default title bar in login screen
+        // Reference: https://stackoverflow.com/questions/14475109/remove-android-app-title-bar
         getSupportActionBar().hide();
         setContentView(R.layout.login_new_layout);
-//        helper = new FingerprintAuthenticationHandler(getApplicationContext(), this);
+
+        // Single Instance for managing user data
         singleTonInstance = CSPrepGuideSingleTon.getInstance(getApplicationContext());
 
+        // Checking for network connection
         if (!Utilities.isNetworkAvailable(getApplicationContext())) {
-            Toast.makeText(getApplicationContext(), "Please check your network connection and try again", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Please check your network connection and try again",
+                    Toast.LENGTH_SHORT).show();
         }
 
+        // initializing Firebase instance for database and authentication
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
+        // Initializing UI components
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
         txtEmail = findViewById(R.id.txtEmail);
@@ -114,43 +137,51 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
         btnForgotPassword = findViewById(R.id.btnForgotPassword);
         btnFingerPrint = findViewById(R.id.btnFingerPrint);
 
+        // Text for progress loader
+        mProgress = new ProgressDialog(this);
+        mProgress.setMessage("Loading...");
 
+        // using shared preferences in android to store userid, password and
+        // flag about whether user is using fingerprint or not
         MySharedPreferences mySharedPreferences = new MySharedPreferences(getApplicationContext());
-        if(mySharedPreferences.getIsUsingFingerPrint()){
+
+        // If user is using fingerprint for login listening for fingerprint sensor
+        if (mySharedPreferences.getIsUsingFingerPrint()) {
             KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
             FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
 
+            //Checking whether permission is granted, else ask for permission
             if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.USE_FINGERPRINT)
                     != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
             if (!fingerprintManager.isHardwareDetected())
-                Toast.makeText(getApplicationContext(), "Fingerprint authentication permission not enabled", Toast.LENGTH_SHORT).show();
-            else{
+                Toast.makeText(getApplicationContext(),
+                        "Fingerprint authentication permission not enabled",
+                        Toast.LENGTH_SHORT).show();
+            else {
                 // The line below prevents the false positive inspection from Android Studio noinspection ResourceType
-                if(!fingerprintManager.hasEnrolledFingerprints()) {
+                if (!fingerprintManager.hasEnrolledFingerprints()) {
 
                     // This happens when no fingerprints are registered.
                     Toast.makeText(getApplicationContext(),
                             "Register at least one fingerprint: 'Settings=>Security->Fingerprint'",
                             Toast.LENGTH_LONG).show();
 
-                }else{
+                } else {
 
-                    if(!keyguardManager.isKeyguardSecure()){
+                    if (!keyguardManager.isKeyguardSecure()) {
                         // Show a message that the user hasn't set up a fingerprint or lock screen.
                         Toast.makeText(getApplicationContext(),
                                 "Secure lock screen hasn't set up.\n"
                                         + "Set up a fingerprint: 'Settings=>Security=>Fingerprint'",
                                 Toast.LENGTH_LONG).show();
                         return;
-                    }
-                    else
+                    } else
                         createKey();
 
-                    if (initializeCipher()){
+                    if (initializeCipher()) {
                         FingerprintManager.CryptoObject cryptoObject = new FingerprintManager.CryptoObject(cipher);
-
                         FingerprintAuthenticationHandler helper = new FingerprintAuthenticationHandler(MainActivity.this);
                         helper.startAuthentication(fingerprintManager, cryptoObject);
                     }
@@ -158,20 +189,9 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
             }
         }
 
-        /**/
 
-        btnFingerPrint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Toast.makeText(getApplicationContext(), "fingerprint clicked", Toast.LENGTH_SHORT).show();
-
-
-
-            }
-        });
-
+        // Logic for showing or hiding the fingerprint image on login screen
         showHideFingerPrintButton();
-
 
         // Set the dimensions of the sign-in button.
         SignInButton signInButton = findViewById(R.id.sign_in_button);
@@ -201,50 +221,66 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
             @Override
             public void onCancel() {
                 Log.d(TAG, "facebook:onCancel");
-                // ...
+                Toast.makeText(getApplicationContext(),
+                        "Problem with facebook login, Please try later",
+                        Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.d(TAG, "facebook:onError", error);
-                // ...
+                Toast.makeText(getApplicationContext(),
+                        "Problem with facebook login, Please try later",
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
-        mProgress = new ProgressDialog(this);
-        mProgress.setMessage("Loading...");
 
+        // Signin using email and password
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Checking for network connection
                 if (!Utilities.isNetworkAvailable(getApplicationContext())) {
-                    Toast.makeText(getApplicationContext(), "Please check your network connection and try again", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),
+                            "Please check your network connection and try again",
+                            Toast.LENGTH_SHORT).show();
                 } else {
+                    // Checking if fields are empty
                     if (!txtEmail.getText().toString().equals("") && !txtPassword.getText().toString().equals("")) {
                         mProgress.show();
                         signIn(txtEmail.getText().toString(), txtPassword.getText().toString());
                     } else {
-                        Toast.makeText(getApplicationContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Fields cannot be empty",
+                                Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         });
 
+
+        // Registering using email and password
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Checking for network connection
                 if (!Utilities.isNetworkAvailable(getApplicationContext())) {
-                    Toast.makeText(getApplicationContext(), "Please check your network connection and try again", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),
+                            "Please check your network connection and try again",
+                            Toast.LENGTH_SHORT).show();
                 } else {
                     if (isRegisterFirstTime) {
                         isRegisterFirstTime = false;
-//                    btnLogin.setVisibility(View.INVISIBLE);
                         txtEmail.setText("");
                         txtPassword.setText("");
-                        Toast.makeText(getApplicationContext(), "Enter your details and press register to create an account", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),
+                                "Enter your details and press register to create an account",
+                                Toast.LENGTH_SHORT).show();
                     } else {
                         if (txtEmail.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
-                            Toast.makeText(getApplicationContext(), "Email and Password cannot be empty", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(),
+                                    "Email and Password cannot be empty",
+                                    Toast.LENGTH_SHORT).show();
                         } else {
                             mProgress.show();
                             registerUser(txtEmail.getText().toString(), txtPassword.getText().toString());
@@ -255,27 +291,40 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
             }
         });
 
+
+        // Google sign in button logic
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!Utilities.isNetworkAvailable(getApplicationContext())){
-                    Toast.makeText(getApplicationContext(), "Please check your network connection and try again", Toast.LENGTH_SHORT).show();
-                }else{
+                // Checking for network connection
+                if (!Utilities.isNetworkAvailable(getApplicationContext())) {
+                    Toast.makeText(getApplicationContext(),
+                            "Please check your network connection and try again",
+                            Toast.LENGTH_SHORT).show();
+                } else {
                     Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                     startActivityForResult(signInIntent, RC_SIGN_IN);
                 }
             }
         });
 
+
+        // Forgot password logic
         btnForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!Utilities.isNetworkAvailable(getApplicationContext())){
-                    Toast.makeText(getApplicationContext(), "Please check your network connection and try again", Toast.LENGTH_SHORT).show();
-                }else{
+                // Checking for network connection
+                if (!Utilities.isNetworkAvailable(getApplicationContext())) {
+                    Toast.makeText(getApplicationContext(),
+                            "Please check your network connection and try again",
+                            Toast.LENGTH_SHORT).show();
+                } else {
                     String emailAddress = txtEmail.getText().toString();
+
+                    //Empty check
                     if (emailAddress.equals("")) {
-                        Toast.makeText(getApplicationContext(), "Email address can not be empty", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Email address can not be empty",
+                                Toast.LENGTH_SHORT).show();
                     } else {
                         mProgress.show();
                         mAuth.sendPasswordResetEmail(emailAddress)
@@ -287,10 +336,13 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
                                             Log.d(TAG, "Email sent.");
                                             txtEmail.setText("");
                                             txtPassword.setText("");
-//                                        btnLogin.setVisibility(View.VISIBLE);
-                                            Toast.makeText(getApplicationContext(), R.string.forgot_password_toast_text, Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getApplicationContext(),
+                                                    R.string.forgot_password_toast_text,
+                                                    Toast.LENGTH_LONG).show();
                                         } else {
-                                            Toast.makeText(getApplicationContext(), "Please check if your email is valid. If the problem persists, Please try again later.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getApplicationContext(),
+                                                    "Please check if your email is valid. If the problem persists, Please try again later.",
+                                                    Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
@@ -301,31 +353,33 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
             }
         });
 
-        
     }
 
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        if(!Utilities.isNetworkAvailable(getApplicationContext())){
-            Toast.makeText(getApplicationContext(), "Please check your network connection and try again", Toast.LENGTH_SHORT).show();
-        }else{
+        // Checking for network connection
+        if (!Utilities.isNetworkAvailable(getApplicationContext())) {
+            Toast.makeText(getApplicationContext(),
+                    "Please check your network connection and try again",
+                    Toast.LENGTH_SHORT).show();
+        } else {
             FirebaseUser currentUser = mAuth.getCurrentUser();
             if (currentUser != null) {
                 Log.d(TAG, currentUser.getUid());
                 mProgress.show();
+
+                // To get user details from firebase if user already has data
                 getUserDetailsFromFirebase(currentUser.getUid(), "", "", "");
             }
         }
-//        updateUI(currentUser);
-
-        // Check for existing Google Sign In account, if the user is already signed in
-        // the GoogleSignInAccount will be non-null.
-//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-//        updateUI(account);
     }
 
+
+    /**
+     * Method to register user with email and password
+     */
     private void registerUser(final String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -338,25 +392,33 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
                             FirebaseUser user = mAuth.getCurrentUser();
                             Log.w(TAG, user.toString());
                             Log.w(TAG, user.getUid());
-//                            updateUI(user);
                             isRegisterFirstTime = true;
-                            singleTonInstance.createUser("", user.getUid(), email, "", new ArrayList<String>(), new ArrayList<String>());
+
+                            // Creating an user object which contains all user data
+                            singleTonInstance.createUser("",
+                                    user.getUid(),
+                                    email, "",
+                                    new ArrayList<String>(),
+                                    new ArrayList<String>());
+
                             Log.d(TAG, "user details after registering" + singleTonInstance.getAppUser().toString());
                             Toast.makeText(getApplicationContext(), "Registration Success",
                                     Toast.LENGTH_SHORT).show();
-//                            btnLogin.setVisibility(View.VISIBLE);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(getApplicationContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-//                            updateUI(null);
                         }
 
                     }
                 });
     }
 
+
+    /**
+     * Method to sign in user with email and password
+     */
     private void signIn(final String email, final String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -369,8 +431,8 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
                             FirebaseUser user = mAuth.getCurrentUser();
                             Log.w(TAG, user.getUid());
                             Log.w(TAG, user.toString());
-                            singleTonInstance.setTempUser(email);
-                            singleTonInstance.setTempPassword(password);
+                            singleTonInstance.setUserEmailForFingerPrintAuthentication(email);
+                            singleTonInstance.setUserPasswordForFingerPrintAuthentication(password);
                             getUserDetailsFromFirebase(user.getUid(), user.getEmail(), "", "");
                         } else {
                             mProgress.dismiss();
@@ -385,6 +447,9 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
                 });
     }
 
+    /**
+     * Callback for google and facebook login after intent
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -408,24 +473,15 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+
+    /**
+     * Success handler for google sign in
+     */
     private void handleSignInResult(final GoogleSignInAccount acct) {
-
-        // Signed in successfully, show authenticated UI.
-//            updateUI(account);
-//            Log.w(TAG, account.toString());
-//            if (account != null) {
-//                FirebaseUser user = mAuth.getCurrentUser();
-
-//                String personName = account.getDisplayName();
-//                String personGivenName = account.getGivenName();
-//                String personFamilyName = account.getFamilyName();
-//                String personEmail = account.getEmail();
-//                String personId = account.getId();
-//                Uri personPhoto = account.getPhotoUrl();
-//                Log.w(TAG, personName + personEmail + personGivenName + personFamilyName + personId + personPhoto.toString());
 
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
+        // Passing the google sign in result to firebase backend user authentication
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -437,31 +493,34 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
                             FirebaseUser user = mAuth.getCurrentUser();
                             Log.d(TAG, user.getUid() + user.getEmail());
                             String personPhoto;
+
+                            // If photo returned by google is null, making it to empty string
                             if (user.getPhotoUrl() == null) {
                                 personPhoto = "";
                             } else {
                                 personPhoto = user.getPhotoUrl().toString();
                             }
                             mProgress.show();
+
+                            // To track whether user is using email or social media for login
                             singleTonInstance.setUsingEmailAuthentication(false);
+
+                            // To get user details from firebase if user already has data
                             getUserDetailsFromFirebase(user.getUid(), user.getEmail(), user.getDisplayName(), personPhoto);
 
-//                            updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-//                            Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
-//                            updateUI(null);
                         }
-
-                        // ...
                     }
                 });
 
 
     }
 
-
+    /**
+     * Success handler for facebook sign in
+     */
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
@@ -476,34 +535,41 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
                             FirebaseUser user = mAuth.getCurrentUser();
                             Log.w(TAG, user.toString());
                             Log.w(TAG, user.getDisplayName() + user.getEmail() + user.getUid() + user.getPhotoUrl());
-//                            updateUI(user);
+
+                            // If photo returned by google is null, making it to empty string
                             String personPhoto;
-                            if(user.getPhotoUrl() == null){
+                            if (user.getPhotoUrl() == null) {
                                 personPhoto = "";
-                            }else{
+                            } else {
                                 personPhoto = user.getPhotoUrl().toString();
                             }
+
+                            // To track whether user is using email or social media for login
                             singleTonInstance.setUsingEmailAuthentication(false);
                             mProgress.show();
+
+                            // To get user details from firebase if user already has data
                             getUserDetailsFromFirebase(user.getUid(), user.getEmail(), user.getDisplayName(), personPhoto);
-//                            Log.d(TAG, "user after facebook login" + singleTonInstance.getAppUser().toString());
+                            Log.d(TAG, "user after facebook login" + singleTonInstance.getAppUser().toString());
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(getApplicationContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-//                            updateUI(null);
                         }
-
-                        // ...
                     }
                 });
     }
 
+
+    /**
+     * This method is used to get details of user from firebase using userID,
+     * If firebase returns the data, User object will be created based on the data retrieved,
+     * else, new User Object will be created based on the passed parameters(name, email, imageUrl)
+     */
     private void getUserDetailsFromFirebase(final String userID, final String userEmail, final String name, final String imageUrl) {
         final User[] user = new User[1];
         String currentUser = "users/".concat(userID);
-//        String currentUser = "users/".concat("sample");
         Log.d(TAG, "reference" + currentUser);
         myRef1 = FirebaseDatabase.getInstance().getReference(currentUser);
         // Read from the database
@@ -522,13 +588,21 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
                     if (user[0].getBookmarks() == null) {
                         user[0].setBookmarks(new ArrayList<String>());
                     }
-                    if (user[0].getImageUrl() == null ){
+                    if (user[0].getImageUrl() == null) {
                         user[0].setImageUrl("");
                     }
                     singleTonInstance.createUser(user[0]);
-                    Log.d(TAG, "User Value After creating singleton instance is: " + singleTonInstance.getAppUser().toString());
+                    Log.d(TAG, "User Value After creating singleton instance is: " +
+                            singleTonInstance.getAppUser().toString());
                 } else {
-                    singleTonInstance.createUser(name, userID, userEmail, imageUrl, new ArrayList<String>(), new ArrayList<String>());
+                    singleTonInstance.createUser(
+                            name,
+                            userID,
+                            userEmail,
+                            imageUrl,
+                            new ArrayList<String>(),
+                            new ArrayList<String>()
+                    );
                     singleTonInstance.addUserToFireBaseDB();
                 }
                 mProgress.dismiss();
@@ -539,27 +613,35 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
             public void onCancelled(DatabaseError error) {
                 mProgress.dismiss();
                 // Failed to read value
-                Toast.makeText(getApplicationContext(), "Error with Firebase database. please try later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),
+                        "Error with Firebase database. please try later",
+                        Toast.LENGTH_SHORT).show();
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
 
         });
     }
 
+    /**
+     * Method for Navigating the user after successful login
+     */
     private void navigateToApplication() {
         Intent intentFromLogin = new Intent(getApplicationContext(), NavigationActivityCS.class);
-        intentFromLogin.putExtra(MESSAGE_FROM_LOGIN, "Message Login");
         txtEmail.setText("");
         txtPassword.setText("");
         startActivity(intentFromLogin);
         finish();
     }
 
+    /**
+     * Method for Showing or hiding the fingerprint button in login screen based on whether user is
+     * using fingerprint for login or not
+     */
     private void showHideFingerPrintButton() {
         MySharedPreferences mySharedPreferences = new MySharedPreferences(getApplicationContext());
-        if(mySharedPreferences.getIsUsingFingerPrint()){
+        if (mySharedPreferences.getIsUsingFingerPrint()) {
             btnFingerPrint.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             btnFingerPrint.setVisibility(View.INVISIBLE);
         }
     }
@@ -572,7 +654,6 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
      * been disabled or reset after the key was generated, or if a fingerprint got enrolled after
      * the key was generated.
      */
-
     private boolean initializeCipher() {
 
         try {
@@ -606,7 +687,6 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
      * authenticated with fingerprint.*
      * KEY_NAME the name of the key to be created
      */
-
     private void createKey() {
 
         try {
@@ -648,15 +728,20 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
 
     }
 
+    /**
+     * This Method is used for handling result from fingerprint Authentication
+     * This is an implementation method of FingerPrintCallbacks Interface which will be invoked on
+     * success or failure of fingerprint sensor after user places the finger
+     */
+
     @Override
     public void onFingerPrintResult(String result) {
         Log.d(TAG, result);
-//        Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-        if(result.equals("Success")){
+        if (result.equals("Success")) {
             mProgress.show();
             MySharedPreferences mySharedPreferences = new MySharedPreferences(getApplicationContext());
-            signIn(mySharedPreferences.getEmailUsingSharedPreference(),mySharedPreferences.getPasswordUsingSharedPreference());
-        }else{
+            signIn(mySharedPreferences.getEmailUsingSharedPreference(), mySharedPreferences.getPasswordUsingSharedPreference());
+        } else {
             Toast.makeText(getApplicationContext(), "Fingerprint Authentication failed!", Toast.LENGTH_SHORT).show();
         }
     }

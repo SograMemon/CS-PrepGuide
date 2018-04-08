@@ -31,33 +31,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * This Activity is used for displaying all the content of the application using fragments
+ */
 public class NavigationActivityCS extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         FilterFragment.filterFragmentInterface,
-        GuideFragment.OnFragmentInteractionListener,
         ProfileFragment.profileFragmentInterface,
-        BookmarksFragment.bookmarksFragmentInterface,
-        HelpFragment.helpFragmentInterface {
+        BookmarksFragment.bookmarksFragmentInterface {
 
+    // Tag for logging
+    private static final String TAG = "NavigationActivity";
+
+    // Fragment Manager used to manage fragments that are to be shown to the user
     FragmentManager fmg = null;
+
+    //Firebase instances for authentication
     private FirebaseAuth mAuth;
+
+    // Declaring UI components
     TextView txtNavUserId, txtNavUserEmail;
     ImageView userImageView;
-    private static final String TAG = "NavigationActivity";
+
+    // Single Instance for managing user data (login, profile, bookmarks)
     CSPrepGuideSingleTon singleTonInstance;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        singleTonInstance = CSPrepGuideSingleTon.getInstance(getApplicationContext());
-        Log.d(TAG, "user details after Navigation"+singleTonInstance.getAppUser().toString());
 
+        singleTonInstance = CSPrepGuideSingleTon.getInstance(getApplicationContext());
+        Log.d(TAG, "user details after Navigation" + singleTonInstance.getAppUser().toString());
 
         setContentView(R.layout.activity_navigation_cs);
+
+        //Support action toolbar in NavigationDrawer
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Drawer in Navigation Activity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -66,25 +79,24 @@ public class NavigationActivityCS extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Firebase instances for authentication and Database
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
 
-//        https://stackoverflow.com/questions/34973456/how-to-change-text-of-a-textview-in-navigation-drawer-header
+        //Reference: https://stackoverflow.com/questions/34973456/how-to-change-text-of-a-textview-in-navigation-drawer-header
+
         View navigationHeaderView = navigationView.getHeaderView(0);
         txtNavUserEmail = navigationHeaderView.findViewById(R.id.txtNavUserEmail);
         txtNavUserId = navigationHeaderView.findViewById(R.id.txtNavUserId);
         userImageView = navigationHeaderView.findViewById(R.id.imgNavUserPic);
-//        txtNavUserId.setText(user.getUid());
 
-        if(singleTonInstance.getAppUser() != null){
+        // Updating the details in navigation pane when user modifies the data in profile section
+        if (singleTonInstance.getAppUser() != null) {
             onUserDetailsChanged();
         }
 
-
-
         fmg = getSupportFragmentManager();
-
-
 
 
         // Check whether the activity is using the layout version with
@@ -98,27 +110,20 @@ public class NavigationActivityCS extends AppCompatActivity
                 return;
             }
 
-            // Create an instance of ExampleFragment
-//            filterFragment firstFragment = new filterFragment();
-
-            // In case this activity was started with special instructions from an Intent,
-            // pass the Intent's extras to the fragment as arguments
-//            firstFragment.setArguments(getIntent().getExtras());
-
-//            FragmentManager manager = getSupportFragmentManager();
-//            // Add the fragment to the 'fragment_container' FrameLayout
-//            manager.beginTransaction()
-//                    .add(R.id.fragment_container, firstFragment)
-//                    .commit();
-
-            if(singleTonInstance.getAppUser().getName().isEmpty()){
+            // If name is not present for user, Navigate the user ot profile screen,
+            // Else, Navigate to filter screen
+            if (singleTonInstance.getAppUser().getName().isEmpty()) {
                 displaySelectedScreen(R.id.nav_profile);
-            }else{
+            } else {
                 displaySelectedScreen(R.id.nav_filter_jobs);
             }
         }
     }
 
+    /**
+     * Default methods of Navigation Activity
+     * Currently not needed in the app
+     */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -129,13 +134,23 @@ public class NavigationActivityCS extends AppCompatActivity
         }
     }
 
+    /**
+     * Default methods of Navigation Activity
+     * Currently not needed in the app
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.navigation_activity_c, menu);
+
+        // Default menu provided by navigation activity is hidden as it is not needed in our app
+        // getMenuInflater().inflate(R.menu.navigation_activity_c, menu);
         return true;
     }
 
+    /**
+     * Default methods of Navigation Activity
+     * Currently not needed in the app
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -151,9 +166,12 @@ public class NavigationActivityCS extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void displaySelectedScreen(int id){
+    /**
+     * Method which handles logic for displaying the fragment in fragment container
+     */
+    private void displaySelectedScreen(int id) {
         Fragment fragment = null;
-        switch(id){
+        switch (id) {
             case R.id.nav_profile:
                 fragment = new ProfileFragment();
                 break;
@@ -183,7 +201,7 @@ public class NavigationActivityCS extends AppCompatActivity
 
         }
 
-        if(fragment != null){
+        if (fragment != null) {
 
             // Add the fragment to the 'fragment_container' FrameLayout
             fmg.beginTransaction()
@@ -196,10 +214,15 @@ public class NavigationActivityCS extends AppCompatActivity
     }
 
 
-    public FragmentManager getFmg(){
+    public FragmentManager getFmg() {
         return fmg;
     }
 
+
+    /**
+     * Default methods of Navigation Activity
+     * Method which handles user selection of a fragment from the navigation drawer
+     */
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -208,27 +231,36 @@ public class NavigationActivityCS extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
 
-    }
-
+    /**
+     * Interface implementation methods from ProfileFragment
+     * These methods allow interaction between fragments
+     * This method is used to update user details in navigation pane whenever
+     * details in profile page are changed (eg., photo and name)
+     */
     @Override
     public void onUserDetailsChanged() {
         txtNavUserId.setText(singleTonInstance.getAppUser().getEmail());
         txtNavUserId.setText(singleTonInstance.getAppUser().getName());
-        //        txtNavUserEmail.setText(user.getEmail());
-//            Log.d(TAG, String.valueOf(user.getDisplayName()));
         txtNavUserEmail.setText(singleTonInstance.getAppUser().getEmail());
         Picasso.with(getApplicationContext()).load(Uri.parse(singleTonInstance.getAppUser().getImageUrl())).fit().centerCrop().into(userImageView);
 
     }
 
+    /**
+     * Interface implementation methods from FilterFragment
+     * These methods allow interaction between fragments
+     */
     @Override
     public void onFilterClicked(String JobId, String JobTitle) {
         Log.d(TAG, JobId + JobTitle);
         displaySelectedScreen(R.id.nav_manage);
     }
+
+    /**
+     * Interface implementation methods from BookmarksFragment
+     * These methods allow interaction between fragments
+     */
 
     @Override
     public void bookmarksItemClicked(int position, String id) {

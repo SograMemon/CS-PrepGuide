@@ -52,19 +52,8 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  * Activities that contain this fragment must implement the
  * {@link ProfileFragment.profileFragmentInterface} interface
  * to handle interaction events.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     //UI Components
     public static final String SKILLSEDIT = "SKILLSEDIT";
     EditText skillsEdit;
@@ -72,23 +61,30 @@ public class ProfileFragment extends Fragment {
     Button addSkill;
     ListView lvSkillList;
     private Button btnUpload;
-    //Request Codes
-    private static final int CAMERA_REQUEST_CODE = 1, GALLERY_REQUEST_CODE = 2, READ_EXTERNAL_REQUEST_CODE = 4;
     private StorageReference mStorage;
     public ProgressDialog mProgress;
     private ImageView ProfilePic;
+    private TextView userEmail;
+    private EditText userName;
+    private Button btnSave;
+    Switch fingerPrintSwitch;
+
+    //Request Codes
+    private static final int CAMERA_REQUEST_CODE = 1, GALLERY_REQUEST_CODE = 2, READ_EXTERNAL_REQUEST_CODE = 4;
 
     //Storage variables for Camera and Gallery
     String mCurrentPhotoPath;
     Uri photoURI, uri;
+
     //to maintain user profile using a singleton Class
     CSPrepGuideSingleTon singleTon = CSPrepGuideSingleTon.getInstance(getApplicationContext());
+
+    // Tag for logging
     private static final String TAG = "Profile Fragment";
-    private TextView userEmail;
-    private EditText userName;
-    private Button btnSave;
+
+    // variable to store whether edit button is clicked or not
     private boolean clicked;
-    Switch fingerPrintSwitch;
+
     CSPrepGuideSingleTon csPrepGuideSingleTonInstance;
 
     //to store skills in arraylist variable
@@ -97,39 +93,16 @@ public class ProfileFragment extends Fragment {
     ArrayAdapter<String> adapter;
     Intent intent;
 
+    // Interface object used to invoke methods
     private profileFragmentInterface mListener;
 
     public ProfileFragment() {
         // Required empty public constructor
     }
 
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment profileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -139,16 +112,19 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         clicked = false;
 
+        // Reference for Firebase Database
         mStorage = FirebaseStorage.getInstance().getReference();
-        mProgress = new ProgressDialog(getApplicationContext());
 
+        mProgress = new ProgressDialog(getApplicationContext());
         ProfilePic = view.findViewById(R.id.ProfilePic);
         btnUpload = view.findViewById(R.id.btnUpload);
-
         fingerPrintSwitch = view.findViewById(R.id.fingerPrintSwitch);
         fingerPrintSwitch.setChecked(false);
 
+        // SingleTonInstance for accessing and modifying user details
         csPrepGuideSingleTonInstance = new CSPrepGuideSingleTon(getContext());
+
+        // Setting whether the switch for fingerprint is on based on which login provider user is using
         if (csPrepGuideSingleTonInstance.isUsingEmailAuthentication()) {
             setFingerPrintSwitchState();
         }
@@ -157,28 +133,32 @@ public class ProfileFragment extends Fragment {
         fingerPrintSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                /**Fingerprint Login is available only for the users that are registered in the app
+                /**
+                 * Fingerprint Login is available only for the users that are registered in the app
                  * (Excluding Social Media Login)
                  * If the user switches ON, only then he is allowed to access login using his fingerprint
                  */
                 if (singleTon.isUsingEmailAuthentication()) {
                     MySharedPreferences cs_prepguide_preferences = new MySharedPreferences(getContext());
                     if (isChecked) {
-                        cs_prepguide_preferences.setEmailUsingSharedPreference(singleTon.getTempUser());
-                        cs_prepguide_preferences.setPasswordUsingSharedPreference(singleTon.getTempPassword());
+                        cs_prepguide_preferences.setEmailUsingSharedPreference(singleTon.getUserEmailForFingerPrintAuthentication());
+                        cs_prepguide_preferences.setPasswordUsingSharedPreference(singleTon.getUserPasswordForFingerPrintAuthentication());
                         cs_prepguide_preferences.setIsUsingFingerPrint(true);
                     } else {
                         //Fingerprint login is unavailable for users signed up with Facebook or Google
                         cs_prepguide_preferences.setIsUsingFingerPrint(false);
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), "Fingerprint Authentication is available for registered users only", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),
+                            "Fingerprint Authentication is available for registered users only",
+                            Toast.LENGTH_SHORT).show();
                     fingerPrintSwitch.setChecked(false);
                 }
             }
         });
 
 
+        // Method handles logic for uploadimg image using camera or gallery
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -198,7 +178,9 @@ public class ProfileFragment extends Fragment {
                                         runtimePermission();
                                         dispatchTakePhotoIntent();
                                     } catch (Exception ex) {
-                                        Toast.makeText(getApplicationContext(), "Camera permissions turned off", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(),
+                                                "Camera permissions turned off",
+                                                Toast.LENGTH_SHORT).show();
                                     }
                                     break;
                                 case -2:
@@ -213,6 +195,7 @@ public class ProfileFragment extends Fragment {
                             }
                         }
                     };
+
                     //Dialog to pick options between Camera or Gallery
                     AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
                     alertDialog.setTitle("Choose an Option!");
@@ -220,23 +203,23 @@ public class ProfileFragment extends Fragment {
                     alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Gallery", dialogClickListener);
                     alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Cancel", dialogClickListener);
                     alertDialog.show();
-                    //Intent intent1 =new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    //startActivityForResult(intent1,CAMERA_REQUEST_CODE);
                 } catch (Exception ex) {
-                    Toast.makeText(getApplicationContext(), "Make sure Camera and Storage Permission is Granted in Settings for this App", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),
+                            "Make sure Camera and Storage Permission is Granted in Settings for this App",
+                            Toast.LENGTH_LONG).show();
                 }
             }
         });
 
+        // Setting the image initially if present
         if (!singleTon.getAppUser().getImageUrl().isEmpty()) {
-//           ProfilePic.setImageURI(Uri.parse(singleTon.getAppUser().getImageUrl()));
             // PICASSO REFERENCE: http://square.github.io/picasso/
-            Picasso.with(getApplicationContext()).load(Uri.parse(singleTon.getAppUser().getImageUrl())).fit().centerCrop().into(ProfilePic);
+            Picasso.with(getApplicationContext())
+                    .load(Uri.parse(singleTon.getAppUser().getImageUrl())).fit().centerCrop().into(ProfilePic);
         }
 
-
+        // UI components
         skillsEdit = view.findViewById(R.id.skillsEdit);
-        //btnProfileSend = parent.findViewById(R.id.btnProfileSend);
         lvSkillList = view.findViewById(R.id.skillsList1);
         userEmail = view.findViewById(R.id.userEmail);
         userName = view.findViewById(R.id.userName);
@@ -250,6 +233,8 @@ public class ProfileFragment extends Fragment {
 
 
         addSkill = view.findViewById(R.id.addSkill);
+
+        // Setting the adapter to a custom
         adapter = new SkillsAdapter(getActivity(), android.R.layout.simple_list_item_1, skillsList);
 
 
@@ -309,13 +294,6 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -344,14 +322,11 @@ public class ProfileFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface profileFragmentInterface {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-
         void onUserDetailsChanged();
     }
-//CAMERA UPLOAD PHOTO REFERENCE:
-// https://stackoverflow.com/questions/40710599/image-capture-with-camera-upload-to-firebase-uri-in-onactivityresult-is-nul
 
+    //CAMERA UPLOAD PHOTO REFERENCE:
+    // https://stackoverflow.com/questions/40710599/image-capture-with-camera-upload-to-firebase-uri-in-onactivityresult-is-nul
     private File createImageFile() throws IOException {
         // Create an image file name
         String imageFileName = "JPG_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_";
@@ -376,11 +351,15 @@ public class ProfileFragment extends Fragment {
             } catch (IOException ex) {
 
                 // Error occurred while creating the File...
-                Toast.makeText(getApplicationContext(), "Error occurred while creating the File...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),
+                        "Error occurred while creating the File...",
+                        Toast.LENGTH_SHORT).show();
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                photoURI = FileProvider.getUriForFile(getApplicationContext(), "com.example.android.fileprovider", photoFile);
+                photoURI = FileProvider.getUriForFile(getApplicationContext(),
+                        "com.example.android.fileprovider",
+                        photoFile);
                 takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePhotoIntent, CAMERA_REQUEST_CODE);
             }
@@ -471,11 +450,7 @@ public class ProfileFragment extends Fragment {
                     Toast.makeText(getApplicationContext(), "Failure while uploading!", Toast.LENGTH_SHORT).show();
                 }
             });
-
-
         }
-
-
     }
 
     //REFERENCE for Runtime Permissions: https://developer.android.com/training/permissions/requesting.html
@@ -499,7 +474,8 @@ public class ProfileFragment extends Fragment {
                             Toast.LENGTH_LONG).show();
 
                 } else {
-                    Toast.makeText(getApplicationContext(), "Permission Canceled, Now your application cannot access CAMERA.",
+                    Toast.makeText(getApplicationContext(),
+                            "Permission Canceled, Now your application cannot access CAMERA.",
                             Toast.LENGTH_LONG).show();
                 }
                 break;
@@ -516,6 +492,9 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * This method is used to display the fingerprint switch state initially based on whether it is enabled or not
+     */
     private void setFingerPrintSwitchState() {
         MySharedPreferences MySharedPreferences = new MySharedPreferences(getApplicationContext());
         if (MySharedPreferences.getIsUsingFingerPrint()) {
