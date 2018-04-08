@@ -136,28 +136,61 @@ List all the main features of your application with a brief description of each 
 ## Final Project Status
 We have started with the development of the application and currently working on various functionalities within the app. For now, we have implemented login, filtering jobs, and job guide view and navigation between various screens. The breakdown of the functionalities and the breakdown is given below.
 
+
+
 #### Minimum Functionality
  - Sign up/Sign in  (Completed)
- - Profile Page     (In progress)
- - Guides Page      (In progress)
- - Filters Page     (In progress)
+ - Profile Page     (Completed)
+ - Guides Page      (Completed)
+ - Filters Page     (Completed)
 
 #### Expected Functionality
- - Job Suggestion (Not implemented)
- - Save/bookmark Guide (Not implemented)
+ - Job Suggestion (Completed)
+ - Save/bookmark Guide (Completed)
  - Login: social media integration (Completed)
- - Edit/delete comments (Not implemented)
- - Upload Profile photo (Not implemented)
- - Reset password (Not implemented)
+ - Edit/delete comments (Completed)
+ - Upload Profile photo (Completed)
+ - Reset password (Completed)
 
 #### Bonus Functionality
- - Login using fingerprint sensor (Not implemented)
- - Listing jobs based on nearby locations (Not implemented)
+ - Login using fingerprint sensor (Completed)
+ - Listing jobs based on nearby locations (Completed)
  - Email the people who bookmarked for a job (Not implemented)
 
-## Sources
+## Firebase Data Model
+##### Model
+![Image of Model](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FDbStruct.PNG?alt=media&token=822ba35e-fd2d-48ac-b967-5353ea6f25fc)
 
-##### [1] stackoverflow.com. "Image capture with camera & upload to Firebase (Uri in onActivityResult() is null)". [Online].[Available](https://stackoverflow.com/questions/40710599/image-capture-withhttps://jbt.github.io/markdown-editor/emoji/smirk.png-camera-upload-to-firebase-uri-in-onactivityresult-is-nul).[Accessed on: 17th March 2018].
+##### Post Model
+![Image of Post Model](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FpostModel.PNG?alt=media&token=4bd3e80f-bf7c-4a2d-897b-d97a4a14e152)
+
+##### Jobs Model
+![Image of Jobs Model](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FJob%20Model.PNG?alt=media&token=07b9ea27-b085-4b5c-928b-a5c1342fca21)
+
+##### Users Model
+![Image of Users Model](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FUserModelCapture.PNG?alt=media&token=6c2276f6-a96d-40fc-a7ad-f91db86908b3)
+
+## References
+
+##### [1] stackoverflow.com. "Image capture with camera & upload to Firebase (Uri in onActivityResult() is null)". [Online]. [Available](https://stackoverflow.com/questions/40710599/image-capture-withhttps://jbt.github.io/markdown-editor/emoji/smirk.png-camera-upload-to-firebase-uri-in-onactivityresult-is-nul).[Accessed on: 17th March 2018].
+
+##### [2] stackoverflow.com. "ImageView in circular through xml". [Online]. [Available](https://stackoverflow.com/questions/22105775/imageview-in-circular-through-xml).[Accessed on: 30th March 2018].
+
+##### [3] stackoverflow.com. "Image capture with camera & upload to Firebase (Uri in onActivityResult() is null)". [Online]. [Available](https://stackoverflow.com/questions/40710599/image-capture-with-camera-upload-to-firebase-uri-in-onactivityresult-is-nul).[Accessed on: 17th March 2018].
+
+##### [4] developer.android.com. "Taking Photos". [Online]. [Available](https://developer.android.com/training/camera/photobasics.html).[Accessed on: 17th March 2018].
+
+
+##### [5] EDMT. Dev. youtube.com. "Android Studio Tutorial - Fingerprint Authentication". [Online]. [Available](https://www.youtube.com/watch?v=zYA5SJgWrLk).[Accessed on: 27th March 2018].
+
+##### [6] developer.android.com. "Fingerprint Authentication". [Online]. [Available](https://developer.android.com/about/versions/marshmallow/android-6.0.html).[Accessed on: 27th March 2018].
+
+##### [7] developer.android.com. "Request App Permissions". [Online]. [Available](https://developer.android.com/training/permissions/requesting.html).[Accessed on: 27th March 2018].
+
+##### [8] stackoverflow.com. "how to create custom spinner like border around the spinner with down triangle on the right side?". [Online]. [Available](https://stackoverflow.com/questions/17231683/how-to-create-custom-spinner-like-border-around-the-spinner-with-down-triangle-o).[Accessed on: 6th April 2018].
+
+##### [9] developer.android.com. "Request App Permissions". [Online]. [Available](http://square.github.io/picasso/).[Accessed on: 17th March 2018].
+
 
 ## References
 
