@@ -252,8 +252,9 @@ public class NavigationActivityCS extends AppCompatActivity
      * These methods allow interaction between fragments
      */
     @Override
-    public void onFilterClicked(String JobId, String JobTitle) {
-        Log.d(TAG, JobId + JobTitle);
+    public void onFilterClicked(String PostId, String JobTitle) {
+        Log.d(TAG, PostId + JobTitle);
+        singleTonInstance.setCurrentPostId(PostId);
         displaySelectedScreen(R.id.nav_manage);
     }
 

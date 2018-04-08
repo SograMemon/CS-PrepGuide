@@ -221,7 +221,9 @@ We have complete with the development of the application with all functionalitie
 
 ##### [16] "Get listview item position on button click", Stackoverflow.com, 2018. [Online]. [Available](https://stackoverflow.com/questions/20541821/get-listview-item-position-on-button-click). [Accessed: 08- Apr- 2018].
 
-##### [17] "'Metro UI Icon Set' by Dakirby309", Iconfinder, 2018. [Online]. [Available](https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128). [Accessed: 08- Apr- 2018].
+##### [17] "Transparent divider in a listview", Stackoverflow.com, 2018. [Online]. [Available](https://stackoverflow.com/questions/8162457/transparent-divider-in-a-listview). [Accessed: 08- Apr- 2018].
+
+##### [18] "'Metro UI Icon Set' by Dakirby309", Iconfinder, 2018. [Online]. [Available](https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128). [Accessed: 08- Apr- 2018].
 
 Logo Images from:
 https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128

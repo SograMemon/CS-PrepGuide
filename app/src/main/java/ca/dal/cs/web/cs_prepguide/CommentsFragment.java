@@ -16,14 +16,23 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-
+/**
+ *
+ *  This class handles all the logic related to the Comments section in the guide view
+ *
+ */
 public class CommentsFragment extends Fragment {
 
+    //UI Components
     ListView lvComments;
     ImageButton btnComment;
     EditText edtTxtForComment;
     CommentsAdapter commentsAdapter;
+
+    //Singleton instance for storing post details
     PostSingleTon postSingleTonInstance;
+
+    //Singleton instance for storing user details
     CSPrepGuideSingleTon userSingleTonInstance;
 
     public CommentsFragment() {
@@ -42,7 +51,6 @@ public class CommentsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment_comments
         View view =  inflater.inflate(R.layout.fragment_comments, container, false);
-
         lvComments = view.findViewById(R.id.lvComments);
 
         //https://stackoverflow.com/questions/8162457/transparent-divider-in-a-listview
@@ -51,6 +59,7 @@ public class CommentsFragment extends Fragment {
         edtTxtForComment = view.findViewById(R.id.edtTxtForComment);
         btnComment = view.findViewById(R.id.btnComment);
 
+        // Listener to handle adding new comments
         btnComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,9 +72,13 @@ public class CommentsFragment extends Fragment {
                     ArrayList<Comment> tempCommentsList = new ArrayList<>();
                     tempCommentsList = postSingleTonInstance.getPost().getComments();
                     tempCommentsList.add(new Comment(text, userSingleTonInstance.getAppUser().getId(), userName, postSingleTonInstance.getPost().getPostId()));
+
+                    //pushing the additions to firebase
                     postSingleTonInstance.getPost().setComments(tempCommentsList);
                     postSingleTonInstance.addCommentsToFireBaseDB();
                     edtTxtForComment.setText("");
+
+                    //refreshing the list view
                     commentsAdapter.notifyDataSetChanged();
                 }
             }

@@ -17,6 +17,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 /**
+ *
+ *  This class handles all the logic related to the Bookmarks section in the application
+ *
+ *
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link BookmarksFragment.bookmarksFragmentInterface} interface
@@ -26,12 +30,18 @@ import java.util.ArrayList;
  */
 public class BookmarksFragment extends Fragment implements GuideNavigationInterface {
 
+    //Interface Object to call methods in the implementing activity
     private bookmarksFragmentInterface mListener;
+
+    //Tag for logging
     private static final String TAG = "bookmarksFragment";
 
+    //UI Components
     private ListView listViewBookmarks;
     private ArrayList<String> bookmarksList;
     private ArrayAdapter bookmarksAdapter;
+
+    //Singleton instance to manage user data
     CSPrepGuideSingleTon singleTonInstance;
 
     public BookmarksFragment() {
@@ -79,6 +89,9 @@ public class BookmarksFragment extends Fragment implements GuideNavigationInterf
         mListener = null;
     }
 
+    /**
+     * This method will navigate the user from bookmarks page to the guide page
+     */
     @Override
     public void navigateToGuideFragment() {
         FragmentManager fmg1 = (getActivity()).getSupportFragmentManager();

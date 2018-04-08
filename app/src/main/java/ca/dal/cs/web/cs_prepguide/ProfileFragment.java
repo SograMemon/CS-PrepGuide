@@ -48,6 +48,10 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 /**
+ *
+ * This class handles all the logic related to the Profile section in the application
+ *
+ *
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link ProfileFragment.profileFragmentInterface} interface

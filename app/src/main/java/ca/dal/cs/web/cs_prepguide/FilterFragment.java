@@ -50,6 +50,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  */
 public class FilterFragment extends Fragment {
 
+    //UI Components
     private Button btnApplyFilter;
     private Spinner spinnerCompany, spinnerType, spinnerStream;
     private ListView listView_jobs;
@@ -64,11 +65,9 @@ public class FilterFragment extends Fragment {
     //Firebase instances for job database
     public DatabaseReference databaseJobs= FirebaseDatabase.getInstance().getReference("jobs");
 
+    private boolean flag = false;
 
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    //Interface object to invoke methods in activity that has the fragment
     private filterFragmentInterface mListener;
 
     /**
@@ -118,7 +117,10 @@ public class FilterFragment extends Fragment {
         spinnerCompany = view.findViewById(R.id.spinner_company);
         spinnerType = view.findViewById(R.id.spinner_type);
 
-        //filter Button
+        String typeInitial;
+        String companyInitial;
+
+        // Showing alert dialog to user to select the option by which jobs should be filtered
         btnApplyFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,11 +173,10 @@ public class FilterFragment extends Fragment {
             }
         });
 
-        /** Make ListView items clickable to redirct to the post page*/
+        // Navigating the user to guide view when clicking on a specific job
         listView_jobs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
                 Job job1 = jobList.get(i);
                 CSPrepGuideSingleTon csPrepGuideSingleTonInstance = new CSPrepGuideSingleTon(getContext());
                 //send the jobId of the job sellected
@@ -248,9 +249,18 @@ public class FilterFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Getting the current location of the user.
+     * If successful filter the jobs based on location
+     */
     private void getLocation() {
-        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+        // Checking for location permissions
+        // If not granted, ask for one
+        if (ActivityCompat.checkSelfPermission(getActivity(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_REQUEST_CODE);
         } else {
             mFusedLocationClient.getLastLocation()
                     .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
@@ -259,19 +269,23 @@ public class FilterFragment extends Fragment {
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
                                 // Logic to handle location object
-                                Log.d("test", String.valueOf(location.getLatitude()) + String.valueOf(location.getLongitude()));
+//                                Log.d("test", String.valueOf(location.getLatitude()) + String.valueOf(location.getLongitude()));
                                 filterJobsBasedOnLocation(location);
                             } else {
-                                Toast.makeText(getApplicationContext(), "Could not get your location, please try later", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(),
+                                        "Could not get your location, please try later",
+                                        Toast.LENGTH_LONG).show();
                             }
                         }
-
                     });
 
         }
 
     }
 
+    /**
+     * When we successfully get the user locaiton, this method will be called which filters the jobs based on location
+     */
     private void filterJobsBasedOnLocation(Location location) {
         ArrayList<Float> temp = new ArrayList();
         jobListBasedOnLocation.clear();
@@ -285,20 +299,22 @@ public class FilterFragment extends Fragment {
                 currentJobLocation.setLongitude(currentJob.getJobLatitude());
                 currentJobLocation.setLatitude(currentJob.getJobLongitude());
 
+                //Calculating the distance and rounding the value
                 float distance = location.distanceTo(currentJobLocation);
                 distance = distance / 1000;
                 distance = Math.round(distance);
                 currentJob.setDistance(distance);
                 currentJob.setFilter(filterType);
                 jobListBasedOnLocation.add(currentJob);
-
             } else {
+                // If location not present, setting its location to the max value
                 currentJob.setDistance(Float.MAX_VALUE);
                 currentJob.setFilter(filterType);
                 jobListBasedOnLocation.add(currentJob);
             }
         }
 
+        // Sorting the jobs based on location
         Collections.sort(jobListBasedOnLocation, new Comparator<Job>() {
             @Override
             public int compare(Job o1, Job o2) {
@@ -308,6 +324,7 @@ public class FilterFragment extends Fragment {
 
         Log.d(TAG, jobListBasedOnLocation.toString());
 
+        // Removing any jobs that may have null value
         for (int i = 0; i < jobListBasedOnLocation.size(); i++) {
             Job tempJob = jobListBasedOnLocation.get(i);
             if (tempJob == null) {
@@ -315,16 +332,15 @@ public class FilterFragment extends Fragment {
             }
         }
 
-
+        // Setting the adapter and passing the filtered data
         JobList adapter = new JobList(getActivity(), jobListBasedOnLocation);
         listView_jobs.setAdapter(adapter);
     }
 
-//    private void formLocationFilteredJobArray(job currentJob, float distance){
-//        for(int i=0; i< jobListBasedOnLocation.length)
-//    }
 
-
+    /**
+     * Method to handle the status of requested permissions
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == 8888) {
