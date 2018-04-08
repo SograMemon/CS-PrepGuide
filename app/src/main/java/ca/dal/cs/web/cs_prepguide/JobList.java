@@ -25,15 +25,15 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  * Created by SM on 3/5/18.
  */
 
-public class jobList extends ArrayAdapter<job> {
+public class JobList extends ArrayAdapter<Job> {
 
     private Activity context;
-    private List<job> jobList;
+    private List<Job> jobList;
 
 
 
 
-    public jobList(Activity context, List<job> jobList){
+    public JobList(Activity context, List<Job> jobList){
         super(context, layout.list_layout, jobList);
 
         this.context= context;
@@ -47,7 +47,7 @@ public class jobList extends ArrayAdapter<job> {
         LayoutInflater inflater= context.getLayoutInflater();
         View listViewItem = inflater.inflate(list_layout,null,true);
 
-        job job1= jobList.get(position);
+        Job job1= jobList.get(position);
 
         if(job1.jobId != null){
             TextView textViewTitle = (TextView) listViewItem.findViewById(id.txt_title);

@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
  * Created by SM on 2/28/18.
  */
 
-public class job {
+public class Job {
 
     String jobId;
     String jobTitle;
@@ -21,10 +21,10 @@ public class job {
     String jobPostId;
     Float distance;
 
-    public job(){
+    public Job(){
 
     }
-    public job(String jobId,String jobTitle, String jobStream, String jobCompany, String jobType, String jobSkills){
+    public Job(String jobId,String jobTitle, String jobStream, String jobCompany, String jobType, String jobSkills){
         this.jobCompany= jobCompany;
         this.jobTitle= jobTitle;
         this.jobStream= jobStream;

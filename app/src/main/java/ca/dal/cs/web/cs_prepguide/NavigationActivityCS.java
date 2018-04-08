@@ -33,7 +33,7 @@ import java.util.List;
 
 public class NavigationActivityCS extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        filterFragment.filterFragmentInterface,
+        FilterFragment.filterFragmentInterface,
         guideFragment.OnFragmentInteractionListener,
         profileFragment.profileFragmentInterface,
         bookmarksFragment.bookmarksFragmentInterface,
@@ -158,7 +158,7 @@ public class NavigationActivityCS extends AppCompatActivity
                 fragment = new profileFragment();
                 break;
             case R.id.nav_filter_jobs:
-                fragment = new filterFragment();
+                fragment = new FilterFragment();
                 break;
             case R.id.nav_manage:
                 fragment = new guideFragment(this, fmg);
