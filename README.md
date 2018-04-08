@@ -172,6 +172,9 @@ We have complete with the development of the application with all functionalitie
 ##### Users Model
 ![Image of Users Model](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FUserModelCapture.PNG?alt=media&token=6c2276f6-a96d-40fc-a7ad-f91db86908b3)
 
+## Credits
+- [Moksh Mohindra](https://www.linkedin.com/in/moksh-mohindra-331b70144) - Our classmate for designing us the application icon
+
 ## References
 
 ##### [1] stackoverflow.com. "Image capture with camera & upload to Firebase (Uri in onActivityResult() is null)". [Online]. [Available](https://stackoverflow.com/questions/40710599/image-capture-withhttps://jbt.github.io/markdown-editor/emoji/smirk.png-camera-upload-to-firebase-uri-in-onactivityresult-is-nul).[Accessed on: 17th March 2018].
@@ -193,11 +196,21 @@ We have complete with the development of the application with all functionalitie
 
 ##### [9] developer.android.com. "Request App Permissions". [Online]. [Available](http://square.github.io/picasso/).[Accessed on: 17th March 2018].
 
-##### [10] Abhiandroid.com. (2018). TabLayout Tutorial With Example In Android Studio. [online] Available at: http://abhiandroid.com/materialdesign/tablayout-example-android-studio.html [Accessed 8 Apr. 2018].
+##### [10] Abhiandroid.com. (2018). TabLayout Tutorial With Example In Android Studio. [online]. [Available](http://abhiandroid.com/materialdesign/tablayout-example-android-studio.html) [Accessed 8 Apr. 2018].
 
-##### [11] textview, s. (2018). setMovementMethod doesn't work in android textview. [online] Stackoverflow.com. Available at: https://stackoverflow.com/questions/37429656/setmovementmethod-doesnt-work-in-android-textview [Accessed 8 Apr. 2018]
+##### [11] textview, s. (2018). setMovementMethod doesn't work in android textview. [online] Stackoverflow.com. [Available](https://stackoverflow.com/questions/37429656/setmovementmethod-doesnt-work-in-android-textview) [Accessed 8 Apr. 2018]
 
- ##### [12] YouTube. (2018). Android Studio Tutorial - Firebase Retrieve Realtime Data - Part 7. [online] Available at: https://www.youtube.com/watch?v=KEp5RAZNMng [Accessed 8 Apr. 2018].
+##### [12] YouTube. (2018). Android Studio Tutorial - Firebase Retrieve Realtime Data - Part 7. [online]. [Available](https://www.youtube.com/watch?v=KEp5RAZNMng) [Accessed 8 Apr. 2018].
+
+##### [13] "Implementing back button in android fragment activity", Stackoverflow.com, 2018. [Online]. [Available](https://stackoverflow.com/questions/25153364/implementing-back-button-in-android-fragment-activity). [Accessed: 08- Apr- 2018].
+
+##### [14] "How to change text of a TextView in navigation drawer header?", Stackoverflow.com, 2018. [Online]. [Available](https://stackoverflow.com/questions/34973456/how-to-change-text-of-a-textview-in-navigation-drawer-header). [Accessed: 08- Apr- 2018].
+
+##### [15] "Remove Android App Title Bar", Stackoverflow.com, 2018. [Online]. [Available](https://stackoverflow.com/questions/14475109/remove-android-app-title-bar). [Accessed: 08- Apr- 2018].
+
+##### [16] "Get listview item position on button click", Stackoverflow.com, 2018. [Online]. [Available](https://stackoverflow.com/questions/20541821/get-listview-item-position-on-button-click). [Accessed: 08- Apr- 2018].
+
+##### [17] "'Metro UI Icon Set' by Dakirby309", Iconfinder, 2018. [Online]. [Available](https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128). [Accessed: 08- Apr- 2018].
 
 Logo Images from:
 https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128
