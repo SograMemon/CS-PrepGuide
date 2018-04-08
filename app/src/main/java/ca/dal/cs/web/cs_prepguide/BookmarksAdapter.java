@@ -1,32 +1,27 @@
 package ca.dal.cs.web.cs_prepguide;
 
-import android.app.Activity;
 //import android.app.Fragment;
 //import android.app.FragmentManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
+        import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.support.v4.app.Fragment;
 
-import java.util.ArrayList;
+        import java.util.ArrayList;
 
 public class BookmarksAdapter extends ArrayAdapter<String>{
     Context cntx;
     private ArrayList<String> bookmarksList;
     CSPrepGuideSingleTon userSingleTon = CSPrepGuideSingleTon.getInstance(cntx);
-    guideNavigationInterface guideNavigationInterfaceObject;
+    GuideNavigationInterface guideNavigationInterfaceObject;
 
-    public BookmarksAdapter(@NonNull Context context, int resource, @NonNull ArrayList<String> bookmarksList, guideNavigationInterface guideNavigationInterfaceObject) {
+    public BookmarksAdapter(@NonNull Context context, int resource, @NonNull ArrayList<String> bookmarksList, GuideNavigationInterface guideNavigationInterfaceObject) {
         super(context, resource,bookmarksList);
         this.cntx = cntx;
         this.bookmarksList = bookmarksList;
