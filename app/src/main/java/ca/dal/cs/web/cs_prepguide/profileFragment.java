@@ -72,78 +72,36 @@ public class profileFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    //UI Components
     public static final String SKILLSEDIT = "SKILLSEDIT";
     EditText skillsEdit;
     Button btnProfileSend;
     Button addSkill;
     ListView lvSkillList;
     private Button btnUpload;
-    private  static  final int CAMERA_REQUEST_CODE=1,GALLERY_REQUEST_CODE=2,READ_EXTERNAL_REQUEST_CODE=4;
+    //Request Codes
+    private static final int CAMERA_REQUEST_CODE = 1, GALLERY_REQUEST_CODE = 2, READ_EXTERNAL_REQUEST_CODE = 4;
     private StorageReference mStorage;
     public ProgressDialog mProgress;
     private ImageView ProfilePic;
+
+    //Storage variables for Camera and Gallery
     String mCurrentPhotoPath;
-    Uri photoURI,uri;
+    Uri photoURI, uri;
+    //to maintain user profile using a singleton Class
     CSPrepGuideSingleTon singleTon = CSPrepGuideSingleTon.getInstance(getApplicationContext());
     private static final String TAG = "Profile Fragment";
     private TextView userEmail;
-    private  EditText userName;
+    private EditText userName;
     private Button btnSave;
     private boolean clicked;
     Switch fingerPrintSwitch;
     CSPrepGuideSingleTon csPrepGuideSingleTonInstance;
 
-    //CAMERA UPLOAD PHOTO REFERRED FROM: https://stackoverflow.com/questions/40710599/image-capture-with-camera-upload-to-firebase-uri-in-onactivityresult-is-nul
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String imageFileName = "JPG_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_";
-        File storageDirectory = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File pic = File.createTempFile(imageFileName,".jpg",storageDirectory);
-
-        // Save a path for the file and use with ACTION_VIEW intents
-        mCurrentPhotoPath = pic.getAbsolutePath();
-        return pic;
-    }
-
-    private void dispatchTakePhotoIntent() {
-        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePhotoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-
-            // Create the File for the location of the photo
-            File photoFile=null;
-            try{
-                photoFile=createImageFile();
-            }
-            catch (IOException ex){
-
-                // Error occurred while creating the File...
-                ex.printStackTrace();
-            }
-            // Continue only if the File was successfully created
-            if (photoFile!=null){
-                photoURI= FileProvider.getUriForFile(getApplicationContext(),"com.example.android.fileprovider",photoFile);
-                takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePhotoIntent, CAMERA_REQUEST_CODE);
-            }
-        }
-    }
-
-    public void pickFromGallery() {
-        uri=android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE);
-    }
-
-
     //to store skills in arraylist variable
     ArrayList<String> skillsList = singleTon.getAppUser().getSkills();
-
     //setting up the listview
     ArrayAdapter<String> adapter;
-
-
     Intent intent;
 
     private profileFragmentInterface mListener;
@@ -198,7 +156,7 @@ public class profileFragment extends Fragment {
         fingerPrintSwitch.setChecked(false);
 
         csPrepGuideSingleTonInstance = new CSPrepGuideSingleTon(getContext());
-        if(csPrepGuideSingleTonInstance.isUsingEmailAuthentication()){
+        if (csPrepGuideSingleTonInstance.isUsingEmailAuthentication()) {
             setFingerPrintSwitchState();
         }
 
@@ -207,21 +165,19 @@ public class profileFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (singleTon.isUsingEmailAuthentication()) {
                     mySharedPreferences cs_prepguide_preferences = new mySharedPreferences(getContext());
-                    if(isChecked){
+                    if (isChecked) {
                         cs_prepguide_preferences.setEmailUsingSharedPreference(singleTon.getTempUser());
                         cs_prepguide_preferences.setPasswordUsingSharedPreference(singleTon.getTempPassword());
                         cs_prepguide_preferences.setIsUsingFingerPrint(true);
-                    }else{
+                    } else {
                         cs_prepguide_preferences.setIsUsingFingerPrint(false);
                     }
-                }else {
-                    Toast.makeText(getApplicationContext(), "Fingerprint Authentication is available for registered users only",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Fingerprint Authentication is available for registered users only", Toast.LENGTH_SHORT).show();
                     fingerPrintSwitch.setChecked(false);
                 }
             }
         });
-
-
 
 
         btnUpload.setOnClickListener(new View.OnClickListener() {
@@ -236,23 +192,23 @@ public class profileFragment extends Fragment {
 //                            Toast.makeText(getApplicationContext(), String.valueOf(which), Toast.LENGTH_SHORT).show();
                             switch (which) {
                                 case -1:
+                                    //This case handles Camera option
 //                                    Toast.makeText(getApplicationContext(), "Camera", Toast.LENGTH_SHORT).show();
                                     try {
                                         //Getting Permissions for our app: Camera
                                         runtimePermission();
                                         dispatchTakePhotoIntent();
-                                        String abc=photoURI.getLastPathSegment();
-                                         //Log.d("segment",abc);
-
-                                    }catch (Exception ex){
-                                        //Toast.makeText(getApplicationContext(), "Camera permissions turned off", Toast.LENGTH_SHORT).show();
+                                    } catch (Exception ex) {
+                                        Toast.makeText(getApplicationContext(), "Camera permissions turned off", Toast.LENGTH_SHORT).show();
                                     }
                                     break;
                                 case -2:
+                                    //This case handle Gallery option
                                     //Toast.makeText(getApplicationContext(), "Gallery", Toast.LENGTH_SHORT).show();
                                     pickFromGallery();
                                     break;
                                 case -3:
+                                    //To cancel the dialog interface
                                     Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_SHORT).show();
                                     break;
                             }
@@ -272,7 +228,7 @@ public class profileFragment extends Fragment {
             }
         });
 
-        if(!singleTon.getAppUser().getImageUrl().isEmpty()){
+        if (!singleTon.getAppUser().getImageUrl().isEmpty()) {
 //           ProfilePic.setImageURI(Uri.parse(singleTon.getAppUser().getImageUrl()));
             // PICASSO REFERENCE: http://square.github.io/picasso/
             Picasso.with(getApplicationContext()).load(Uri.parse(singleTon.getAppUser().getImageUrl())).fit().centerCrop().into(ProfilePic);
@@ -281,20 +237,20 @@ public class profileFragment extends Fragment {
 
         skillsEdit = view.findViewById(R.id.skillsEdit);
         //btnProfileSend = parent.findViewById(R.id.btnProfileSend);
-        lvSkillList= view.findViewById(R.id.skillsList1);
+        lvSkillList = view.findViewById(R.id.skillsList1);
         userEmail = view.findViewById(R.id.userEmail);
         userName = view.findViewById(R.id.userName);
         btnSave = view.findViewById(R.id.btnSave);
 
-        String emailID =singleTon.getAppUser().getEmail();
+        String emailID = singleTon.getAppUser().getEmail();
         //Setting the retrieved Email ID of the user
         userEmail.setText(emailID);
         userName.setEnabled(false);
         userName.setText(singleTon.getAppUser().getName());
 
 
-        addSkill= view.findViewById(R.id.addSkill);
-        adapter = new SkillsAdapter(getActivity(), android.R.layout.simple_list_item_1,skillsList);
+        addSkill = view.findViewById(R.id.addSkill);
+        adapter = new SkillsAdapter(getActivity(), android.R.layout.simple_list_item_1, skillsList);
 
 
         lvSkillList.setAdapter(adapter);
@@ -303,7 +259,7 @@ public class profileFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if(!skillsEdit.getText().toString().isEmpty()) {
+                if (!skillsEdit.getText().toString().isEmpty()) {
                     skillsList.add(skillsEdit.getText().toString());
 
                     //making the edittext field blank
@@ -312,9 +268,8 @@ public class profileFragment extends Fragment {
                     singleTon.addUserToFireBaseDB();
                     Log.d(TAG, "after adding skills" + singleTon.getAppUser().getSkills().toString());
                     adapter.notifyDataSetChanged();
-                }
-                else{
-                    Toast.makeText(getApplicationContext(),"Please add a Skill",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please add a Skill", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -325,7 +280,7 @@ public class profileFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if(!clicked) {
+                if (!clicked) {
                     singleTon.getAppUser().setName(userName.getText().toString());
                     mListener.onUserDetailsChanged();
                     userName.setEnabled(false);
@@ -333,9 +288,8 @@ public class profileFragment extends Fragment {
                     singleTon.addUserToFireBaseDB();
                     userName.setEnabled(true);
                     btnSave.setText(getResources().getText(R.string.save));
-                    clicked=true;
-                }
-                else {
+                    clicked = true;
+                } else {
 
                     singleTon.getAppUser().setName(userName.getText().toString());
                     mListener.onUserDetailsChanged();
@@ -344,7 +298,7 @@ public class profileFragment extends Fragment {
                     singleTon.addUserToFireBaseDB();
                     userName.setEnabled(false);
                     btnSave.setText(getResources().getText(R.string.edit));
-                    clicked=false;
+                    clicked = false;
 
                 }
             }
@@ -390,22 +344,63 @@ public class profileFragment extends Fragment {
     public interface profileFragmentInterface {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+
         void onUserDetailsChanged();
     }
+//CAMERA UPLOAD PHOTO REFERENCE:
+// https://stackoverflow.com/questions/40710599/image-capture-with-camera-upload-to-firebase-uri-in-onactivityresult-is-nul
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode,resultCode,data);
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String imageFileName = "JPG_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_";
+        //Give image file a storage directory for saving it
+        File storageDirectory = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File pic = File.createTempFile(imageFileName, ".jpg", storageDirectory);
 
-        if (requestCode ==CAMERA_REQUEST_CODE && resultCode==RESULT_OK ){
+        // Save a path for the file and use with ACTION_VIEW intents
+        mCurrentPhotoPath = pic.getAbsolutePath();
+        return pic;
+    }
+
+    private void dispatchTakePhotoIntent() {
+        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePhotoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+
+            // Create the File for the location of the photo
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+
+                // Error occurred while creating the File...
+                Toast.makeText(getApplicationContext(), "Error occurred while creating the File...", Toast.LENGTH_SHORT).show();
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                photoURI = FileProvider.getUriForFile(getApplicationContext(), "com.example.android.fileprovider", photoFile);
+                takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePhotoIntent, CAMERA_REQUEST_CODE);
+            }
+        }
+    }
+
+    public void pickFromGallery() {
+        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE);
+    }
+
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
 
             mProgress = new ProgressDialog(getActivity());
             mProgress.setMessage("Uploading Image...");
             mProgress.show();
 
-
-            //Uri uri =  data.getData();
-
-           /* if (uri != null) {*/
             StorageReference filepath = mStorage.child("Photos").child(photoURI.getLastPathSegment());
 
 
@@ -438,7 +433,7 @@ public class profileFragment extends Fragment {
 
 
         //Gallery Request to upload an image
-        if (requestCode ==GALLERY_REQUEST_CODE && resultCode==RESULT_OK ) {
+        if (requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK) {
 
             mProgress = new ProgressDialog(getActivity());
             mProgress.setMessage("Uploading Image...");
@@ -474,49 +469,30 @@ public class profileFragment extends Fragment {
     }
 
     //REFERENCE for Runtime Permissions: https://developer.android.com/training/permissions/requesting.html
-    public void runtimePermission(){
+    public void runtimePermission() {
 
         //Checks if the Camera permission is given or not
         if (ContextCompat.checkSelfPermission(getApplicationContext(),
-                android.Manifest.permission.CAMERA)== PackageManager.PERMISSION_DENIED)
+                android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED)
 
             //Requests runtime Camera permission to be granted from the user
-            ActivityCompat.requestPermissions(getActivity(), new String[] {android.Manifest.permission.CAMERA},
+            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.CAMERA},
                     CAMERA_REQUEST_CODE);
-
-        /*//Checks if the Storage permission is given or not
-        if (ContextCompat.checkSelfPermission(getApplicationContext(),
-                android.Manifest.permission.READ_EXTERNAL_STORAGE)==PackageManager.PERMISSION_DENIED)
-
-            //Requests runtime Storage permission to be granted from the user
-            ActivityCompat.requestPermissions(getActivity(), new String[] {android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                    READ_EXTERNAL_REQUEST_CODE);*/
-
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permission[], int[] permissionResult) {
         switch (requestCode) {
             case CAMERA_REQUEST_CODE:
                 if (permissionResult.length > 0 && permissionResult[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(),"Permission is Granted....Now your app can access Camera",
+                    Toast.makeText(getApplicationContext(), "Permission is Granted....Now your app can access Camera",
                             Toast.LENGTH_LONG).show();
 
                 } else {
-                    Toast.makeText(getApplicationContext(),"Permission Canceled, Now your application cannot access CAMERA.",
+                    Toast.makeText(getApplicationContext(), "Permission Canceled, Now your application cannot access CAMERA.",
                             Toast.LENGTH_LONG).show();
                 }
                 break;
-
-
-            /*case READ_EXTERNAL_REQUEST_CODE:
-                if (permissionResult.length > 0 && permissionResult[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(),"Permission Granted, Now your application can access CAMERA AND STORAGE.",
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(),"Permission Canceled, Now your application cannot access CAMERA AND STORAGE",
-                            Toast.LENGTH_LONG).show();
-                }
-                break;*/
         }
     }
 
@@ -525,16 +501,16 @@ public class profileFragment extends Fragment {
     public void onStart() {
         super.onStart();
         getActivity().setTitle("Profile");
-        if(singleTon.getAppUser().getName().isEmpty()){
+        if (singleTon.getAppUser().getName().isEmpty()) {
             Toast.makeText(getContext(), "Please add a name to your account", Toast.LENGTH_LONG).show();
         }
     }
 
     private void setFingerPrintSwitchState() {
         mySharedPreferences mySharedPreferences = new mySharedPreferences(getApplicationContext());
-        if(mySharedPreferences.getIsUsingFingerPrint()){
+        if (mySharedPreferences.getIsUsingFingerPrint()) {
             fingerPrintSwitch.setChecked(true);
-        }else{
+        } else {
             fingerPrintSwitch.setChecked(false);
         }
     }

@@ -90,10 +90,12 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
     CSPrepGuideSingleTon singleTonInstance;
     public ProgressDialog mProgress;
 
-    //FINGERPRINT REFERENCES
-    //1. https://www.youtube.com/watch?v=zYA5SJgWrLk
-    //2. https://developer.android.com/about/versions/marshmallow/android-6.0.html
-    private static final String KEY_NAME="FARAAZ";
+    /**
+     * FINGERPRINT REFERENCES
+     * 1. https://www.youtube.com/watch?v=zYA5SJgWrLk
+     * 2. https://developer.android.com/about/versions/marshmallow/android-6.0.html
+     **/
+    private static final String KEY_NAME = "FARAAZ";
     private Cipher cipher;
     private TextView textView;
     private KeyStore mKeyStore;
@@ -574,6 +576,14 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
         }
     }
 
+    /**
+     * Initialize the {@link Cipher} instance with the created key in the
+     * {@link #createKey()} method.
+     *
+     * @return {@code true} if initialization is successful, {@code false} if the lock screen has
+     * been disabled or reset after the key was generated, or if a fingerprint got enrolled after
+     * the key was generated.
+     */
 
     private boolean initializeCipher() {
 
@@ -584,7 +594,7 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
 
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             //throw new RuntimeException("Failed to get an instance of Cipher", e);
-            Toast.makeText(getApplicationContext(),"Failed to get an instance of Cipher", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Failed to get an instance of Cipher", Toast.LENGTH_SHORT).show();
         }
 
         try {
@@ -603,6 +613,11 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
 
     }
 
+    /**
+     * Creates a symmetric key in the Android Key Store which can only be used after the user has
+     * authenticated with fingerprint.*
+     * KEY_NAME the name of the key to be created
+     */
 
     private void createKey() {
 
@@ -631,8 +646,7 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
                     KeyProperties.PURPOSE_ENCRYPT |
                             KeyProperties.PURPOSE_DECRYPT)
                     .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                    // Require the user to authenticate with a fingerprint to authorize every use
-                    // of the key
+                    // Require the user to authenticate with a fingerprint to authorize every use of the key
                     .setUserAuthenticationRequired(true)
                     .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7);
 

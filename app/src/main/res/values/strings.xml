@@ -66,9 +66,9 @@
     <string name="edit">Edit</string>
     <string name="save">Save</string>
     <string name="web_client_id_for_google">417200596169-kn9l0dmgtk0g9dnqfr53mi3vj8m4r1iv.apps.googleusercontent.com</string>
-    <string name="permissions_required_for_the_app">PERMISSIONS REQUIRED FOR THE APP</string>
+    <string name="permissions_required_for_the_app">Permissions Required for this application</string>
     <string name="help_fragment">Help Fragment</string>
-    <string name="_1_camera_n2_storage">1.CAMERA  2.Storage</string>
+    <string name="_1_camera_n2_storage">1.Camera  2.Storage</string>
     <string name="help_section">HELP SECTION</string>
     <string name="login_help">Login Help</string>
     <string name="camera_issue">Camera Issue</string>

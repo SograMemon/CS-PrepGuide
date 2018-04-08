@@ -17,10 +17,13 @@ import android.widget.Toast;
  * Created by faraa on 2018-03-31.
  */
 
-//FINGERPRINT REFERENCES:
-//        1. https://www.youtube.com/watch?v=zYA5SJgWrLk
-//        2.https://developer.android.com/about/versions/marshmallow/android-6.0.html
 
+/**
+ * FINGERPRINT REFERENCES:
+ *
+ * 1. https://www.youtube.com/watch?v=zYA5SJgWrLk
+ * 2.https://developer.android.com/about/versions/marshmallow/android-6.0.html
+ */
 
 class FingerprintAuthenticationHandler extends FingerprintManager.AuthenticationCallback{
 
@@ -39,7 +42,9 @@ class FingerprintAuthenticationHandler extends FingerprintManager.Authentication
         }
     }
 
+    /**
     //Check for Authentication of the user
+    */
     void startAuthentication(FingerprintManager fingerprintManager, FingerprintManager.CryptoObject cryptoObject){
         CancellationSignal cenCancellationSignal = new CancellationSignal();
         if(ActivityCompat.checkSelfPermission(context, Manifest.permission.USE_FINGERPRINT)
@@ -50,7 +55,8 @@ class FingerprintAuthenticationHandler extends FingerprintManager.Authentication
         fingerprintManager.authenticate(cryptoObject,cenCancellationSignal,0,this,null);
 
     }
-    //Handles Successful Authentication of the user
+
+    /**Handles Successful Authentication of the user*/
     @Override
     public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result){
 
@@ -62,7 +68,7 @@ class FingerprintAuthenticationHandler extends FingerprintManager.Authentication
     }
 
 
-    //Handles Failed Authentication of the user
+    /**Handles Failed Authentication of the user*/
     @Override
     public void onAuthenticationFailed(){
         super.onAuthenticationFailed();

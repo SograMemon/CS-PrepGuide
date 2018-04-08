@@ -70,14 +70,6 @@ public class helpFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_help, container, false);
 
-        //introApp = view.findViewById(R.id.introApp);
-
-        //String appIntro = "";
-        //introApp.setText(appIntro);
-
-
-
-
         return view;
     }
 
