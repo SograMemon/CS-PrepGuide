@@ -1,5 +1,5 @@
 package ca.dal.cs.web.cs_prepguide;
 
-public interface guideNavigationInterface {
+public interface GuideNavigationInterface {
     public void testGuideNavigation();
 }

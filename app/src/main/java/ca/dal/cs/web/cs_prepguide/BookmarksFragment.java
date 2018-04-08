@@ -1,11 +1,9 @@
 package ca.dal.cs.web.cs_prepguide;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
@@ -22,12 +19,12 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link bookmarksFragment.bookmarksFragmentInterface} interface
+ * {@link BookmarksFragment.bookmarksFragmentInterface} interface
  * to handle interaction events.
  * Use the factory method to
  * create an instance of this fragment.
  */
-public class bookmarksFragment extends Fragment implements guideNavigationInterface{
+public class BookmarksFragment extends Fragment implements GuideNavigationInterface {
 
     private bookmarksFragmentInterface mListener;
     private static final String TAG = "bookmarksFragment";
@@ -37,7 +34,7 @@ public class bookmarksFragment extends Fragment implements guideNavigationInterf
     private ArrayAdapter bookmarksAdapter;
     CSPrepGuideSingleTon singleTonInstance;
 
-    public bookmarksFragment() {
+    public BookmarksFragment() {
         // Required empty public constructor
     }
 
@@ -110,7 +107,7 @@ public class bookmarksFragment extends Fragment implements guideNavigationInterf
 
     public void changeToFragment(){
         FragmentManager fmg1 =  (getActivity()).getSupportFragmentManager();
-        Fragment fragment = new guideFragment(getActivity(), fmg1);
+        Fragment fragment = new GuideFragment(getActivity(), fmg1);
         fmg1.beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null) //https://stackoverflow.com/questions/25153364/implementing-back-button-in-android-fragment-activity

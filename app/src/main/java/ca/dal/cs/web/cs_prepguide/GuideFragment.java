@@ -43,7 +43,7 @@ import java.util.List;
  * Use the {@link guideFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class guideFragment extends Fragment {
+public class GuideFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -67,12 +67,12 @@ public class guideFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public guideFragment() {
+    public GuideFragment() {
         // Required empty public constructor
     }
 
     @SuppressLint("ValidFragment")
-    public guideFragment(Activity parent, FragmentManager fmg) {
+    public GuideFragment(Activity parent, FragmentManager fmg) {
         // Required empty public constructor
         this.parent = parent;
         this.fmg = fmg;
@@ -87,8 +87,8 @@ public class guideFragment extends Fragment {
      * @return A new instance of fragment guideFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static guideFragment newInstance(String param1, String param2) {
-        guideFragment fragment = new guideFragment();
+    public static GuideFragment newInstance(String param1, String param2) {
+        GuideFragment fragment = new GuideFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

@@ -7,10 +7,10 @@ import android.content.SharedPreferences;
  * Created by vamshikrishnamoogala on 2018-04-01.
  */
 
-public class mySharedPreferences {
+public class MySharedPreferences {
     private SharedPreferences myData;
 
-    public mySharedPreferences(Context context) {
+    public MySharedPreferences(Context context) {
         myData = context.getSharedPreferences("cs_prepguide_preferences", Context.MODE_PRIVATE);
     }
 

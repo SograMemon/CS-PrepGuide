@@ -1,14 +1,10 @@
 package ca.dal.cs.web.cs_prepguide;
 
-import android.*;
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.app.Fragment;
@@ -36,16 +32,13 @@ import android.support.v4.app.Fragment;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,12 +50,12 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link profileFragment.profileFragmentInterface} interface
+ * {@link ProfileFragment.profileFragmentInterface} interface
  * to handle interaction events.
- * Use the {@link profileFragment#newInstance} factory method to
+ * Use the {@link ProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class profileFragment extends Fragment {
+public class ProfileFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -106,7 +99,7 @@ public class profileFragment extends Fragment {
 
     private profileFragmentInterface mListener;
 
-    public profileFragment() {
+    public ProfileFragment() {
         // Required empty public constructor
     }
 
@@ -120,8 +113,8 @@ public class profileFragment extends Fragment {
      * @return A new instance of fragment profileFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static profileFragment newInstance(String param1, String param2) {
-        profileFragment fragment = new profileFragment();
+    public static ProfileFragment newInstance(String param1, String param2) {
+        ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -164,7 +157,7 @@ public class profileFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (singleTon.isUsingEmailAuthentication()) {
-                    mySharedPreferences cs_prepguide_preferences = new mySharedPreferences(getContext());
+                    MySharedPreferences cs_prepguide_preferences = new MySharedPreferences(getContext());
                     if (isChecked) {
                         cs_prepguide_preferences.setEmailUsingSharedPreference(singleTon.getTempUser());
                         cs_prepguide_preferences.setPasswordUsingSharedPreference(singleTon.getTempPassword());
@@ -507,8 +500,8 @@ public class profileFragment extends Fragment {
     }
 
     private void setFingerPrintSwitchState() {
-        mySharedPreferences mySharedPreferences = new mySharedPreferences(getApplicationContext());
-        if (mySharedPreferences.getIsUsingFingerPrint()) {
+        MySharedPreferences MySharedPreferences = new MySharedPreferences(getApplicationContext());
+        if (MySharedPreferences.getIsUsingFingerPrint()) {
             fingerPrintSwitch.setChecked(true);
         } else {
             fingerPrintSwitch.setChecked(false);
