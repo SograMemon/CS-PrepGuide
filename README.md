@@ -175,6 +175,17 @@ We have complete with the development of the application with all functionalitie
 ## Credits
 - [Moksh Mohindra](https://www.linkedin.com/in/moksh-mohindra-331b70144) - Our classmate for designing us the application icon
 
+## Screenshots
+
+![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FLogin.PNG?alt=media&token=7ef128a6-b27d-427d-ab44-90fd3b5b2a05)
+
+![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2Fl2.PNG?alt=media&token=923d6170-2d3c-46cf-a024-a15e2104744f)
+
+![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2Fl3.PNG?alt=media&token=649e3719-7731-430e-b84b-387bd1f73400)
+
+![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2Fl4.PNG?alt=media&token=fc18719d-0567-4523-bccb-e8b7162f42c9)
+
+
 ## References
 
 ##### [1] stackoverflow.com. "Image capture with camera & upload to Firebase (Uri in onActivityResult() is null)". [Online]. [Available](https://stackoverflow.com/questions/40710599/image-capture-withhttps://jbt.github.io/markdown-editor/emoji/smirk.png-camera-upload-to-firebase-uri-in-onactivityresult-is-nul).[Accessed on: 17th March 2018].

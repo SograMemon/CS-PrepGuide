@@ -327,6 +327,7 @@ public class ProfileFragment extends Fragment {
 
     //CAMERA UPLOAD PHOTO REFERENCE:
     // https://stackoverflow.com/questions/40710599/image-capture-with-camera-upload-to-firebase-uri-in-onactivityresult-is-nul
+    //This method creates a name for the camera image that will be captured
     private File createImageFile() throws IOException {
         // Create an image file name
         String imageFileName = "JPG_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_";
@@ -339,6 +340,7 @@ public class ProfileFragment extends Fragment {
         return pic;
     }
 
+    //Handles image capturing of camera app
     private void dispatchTakePhotoIntent() {
         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -366,6 +368,7 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    //Method to handle Gallery image
     public void pickFromGallery() {
         uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -373,6 +376,7 @@ public class ProfileFragment extends Fragment {
     }
 
 
+    //This method handles the result of the image captured by the Camera or uploaded from Gallery
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //Checks for the request code if it is Camera or Gallery for uploading an image
@@ -454,7 +458,10 @@ public class ProfileFragment extends Fragment {
     }
 
     //REFERENCE for Runtime Permissions: https://developer.android.com/training/permissions/requesting.html
-    public void runtimePermission() {
+    /**This method asks for the permission of using Camera by our app
+    *App asks for permission only if it isn't provided at first
+    */
+     public void runtimePermission() {
 
         //Checks if the Camera permission is given or not
         if (ContextCompat.checkSelfPermission(getApplicationContext(),
@@ -465,6 +472,9 @@ public class ProfileFragment extends Fragment {
                     CAMERA_REQUEST_CODE);
     }
 
+    /**
+     * This method handles App's Permission request
+     * */
     @Override
     public void onRequestPermissionsResult(int requestCode, String permission[], int[] permissionResult) {
         switch (requestCode) {
