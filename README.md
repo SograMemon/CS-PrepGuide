@@ -4,10 +4,14 @@ We aim to create a platform that provides information about the different discip
 they want to get placed. This valuable information in the form of guide provided in our app will help users to make and plan their career path. Once the users have made this decision the users can
 browse through job preparation guides that help the user achieve the skills they require to qualify for the best jobs at companies ranging from the top companies to smaller passionate companies.
 This will be useful to fresh Computer Science graduates as well as professionals considering a career change to join the booming IT industries.
-
+Key features included are: login/logout using social media, fingerprint login, filtering of the jobs, setting up the user skill profile, posts and comments.
 
 ## Installation Notes
 This project zip file can be downloaded and unzipped after which it can be opened in Android studio to be able to test and run the application.
+
+## Libraries
+##### picasso:  Picasso allows for hassle-free image loading in your application—often in one line of code! [here](http://square.github.io/picasso/)
+##### hdodenhof/CircleImageView: A fast circular ImageView based on RoundedImageView from Vince Mi which itself is based on techniques recommended by Romain Guy.[here](https://github.com/hdodenhof/CircleImageView)
 
 ## Code Examples
 
@@ -134,9 +138,7 @@ List all the main features of your application with a brief description of each 
 
 
 ## Final Project Status
-We have started with the development of the application and currently working on various functionalities within the app. For now, we have implemented login, filtering jobs, and job guide view and navigation between various screens. The breakdown of the functionalities and the breakdown is given below.
-
-
+We have complete with the development of the application with all functionalities working properly in the app. For now, we have implemented login, user profile, filtering jobs, and job guide view and navigation between various screens. The breakdown of the functionalities and the breakdown is given below.
 
 #### Minimum Functionality
  - Sign up/Sign in  (Completed)
