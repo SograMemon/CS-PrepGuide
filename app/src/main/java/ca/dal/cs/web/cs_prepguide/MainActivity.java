@@ -1,15 +1,10 @@
 package ca.dal.cs.web.cs_prepguide;
 
-import android.*;
 import android.app.KeyguardManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.hardware.fingerprint.FingerprintManager;
-import android.net.Uri;
-import android.os.Handler;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
@@ -17,13 +12,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +43,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ThrowOnExtraProperties;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
@@ -59,7 +50,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
@@ -70,8 +60,6 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class MainActivity extends AppCompatActivity implements FingerPrintCallbacks{
 
@@ -127,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
         btnFingerPrint = findViewById(R.id.btnFingerPrint);
 
 
-        mySharedPreferences mySharedPreferences = new mySharedPreferences(getApplicationContext());
+        MySharedPreferences mySharedPreferences = new MySharedPreferences(getApplicationContext());
         if(mySharedPreferences.getIsUsingFingerPrint()){
             KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
             FingerprintManager fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
@@ -568,7 +556,7 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
     }
 
     private void showHideFingerPrintButton() {
-        mySharedPreferences mySharedPreferences = new mySharedPreferences(getApplicationContext());
+        MySharedPreferences mySharedPreferences = new MySharedPreferences(getApplicationContext());
         if(mySharedPreferences.getIsUsingFingerPrint()){
             btnFingerPrint.setVisibility(View.VISIBLE);
         }else{
@@ -666,7 +654,7 @@ public class MainActivity extends AppCompatActivity implements FingerPrintCallba
 //        Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
         if(result.equals("Success")){
             mProgress.show();
-            mySharedPreferences mySharedPreferences = new mySharedPreferences(getApplicationContext());
+            MySharedPreferences mySharedPreferences = new MySharedPreferences(getApplicationContext());
             signIn(mySharedPreferences.getEmailUsingSharedPreference(),mySharedPreferences.getPasswordUsingSharedPreference());
         }else{
             Toast.makeText(getApplicationContext(), "Fingerprint Authentication failed!", Toast.LENGTH_SHORT).show();

@@ -34,10 +34,10 @@ import java.util.List;
 public class NavigationActivityCS extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         FilterFragment.filterFragmentInterface,
-        guideFragment.OnFragmentInteractionListener,
-        profileFragment.profileFragmentInterface,
-        bookmarksFragment.bookmarksFragmentInterface,
-        helpFragment.helpFragmentInterface {
+        GuideFragment.OnFragmentInteractionListener,
+        ProfileFragment.profileFragmentInterface,
+        BookmarksFragment.bookmarksFragmentInterface,
+        HelpFragment.helpFragmentInterface {
 
     FragmentManager fmg = null;
     private FirebaseAuth mAuth;
@@ -155,19 +155,19 @@ public class NavigationActivityCS extends AppCompatActivity
         Fragment fragment = null;
         switch(id){
             case R.id.nav_profile:
-                fragment = new profileFragment();
+                fragment = new ProfileFragment();
                 break;
             case R.id.nav_filter_jobs:
                 fragment = new FilterFragment();
                 break;
             case R.id.nav_manage:
-                fragment = new guideFragment(this, fmg);
+                fragment = new GuideFragment(this, fmg);
                 break;
             case R.id.nav_bookmarks:
-                fragment = new bookmarksFragment();
+                fragment = new BookmarksFragment();
                 break;
             case R.id.nav_help:
-                fragment = new helpFragment();
+                fragment = new HelpFragment();
                 break;
             case R.id.nav_logout:
                 FirebaseAuth mAuth = FirebaseAuth.getInstance();
