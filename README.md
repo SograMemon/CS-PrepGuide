@@ -193,16 +193,11 @@ We have complete with the development of the application with all functionalitie
 
 ##### [9] developer.android.com. "Request App Permissions". [Online]. [Available](http://square.github.io/picasso/).[Accessed on: 17th March 2018].
 
+##### [10] Abhiandroid.com. (2018). TabLayout Tutorial With Example In Android Studio. [online] Available at: http://abhiandroid.com/materialdesign/tablayout-example-android-studio.html [Accessed 8 Apr. 2018].
 
-## References
+##### [11] textview, s. (2018). setMovementMethod doesn't work in android textview. [online] Stackoverflow.com. Available at: https://stackoverflow.com/questions/37429656/setmovementmethod-doesnt-work-in-android-textview [Accessed 8 Apr. 2018]
 
- Abhiandroid.com. (2018). TabLayout Tutorial With Example In Android Studio. [online] Available at: http://abhiandroid.com/materialdesign/tablayout-example-android-studio.html [Accessed 8 Apr. 2018].
-
-Html.fromHtml, S. (2018). Set text in TextView using Html.fromHtml. [online] Stackoverflow.com. Available at: https://stackoverflow.com/questions/12566371/set-text-in-textview-using-html-fromhtml [Accessed 8 Apr. 2018].
-
- textview, s. (2018). setMovementMethod doesn't work in android textview. [online] Stackoverflow.com. Available at: https://stackoverflow.com/questions/37429656/setmovementmethod-doesnt-work-in-android-textview [Accessed 8 Apr. 2018]
-
- YouTube. (2018). Android Studio Tutorial - Firebase Retrieve Realtime Data - Part 7. [online] Available at: https://www.youtube.com/watch?v=KEp5RAZNMng [Accessed 8 Apr. 2018].
+ ##### [12] YouTube. (2018). Android Studio Tutorial - Firebase Retrieve Realtime Data - Part 7. [online] Available at: https://www.youtube.com/watch?v=KEp5RAZNMng [Accessed 8 Apr. 2018].
 
 Logo Images from:
 https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128
