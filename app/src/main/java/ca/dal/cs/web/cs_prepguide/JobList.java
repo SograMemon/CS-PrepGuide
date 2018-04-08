@@ -25,14 +25,19 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  * Created by SM on 3/5/18.
  */
 
+/**
+ * Class to set ListView with the job details by getting the fileds and image from firebase and setting them to the correct textView and imageView in the ListView
+ *
+ */
 public class JobList extends ArrayAdapter<Job> {
 
     private Activity context;
     private List<Job> jobList;
 
 
-
-
+    /**
+     * Constructor
+     */
     public JobList(Activity context, List<Job> jobList){
         super(context, layout.list_layout, jobList);
 
@@ -50,6 +55,7 @@ public class JobList extends ArrayAdapter<Job> {
         Job job1= jobList.get(position);
 
         if(job1.jobId != null){
+            //find the views in xml file
             TextView textViewTitle = (TextView) listViewItem.findViewById(id.txt_title);
             TextView textViewStream = (TextView) listViewItem.findViewById(id.txt_stream);
             TextView textViewType = (TextView) listViewItem.findViewById(id.txt_type);
@@ -58,12 +64,14 @@ public class JobList extends ArrayAdapter<Job> {
 
             ImageView logo = listViewItem.findViewById(R.id.logo);
 
+            //set the value of stream, company, type of job to be displayed with the jobTitle
             textViewCompany.setText(job1.getJobCompany());
             textViewStream.setText(job1.getJobStream());
             textViewTitle.setText(job1.getJobTitle());
             textViewType.setText(job1.getJobType());
             textViewMatchSkill.setText(job1.getJobFilter());
 
+            //set company image logo
             if (job1.getJobCompany().equals("Google"))
             Picasso.with(getApplicationContext()).load("https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/companyLogo%2FCompnayLogosSquarGoogle.jpg?alt=media&token=a4b631b1-f975-4493-aeef-a5c5525c26a7").fit().centerCrop().into(logo);
 

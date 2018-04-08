@@ -50,35 +50,39 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  */
 public class FilterFragment extends Fragment {
 
-    public static final String job_Title = "jobtitle";
-    public static final String job_ID = "jobid";
-    public static final String v = "";
-
-    public static final String STREAM = "STREAM";
-    public static final String COMPANY = "COMPANY";
-    public static final String TYPE = "TYPE";
-
-
     private Button btnApplyFilter;
     private Spinner spinnerCompany, spinnerType, spinnerStream;
     private ListView listView_jobs;
     private FusedLocationProviderClient mFusedLocationClient;
     private static final int LOCATION_REQUEST_CODE = 8888;
-    //private EditText editText_addJob;
+    /**
+     * This EditText is used by the addJob function which has been commented.
+     * This EditText and function can be used in the future to widen the scope of the project
+     * private EditText editText_addJob;
+     * */
 
-    public DatabaseReference databaseJobs = FirebaseDatabase.getInstance().getReference("jobs");
+    //Firebase instances for job database
+    public DatabaseReference databaseJobs= FirebaseDatabase.getInstance().getReference("jobs");
 
-    private boolean flag = false;
+
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
     private filterFragmentInterface mListener;
 
+    /**
+     * Constructor
+     */
     public FilterFragment() {
+
     }
 
-
+    //job lists to populate the listView with a list of jobs that are a result of filter applications
     private List<Job> jobList;
-    private List<Job> jobListSetSpinner;
     private List<Job> jobList1, jobListBasedOnLocation;
-    private String filterType = "spinner";
+    //filterType defines the filter being used 
+    private String filterType="spinner";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,12 +96,8 @@ public class FilterFragment extends Fragment {
 
 
         final View view = inflater.inflate(R.layout.fragment_filter, container, false);
-//        System.out.println(getView());
 
         System.out.println(getView());
-
-
-        //listView_jobs= (ListView) parent.findViewById(R.id.list_job);
         jobList = new ArrayList<>();
         jobList1 = new ArrayList<>();
 
@@ -117,104 +117,119 @@ public class FilterFragment extends Fragment {
         spinnerStream = view.findViewById(R.id.spinner_stream);
         spinnerCompany = view.findViewById(R.id.spinner_company);
         spinnerType = view.findViewById(R.id.spinner_type);
-//        imgBtnLocationFilter = view.findViewById(R.id.imgBtnLocationFilter);
 
-        String typeInitial;
-        String companyInitial;
-
+        //filter Button
         btnApplyFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case -1:
-                                // Based on Location
-                                filterType = "location";
-                                getLocation();
+                //check if device is connected to the internet
+                if(!Utilities.isNetworkAvailable(getApplicationContext())){
+                    Toast.makeText(getApplicationContext(), "Please check your network connection and try again", Toast.LENGTH_SHORT).show();
+                }else {
 
-                                break;
-                            case -2:
-                                // Based on suggestions
-                                filterType = "skills";
-                                suggestJob();
+                    /** Displays DialogInterface where users can select the type of filter they would like to use */
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                                break;
-                            case -3:
-                                // General filter
-                                String edt = null;
-                                //edt= editText_addJob.getText().toString();
-                                //if(edt.equalsIgnoreCase("")){
-                                filterType = "spinner";
-                                getJob();
+                            switch (which) {
+                                case -1:
+                                    // Based on Location executes when filter By location selected
+                                    filterType = "location";
+                                    getLocation();
 
-                                //}else {
-                                //  addJob();
-                                //}
-                                break;
+                                    break;
+                                case -2:
+                                    // Based on suggestions executes when filter by skills selected
+                                    filterType = "skills";
+                                    suggestJob();
+
+                                    break;
+                                case -3:
+                                    // General filter
+
+                                    filterType = "spinner";
+                                    getJob();
+
+                                    /**funtion call for a funtion that can be added in the future
+                                     *  addJob();
+                                     */
+
+                                    break;
+                            }
                         }
-                    }
-                };
-                AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                alertDialog.setTitle("Choose an option");
-                alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "By Location", dialogClickListener);
-                alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "By Skills", dialogClickListener);
-                alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "General", dialogClickListener);
-                alertDialog.show();
+                    };
+                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+                    /** Dispaly contents of Dialog box that gives uses the option to select filter type */
+                    alertDialog.setTitle("Choose an option");
+                    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "By Location", dialogClickListener);
+                    alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "By Skills", dialogClickListener);
+                    alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "General", dialogClickListener);
+                    alertDialog.show();
+                }
 
             }
         });
 
-
+        /** Make ListView items clickable to redirct to the post page*/
         listView_jobs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 Job job1 = jobList.get(i);
-                //job1.setFilter(filterType);
                 CSPrepGuideSingleTon csPrepGuideSingleTonInstance = new CSPrepGuideSingleTon(getContext());
+                //send the jobId of the job sellected
                 csPrepGuideSingleTonInstance.setCurrentPostId(job1.jobPostId);
                 mListener.onFilterClicked(job1.jobPostId, job1.getJobId());
             }
         });
 
-
+        //updates the jobList if new jobs are added to the firebase job database
         databaseJobs.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
+                /**clear existing data in the jobList to avoid duplication */
                 jobList.clear();
                 for (DataSnapshot jobSnapshot : dataSnapshot.getChildren()) {
                     Job job1 = jobSnapshot.getValue(Job.class);
                     job1.setFilter(filterType);
                     jobList.add(job1);
-                    //streamIntial = streamIntial+","+job1.jobStream;
+
 
                 }
-
+                // Display list of jobs using listView
                 JobList adapter = new JobList(getActivity(), jobList);
                 listView_jobs.setAdapter(adapter);
+                // Initialize string arrays for each spinner stream, company and type respectively
                 String[] sArry, cArry, tArry;
 
+                //call function to get the dynamic values of the stream spinner
                 sArry = setStreamSpinners();
+                //convert String array to ArrayList
                 final List<String> streamList = new ArrayList<>(Arrays.asList(sArry));
+                //set stream spinner with dynamic ArrayList
                 final ArrayAdapter<String> stringArrayAdapter;
                 stringArrayAdapter = new ArrayAdapter<String>(getActivity(),
                         R.layout.spinner_dropdown_item, streamList);
                 stringArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
                 spinnerStream.setAdapter(stringArrayAdapter);
 
+                //call function to get the dynammic values of the company spinner
                 cArry = setCompanySpinners();
+                //convert String array to ArrayList
                 final List<String> companyList = new ArrayList<>(Arrays.asList(cArry));
+                //set company spinner with dynamic ArrayList
                 final ArrayAdapter<String> stringArrayAdapterC;
                 stringArrayAdapterC = new ArrayAdapter<String>(getActivity(),
                         R.layout.spinner_dropdown_item, companyList);
                 stringArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
                 spinnerCompany.setAdapter(stringArrayAdapterC);
 
+                //call function to get the dynammic values of the type spinner
                 tArry = setTypeSpinners();
+                //convert String array to ArrayList
                 final List<String> typeList = new ArrayList<>(Arrays.asList(tArry));
+                //set type spinner with dynamic ArrayList
                 final ArrayAdapter<String> stringArrayAdapterT;
                 stringArrayAdapterT = new ArrayAdapter<String>(getActivity(),
                         R.layout.spinner_dropdown_item, typeList);
@@ -327,26 +342,30 @@ public class FilterFragment extends Fragment {
         super.onStart();
         getActivity().setTitle("Filter Jobs");
     }
-
-//    private void addJob(){
-//        //String title_job= editText_addJob.getText().toString().trim();
-//        String jobStream= spinnerStream.getSelectedItem().toString();
-//        String company=spinnerCompany.getSelectedItem().toString();
-//        String type=spinnerType.getSelectedItem().toString();
-//
-//       if(!TextUtils.isEmpty(title_job)){
-//           String id= databaseJobs.push().getKey();
-//            job jobInstance= new job(id,title_job,jobStream, company, type);
-//
-//           databaseJobs.child(id).setValue(jobInstance);
-//            Toast.makeText(getApplicationContext(), "Job added",
-//                    Toast.LENGTH_SHORT).show();
-//
-//        }else{
-//            Toast.makeText(getApplicationContext(), "Enter a job",
-//                    Toast.LENGTH_SHORT).show();
-//        }
-//    }
+/**
+ * This function is used with an editText to add new jobs to the firebase database.
+ * This function can be activated in the future when the app provides companies a platfor to upload new jobs
+ * This funtion uses the values set on the spinners to set the attributes of the job being added
+ *
+ * private void addJob(){
+ *      String title_job= editText_addJob.getText().toString().trim();
+ *      String jobStream= spinnerStream.getSelectedItem().toString();
+ *      String company=spinnerCompany.getSelectedItem().toString();
+ *      String type=spinnerType.getSelectedItem().toString();
+ *
+ *      if(!TextUtils.isEmpty(title_job)){
+ *          String id= databaseJobs.push().getKey();
+ *          job jobInstance= new job(id,title_job,jobStream, company, type);
+ *          databaseJobs.child(id).setValue(jobInstance);
+ *          Toast.makeText(getApplicationContext(), "Job added",
+ *          Toast.LENGTH_SHORT).show();
+ *          }else{
+ *          Toast.makeText(getApplicationContext(), "Enter a job",
+ *          Toast.LENGTH_SHORT).show();
+ *          }
+ *        }
+ *
+ */
 
 
     private void getJob() {
@@ -419,50 +438,74 @@ public class FilterFragment extends Fragment {
         }
     }
 
+    /**
+     * Function returns dynamic String array for the Stream Spinner
+     * Only the streams for which there is a job in the database are added to the spinner
+     */
     public String[] setStreamSpinners() {
 
         String streamIntial;
+        //first option to be added in spinner
         streamIntial = "All";
 
+        //loop iterates through all jobs in the database
         for (int i = 0; i < jobList.size() - 1; i++) {
             Job job1 = jobList.get(i);
+            //if the company value of the current job is not present in the streamInitial string then add a comma and this company to the string
             if (!streamIntial.contains(job1.jobStream)) {
                 streamIntial = streamIntial + "," + job1.jobStream;
             }
         }
         String[] streamArry = null;
+        //split the string by commas to get a string array that has each item that needs to be added in the spin
         streamArry = streamIntial.split(",");
         return streamArry;
     }
 
+    /**
+     * Function returns dynamic String array for the company Spinner
+     * Only the companies for which there is a job in the database are added to the spinner
+     */
     public String[] setCompanySpinners() {
 
         String companyIntial;
+        //first option to be added in spinner
         companyIntial = "All";
 
+        //loop iterates through all jobs in the database
         for (int i = 0; i < jobList.size() - 1; i++) {
             Job job1 = jobList.get(i);
+            //if the company value of the current job is not present in the companyInitial string then add a comma and this company to the string
             if (!companyIntial.contains(job1.jobCompany)) {
                 companyIntial = companyIntial + "," + job1.jobCompany;
             }
         }
         String[] Arry = null;
+        //split the string by commas to get a string array that has each item that needs to be added in the spinner
         Arry = companyIntial.split(",");
         return Arry;
     }
 
+    /**
+     * Function returns dynamic String array for the Type Spinner
+     * Only the position types for which there is a job in the database are added to the spinner
+     */
     public String[] setTypeSpinners() {
 
         String typeIntial;
+        //first option to be added in spinner
         typeIntial = "All";
 
+        //loop iterates through all jobs in the database
         for (int i = 0; i < jobList.size() - 1; i++) {
             Job job1 = jobList.get(i);
+            //if the company value of the current job is not present in the typeInitial string then add a comma and this company to the string
             if (!typeIntial.contains(job1.jobType)) {
                 typeIntial = typeIntial + "," + job1.jobType;
             }
         }
         String[] Arry = null;
+        //split the string by commas to get a string array that has each item that needs to be added in the spinner
         Arry = typeIntial.split(",");
         return Arry;
     }
@@ -473,20 +516,33 @@ public class FilterFragment extends Fragment {
         mListener = null;
     }
 
+    /**
+     * Function generates jobList based on no of skills matches with the user
+     * The job with the highest number of user skills matching the required jobSkills are displayed on the top of the list
+     * Called when the user selects filter by skill in the dialogInterface
+     */
     public void suggestJob() {
         CSPrepGuideSingleTon userSingleTonInstance;
         userSingleTonInstance = CSPrepGuideSingleTon.getInstance(getContext());
+        //get userSkills using singleton class
         ArrayList<String> userSkill = userSingleTonInstance.getAppUser().getSkills();
         Job job1;
         String userSkillStr;
+        //initialize array to store the number of matching skills for each job in the database
         int[] matchSkills = new int[jobList.size()];
-        for (int i = 0; i < jobList.size() - 1; i++) {
+        //loop through all jobs in database
+        for (int i = 0; i < jobList.size(); i++) {
             job1 = jobList.get(i);
             matchSkills[i] = 0;
+            //loop through all user skills in database
             for (int j = 0; j < userSkill.size(); j++) {
                 userSkillStr = userSkill.get(j);
+                //check if JobSkill attribute in current job is not null
                 if (job1.jobSkills != null) {
+                    //convert all skills to lower case for ease of comparison
                     String jobSkillLower = job1.getJobSkills().toLowerCase();
+                    //jobSkillLower is a string that has all the required skills for the job separated by commas
+                    //each user skill is checked if it matches a skill in the string matchSkills is incremented
                     if (jobSkillLower.contains(userSkill.get(j).toLowerCase())) {
                         matchSkills[i]++;
                     }
@@ -496,24 +552,23 @@ public class FilterFragment extends Fragment {
 
         jobList1.clear();
         String orderedSuggetion = "0";
-        String head, tail;
         char c;
-        int index, incertIndex = 0;
-        int incertVal = 0;
+        int index, insertIndex = 0;
+        int insertVal = 0;
         for (int i = 1; i < matchSkills.length; i++) {
-            incertIndex = -1;
+            insertIndex = -1;
             for (int j = 0; j < orderedSuggetion.length(); j++) {
                 index = Integer.parseInt(String.valueOf(orderedSuggetion.charAt(j)));
-                incertVal = i;
+                insertVal = i;
                 if (matchSkills[i] > matchSkills[index] || matchSkills[i] == matchSkills[index]) {
-                    incertIndex = j;
+                    insertIndex = j;
                 } else if (matchSkills[i] != 0) {
-                    incertIndex = j + 1;
+                    insertIndex = j + 1;
                 }
 
             }
-            if (incertIndex != -1) {
-                orderedSuggetion = orderedSuggetion.substring(0, incertIndex) + incertVal + orderedSuggetion.substring(incertIndex, orderedSuggetion.length());
+            if (insertIndex != -1) {
+                orderedSuggetion = orderedSuggetion.substring(0, insertIndex) + insertVal + orderedSuggetion.substring(insertIndex, orderedSuggetion.length());
             }
         }
 

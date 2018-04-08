@@ -5,9 +5,15 @@ import android.view.LayoutInflater;
 /**
  * Created by SM on 2/28/18.
  */
+/**
+ * Job Model for storing details about the Job
+ */
 
 public class Job {
 
+    /**
+     * Job Details
+     */
     String jobId;
     String jobTitle;
     String jobStream;
@@ -21,9 +27,18 @@ public class Job {
     String jobPostId;
     Float distance;
 
-    public Job(){
+    /**
+     * Empty Constructor
+     */
 
+    public Job(){
+        // Default constructor required for calls to DataSnapshot.getValue(User.class)
+        // to retrieve details from Firebase
     }
+
+    /**
+     * Constructor
+     */
     public Job(String jobId,String jobTitle, String jobStream, String jobCompany, String jobType, String jobSkills){
         this.jobCompany= jobCompany;
         this.jobTitle= jobTitle;
@@ -55,11 +70,21 @@ public class Job {
     public String getJobSkills() {
         return jobSkills;
     }
+
+    /**
+     * Method to set the number of skills in the job that match with user's skill
+     */
     public void setMatchSkillNo(String matchSkillNo){
         this.matchSkillNo=matchSkillNo;
     }
+    /**
+     * Method returns no of matched skills
+     */
     public String getMatchSkill(){return matchSkillNo;}
 
+    /**
+     * Getters and Setters
+     */
     public void setJobId(String jobId) {
         this.jobId = jobId;
     }
@@ -100,10 +125,6 @@ public class Job {
         return distance;
     }
 
-    public void setDistance(Float distance) {
-        this.distance = distance;
-    }
-
     public String getJobPostId() {
         return jobPostId;
     }
@@ -112,6 +133,17 @@ public class Job {
         this.jobPostId = jobPostId;
     }
 
+    /**
+     * Method to compute distance
+     */
+    public void setDistance(Float distance) {
+        this.distance = distance;
+    }
+
+
+    /**
+     * Method to set the filter being used and accordingly decide which parameter no of matched skills or distance to compute
+     */
     public void setFilter(String filterVal){
         if(filterVal.equalsIgnoreCase("location")){
             this.jobFilter="Distance from current location: "+this.distance+" km";
@@ -125,6 +157,9 @@ public class Job {
         return this.jobFilter;
     }
 
+    /**
+     * toString Method
+     */
     @Override
     public String toString() {
         return "job{" +
