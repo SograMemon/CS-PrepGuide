@@ -153,9 +153,14 @@ public class ProfileFragment extends Fragment {
             setFingerPrintSwitchState();
         }
 
+        //Switch provided to give access to the user to login using his fingerprint
         fingerPrintSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                /**Fingerprint Login is available only for the users that are registered in the app
+                 * (Excluding Social Media Login)
+                 * If the user switches ON, only then he is allowed to access login using his fingerprint
+                 */
                 if (singleTon.isUsingEmailAuthentication()) {
                     MySharedPreferences cs_prepguide_preferences = new MySharedPreferences(getContext());
                     if (isChecked) {
@@ -163,6 +168,7 @@ public class ProfileFragment extends Fragment {
                         cs_prepguide_preferences.setPasswordUsingSharedPreference(singleTon.getTempPassword());
                         cs_prepguide_preferences.setIsUsingFingerPrint(true);
                     } else {
+                        //Fingerprint login is unavailable for users signed up with Facebook or Google
                         cs_prepguide_preferences.setIsUsingFingerPrint(false);
                     }
                 } else {
@@ -178,7 +184,7 @@ public class ProfileFragment extends Fragment {
             public void onClick(View view) {
                 try {
 
-
+                    //Handles the user's response in choosing between Gallery or Camera
                     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -207,6 +213,7 @@ public class ProfileFragment extends Fragment {
                             }
                         }
                     };
+                    //Dialog to pick options between Camera or Gallery
                     AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
                     alertDialog.setTitle("Choose an Option!");
                     alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Camera", dialogClickListener);
@@ -248,6 +255,7 @@ public class ProfileFragment extends Fragment {
 
         lvSkillList.setAdapter(adapter);
 
+        //Button to add the user's skills
         addSkill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -269,6 +277,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        //Button to save the Username which he edits
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -387,29 +396,32 @@ public class ProfileFragment extends Fragment {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        //Checks for the request code if it is Camera or Gallery for uploading an image
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
 
+            //Shows progress while uploading an image
             mProgress = new ProgressDialog(getActivity());
             mProgress.setMessage("Uploading Image...");
             mProgress.show();
 
             StorageReference filepath = mStorage.child("Photos").child(photoURI.getLastPathSegment());
 
-
+            //Storing the uploaded image in the firebase
             filepath.putFile(photoURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
+                    //Displaying the profile picture
                     Uri downloadUri = taskSnapshot.getDownloadUrl();
                     Picasso.with(getApplicationContext()).load(downloadUri).fit().centerCrop().into(ProfilePic);
 
+                    //Saving profile picture to the firebase of the user
                     singleTon.getAppUser().setImageUrl(downloadUri.toString());
                     singleTon.addUserToFireBaseDB();
+                    mListener.onUserDetailsChanged();
 
                     mProgress.dismiss();
                     Toast.makeText(getApplicationContext(), "Uploading Done!! .... ", Toast.LENGTH_LONG).show();
-                    mListener.onUserDetailsChanged();
 
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -428,6 +440,7 @@ public class ProfileFragment extends Fragment {
         //Gallery Request to upload an image
         if (requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK) {
 
+            //Shows progress while uploading an image
             mProgress = new ProgressDialog(getActivity());
             mProgress.setMessage("Uploading Image...");
             mProgress.show();
@@ -435,17 +448,21 @@ public class ProfileFragment extends Fragment {
 
             uri = data.getData();
 
+            //Storing the uploaded image in the firebase
             filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUri = taskSnapshot.getDownloadUrl();
                     Picasso.with(getApplicationContext()).load(downloadUri).fit().centerCrop().into(ProfilePic);
 
+                    //Saving profile picture to the firebase of the user
                     singleTon.getAppUser().setImageUrl(downloadUri.toString());
                     singleTon.addUserToFireBaseDB();
+                    mListener.onUserDetailsChanged();
 
                     mProgress.dismiss();
                     Toast.makeText(getApplicationContext(), "Uploading Done!! .... ", Toast.LENGTH_LONG).show();
+
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
