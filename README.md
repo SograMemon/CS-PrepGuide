@@ -14,13 +14,13 @@ Key features included are: login/logout using social media, fingerprint login, f
 
 
 ## Installation Notes
-This project zip file can be downloaded and unzipped after which it can be opened in Android studio to be able to test and run the application. 
-
-The [apk file](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/release-apk%2Fapp-release.apk?alt=media&token=f1f2c20e-f896-468e-81a5-9e038e4b3af3) can be downloaded and installed onto an android phone.
+This project zip file can be downloaded and unzipped after which it can be opened in Android studio to be able to test and run the application.
 
 ## Libraries
-- **picasso:**  Picasso allows for hassle-free image loading in your application—often in one line of code! [here](http://square.github.io/picasso/)
-- **hdodenhof/CircleImageView:** A fast circular ImageView based on RoundedImageView from Vince Mi which itself is based on techniques recommended by Romain Guy.[here](https://github.com/hdodenhof/CircleImageView)
+##### Picasso:  Picasso allows for hassle-free image loading in your application—often in one line of code! [here](http://square.github.io/picasso/)
+##### hdodenhof/CircleImageView: A fast circular ImageView based on RoundedImageView from Vince Mi which itself is based on techniques recommended by Romain Guy.[here](https://github.com/hdodenhof/CircleImageView)
+
+##### Facebook SDK:It is a component of the Facebook SDK for Android. To use the Facebook Login SDK, make it a dependency in Maven, or download it.[here](https://developers.facebook.com/docs/facebook-login/android)
 
 ## Code Examples
 
@@ -58,54 +58,76 @@ Firebase makes the process easy for login implementation, Below is a code exampl
 
 **Problem 2: We tried using Firebase RealtimeDB to store the data**
 
-Below is a code example which can be used to retrieve data
+Below is a code example which can be used to update email address to a user account using Firebase
 
 ```java
-    public void getPostDetailsFromFirebase(String postId) {
-        final PostSingleTon postSingleToninstance = PostSingleTon.getInstance(getContext());
+    private void addUserToFireBaseDB(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // Name, email address, and profile photo Url
+            String name = user.getDisplayName();
+            String email = user.getEmail();
+            //Uri photoUrl = user.getPhotoUrl();
 
-        // Forming the reference
-        String currentPostId = "Posts/".concat(postId);
-        Log.d(TAG, "reference" + currentPostId);
+            // Check if user's email is verified
+            boolean emailVerified = user.isEmailVerified();
 
-        final Post[] currentPost = new Post[1];
+            // The user's ID, unique to the Firebase project. Do NOT use this value to
+            // authenticate with your backend server, if you have one. Use
+            // FirebaseUser.getToken() instead.
+            String uid = user.getUid();
 
-        myRef1 = FirebaseDatabase.getInstance().getReference(currentPostId);
-        myRef1.addListenerForSingleValueEvent(new ValueEventListener() {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference();
+            myRef.child("users").child(uid).child("email").setValue(email);
+        }
+    }
+```
 
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+**Problem 3: We used fragments in NavigationActivity to allow users to navigate between the screens**
 
-                currentPost[0] = dataSnapshot.getValue(Post.class);
-                if (currentPost[0] != null) {
-                    Log.d(TAG, "Current Post is: " + currentPost[0].toString());
-                    if (currentPost[0].getComments() == null) {
-                        currentPost[0].setComments(new ArrayList<Comment>());
-                    }
+Below is a code example which shows the initial implementation
 
-                    postSingleToninstance.setPost(currentPost[0]);
-                    String postdetails = currentPost[0].getPostContent();
-                    String postlink = currentPost[0].getPostLink();
+```java
+public class NavigationActivityCS extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,
+        filterFragment.OnFragmentInteractionListener,
+        guideFragment.OnFragmentInteractionListener,profileFragment.OnFragmentInteractionListener {
 
-                    // Setting the retrieved details in UI
-                    mValueView.setText(Html.fromHtml(postdetails));
-                    nvalueView.setText(Html.fromHtml(postlink));
-                    nvalueView.setMovementMethod(LinkMovementMethod.getInstance());
-                    Log.d(TAG, "Post Value After creating singleton instance is: " + postSingleToninstance.getPost().toString());
-                }
-                mProgress.dismiss();
+    FragmentManager fmg = null;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        fmg = getSupportFragmentManager();
+
+        setContentView(R.layout.activity_navigation_cs);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        // Check whether the activity is using the layout version with
+        // the fragment_container FrameLayout. If so, we must add the first fragment
+        if (findViewById(R.id.fragment_container) != null) {
+
+            // However, if we're being restored from a previous state,
+            // then we don't need to do anything and should return or else
+            // we could end up with overlapping fragments.
+            if (savedInstanceState != null) {
+                return;
             }
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                mProgress.dismiss();
-                // Failed to read value
-                Toast.makeText(getContext(), "Error with Firebase database. please try later", Toast.LENGTH_SHORT).show();
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-
-        });
+            displaySelectedScreen(R.id.nav_filter_jobs);
+        }
     }
 ```
 
@@ -147,9 +169,6 @@ We have complete with the development of the application with all functionalitie
  - Email the people who bookmarked for a job (Not implemented)
 
 ## Firebase Data Model
-
-Below are the screenshots which describes our database schema
-
 ##### Model
 ![Image of Model](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FDbStruct.PNG?alt=media&token=822ba35e-fd2d-48ac-b967-5353ea6f25fc)
 
@@ -162,9 +181,10 @@ Below are the screenshots which describes our database schema
 ##### Users Model
 ![Image of Users Model](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FUserModelCapture.PNG?alt=media&token=6c2276f6-a96d-40fc-a7ad-f91db86908b3)
 
-## Screenshots
+## Credits
+- [Moksh Mohindra](https://www.linkedin.com/in/moksh-mohindra-331b70144) - Our classmate for designing us the application icon
 
-Below are the screenshots of various screens in the application 
+## Screenshots
 
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FLogin.PNG?alt=media&token=7ef128a6-b27d-427d-ab44-90fd3b5b2a05)
 
@@ -174,8 +194,6 @@ Below are the screenshots of various screens in the application
 
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2Fl4.PNG?alt=media&token=fc18719d-0567-4523-bccb-e8b7162f42c9)
 
-## Credits
-- [Moksh Mohindra](https://www.linkedin.com/in/moksh-mohindra-331b70144) - Our classmate for designing us the application icon
 
 ## References
 
@@ -212,11 +230,7 @@ Below are the screenshots of various screens in the application
 
 ##### [16] "Get listview item position on button click", Stackoverflow.com, 2018. [Online]. [Available](https://stackoverflow.com/questions/20541821/get-listview-item-position-on-button-click). [Accessed: 08- Apr- 2018].
 
-##### [17] "Transparent divider in a listview", Stackoverflow.com, 2018. [Online]. [Available](https://stackoverflow.com/questions/8162457/transparent-divider-in-a-listview). [Accessed: 08- Apr- 2018].
-
-##### [18] "Android - Facebook Login - Documentation - Facebook for Developers", Facebook for Developers, 2018. [Online]. [Available](https://developers.facebook.com/docs/facebook-login/android). [Accessed: 09- Apr- 2018].
-
-##### [19] "'Metro UI Icon Set' by Dakirby309", Iconfinder, 2018. [Online]. [Available](https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128). [Accessed: 08- Apr- 2018].
+##### [17] "'Metro UI Icon Set' by Dakirby309", Iconfinder, 2018. [Online]. [Available](https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128). [Accessed: 08- Apr- 2018].
 
 Logo Images from:
 https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128
