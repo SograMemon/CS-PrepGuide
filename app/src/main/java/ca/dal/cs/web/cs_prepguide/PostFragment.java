@@ -141,7 +141,7 @@ public class PostFragment extends Fragment {
 
                     postSingleToninstance.setPost(currentPost[0]);
                     String postdetails = currentPost[0].getPostContent();
-                    ;
+                    
                     String postlink = currentPost[0].getPostLink();
 
                     // Setting the retrieved details in UI

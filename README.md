@@ -56,76 +56,54 @@ Firebase makes the process easy for login implementation, Below is a code exampl
 
 **Problem 2: We tried using Firebase RealtimeDB to store the data**
 
-Below is a code example which can be used to update email address to a user account using Firebase
+Below is a code example which can be used to retrieve data
 
 ```java
-    private void addUserToFireBaseDB(){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // Name, email address, and profile photo Url
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-            //Uri photoUrl = user.getPhotoUrl();
+    public void getPostDetailsFromFirebase(String postId) {
+        final PostSingleTon postSingleToninstance = PostSingleTon.getInstance(getContext());
 
-            // Check if user's email is verified
-            boolean emailVerified = user.isEmailVerified();
+        // Forming the reference
+        String currentPostId = "Posts/".concat(postId);
+        Log.d(TAG, "reference" + currentPostId);
 
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getToken() instead.
-            String uid = user.getUid();
+        final Post[] currentPost = new Post[1];
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference();
-            myRef.child("users").child(uid).child("email").setValue(email);
-        }
-    }
-```
+        myRef1 = FirebaseDatabase.getInstance().getReference(currentPostId);
+        myRef1.addListenerForSingleValueEvent(new ValueEventListener() {
 
-**Problem 3: We used fragments in NavigationActivity to allow users to navigate between the screens**
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
-Below is a code example which shows the initial implementation
+                currentPost[0] = dataSnapshot.getValue(Post.class);
+                if (currentPost[0] != null) {
+                    Log.d(TAG, "Current Post is: " + currentPost[0].toString());
+                    if (currentPost[0].getComments() == null) {
+                        currentPost[0].setComments(new ArrayList<Comment>());
+                    }
 
-```java
-public class NavigationActivityCS extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        filterFragment.OnFragmentInteractionListener,
-        guideFragment.OnFragmentInteractionListener,profileFragment.OnFragmentInteractionListener {
+                    postSingleToninstance.setPost(currentPost[0]);
+                    String postdetails = currentPost[0].getPostContent();
+                    String postlink = currentPost[0].getPostLink();
 
-    FragmentManager fmg = null;
+                    // Setting the retrieved details in UI
+                    mValueView.setText(Html.fromHtml(postdetails));
+                    nvalueView.setText(Html.fromHtml(postlink));
+                    nvalueView.setMovementMethod(LinkMovementMethod.getInstance());
+                    Log.d(TAG, "Post Value After creating singleton instance is: " + postSingleToninstance.getPost().toString());
+                }
+                mProgress.dismiss();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        fmg = getSupportFragmentManager();
-
-        setContentView(R.layout.activity_navigation_cs);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        // Check whether the activity is using the layout version with
-        // the fragment_container FrameLayout. If so, we must add the first fragment
-        if (findViewById(R.id.fragment_container) != null) {
-
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
-                return;
             }
 
-            displaySelectedScreen(R.id.nav_filter_jobs);
-        }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                mProgress.dismiss();
+                // Failed to read value
+                Toast.makeText(getContext(), "Error with Firebase database. please try later", Toast.LENGTH_SHORT).show();
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+
+        });
     }
 ```
 
