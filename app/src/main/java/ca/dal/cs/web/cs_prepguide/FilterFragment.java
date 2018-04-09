@@ -204,6 +204,10 @@ public class FilterFragment extends Fragment {
                 // Initialize string arrays for each spinner stream, company and type respectively
                 String[] sArry, cArry, tArry;
 
+                /*Reference for code below to set dynamic spinners with string array:
+                *
+                */
+
                 //call function to get the dynamic values of the stream spinner
                 sArry = setStreamSpinners();
                 //convert String array to ArrayList
@@ -215,7 +219,7 @@ public class FilterFragment extends Fragment {
                 stringArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
                 spinnerStream.setAdapter(stringArrayAdapter);
 
-                //call function to get the dynammic values of the company spinner
+                //call function to get the dynamic values of the company spinner
                 cArry = setCompanySpinners();
                 //convert String array to ArrayList
                 final List<String> companyList = new ArrayList<>(Arrays.asList(cArry));
@@ -226,7 +230,7 @@ public class FilterFragment extends Fragment {
                 stringArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
                 spinnerCompany.setAdapter(stringArrayAdapterC);
 
-                //call function to get the dynammic values of the type spinner
+                //call function to get the dynamic values of the type spinner
                 tArry = setTypeSpinners();
                 //convert String array to ArrayList
                 final List<String> typeList = new ArrayList<>(Arrays.asList(tArry));
@@ -361,7 +365,10 @@ public class FilterFragment extends Fragment {
 /**
  * This function is used with an editText to add new jobs to the firebase database.
  * This function can be activated in the future when the app provides companies a platfor to upload new jobs
- * This funtion uses the values set on the spinners to set the attributes of the job being added
+ * This function uses the values set on the spinners to set the attributes of the job being added
+ * Reference for this function:
+ *  https://www.youtube.com/watch?v=EM2x33g4syY
+ *  https://www.youtube.com/playlist?list=PLk7v1Z2rk4hj6SDHf_YybDeVhUT9MXaj1
  *
  * private void addJob(){
  *      String title_job= editText_addJob.getText().toString().trim();
@@ -383,7 +390,16 @@ public class FilterFragment extends Fragment {
  *
  */
 
-
+/**
+ *  Function called when filter by General selected
+ *  checks value of each spinner and compares it to the job retrieved from database
+ *  adds job to new jobList if the job attributes match all the attributes set in the spinners
+ *  displays new jobList
+ *
+ *  Reference for this function:
+ *  https://www.youtube.com/watch?v=EM2x33g4syY
+ *  https://www.youtube.com/playlist?list=PLk7v1Z2rk4hj6SDHf_YybDeVhUT9MXaj1
+ *  */
     private void getJob() {
 
         String jobStream = spinnerStream.getSelectedItem().toString();
@@ -566,36 +582,64 @@ public class FilterFragment extends Fragment {
             }
         }
 
+        //clear any previous jobs added to avoid duplicates
         jobList1.clear();
-        String orderedSuggetion = "0";
+        String orderedSuggestion = "0";
         char c;
         int index, insertIndex = 0;
         int insertVal = 0;
+        /**
+         * order jobs in decreasing order of No of matched skills
+         */
+        //loop through all the No of matched skills values
         for (int i = 1; i < matchSkills.length; i++) {
             insertIndex = -1;
-            for (int j = 0; j < orderedSuggetion.length(); j++) {
-                index = Integer.parseInt(String.valueOf(orderedSuggetion.charAt(j)));
+            /**
+             * loop though each character of string orderedSuggestion.
+             * The initial value of orderedSuggestion is 0 to represent the index of the first job in database
+             * The string orderedSuggestions will have a sting containing the job index values in order of the jobs that have
+             * the highest value of matching skills to the lowest value of matching skills.
+             * This will be used to create a new jobList where the jobs are ordered by decreasing value of matched skills
+             */
+            for (int j = 0; j < orderedSuggestion.length(); j++) {
+                //store int value of character at position j in orderedSuggestions string
+                index = Integer.parseInt(String.valueOf(orderedSuggestion.charAt(j)));
                 insertVal = i;
+                /**compare the number of skills in current job to the number of skills in the job added to the orderedSuggestion sting
+                 *if the current job matchSkills value is greater than or equal to the job referenced by orderedSuggestions add th value of current
+                 * job Index to the left side of the current character of orderedSuggestions. This is done by setting insert index to j which is the
+                 * current index value of orderedSuggestions
+                 *
+                 * if matchSkills[i] less than the matchedSkills of the orderedSuggestions than set insertIndex to j+1 to add the job index to the
+                 * right side of the current value of orderedSuggestions
+                 */
                 if (matchSkills[i] > matchSkills[index] || matchSkills[i] == matchSkills[index]) {
                     insertIndex = j;
-                } else if (matchSkills[i] != 0) {
+                }
+                else if (matchSkills[i] != 0) {
                     insertIndex = j + 1;
                 }
 
             }
+            //add each job index based on decreasing value of matchedSkills
             if (insertIndex != -1) {
-                orderedSuggetion = orderedSuggetion.substring(0, insertIndex) + insertVal + orderedSuggetion.substring(insertIndex, orderedSuggetion.length());
+                orderedSuggestion = orderedSuggestion.substring(0, insertIndex) + insertVal + orderedSuggestion.substring(insertIndex, orderedSuggestion.length());
             }
         }
 
-        for (int i = 0; i < orderedSuggetion.length(); i++) {
-            index = Integer.parseInt(String.valueOf(orderedSuggetion.charAt(i)));
+
+        /**
+         * Create new jobList "jobList1" where jobs are added according to the index order in the string orderedSuggestion
+         */
+        for (int i = 0; i < orderedSuggestion.length(); i++) {
+            index = Integer.parseInt(String.valueOf(orderedSuggestion.charAt(i)));
             Job job2 = jobList.get(index);
             job2.setMatchSkillNo(" " + matchSkills[index]);
             job2.setFilter(filterType);
             jobList1.add(job2);
         }
 
+        //display jobList2 using ListView
         JobList adapter = new JobList(getActivity(), jobList1);
         listView_jobs.setAdapter(adapter);
     }
