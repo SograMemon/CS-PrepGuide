@@ -200,20 +200,26 @@ We have completed the development of the application with all functionalities wo
 
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2Fl2.PNG?alt=media&token=923d6170-2d3c-46cf-a024-a15e2104744f)
 
-##### Job Filter Page: allows users to select job filtering either by location, skills or general. The option selection is done on a pop up dialogInterface. If location is selected jobs are listed based on the distance of the office from the user. Listing the closet locations first. Similarly if filtering by skills is selected, jobs are suggested based on the skills the user has and the number of the user's skills that match the required job skills. The user must enter his/her skills in their profile for this feature to work. If the user selects general as the filter option the values that are set in the spinners by the user are used to filter the jobs. For example if the company spinner is set to "Google" only jobs at google are displayed. 
+##### Job Filter Page: 
+Allows users to select job filtering either by location, skills or general. The option selection is done on a pop up dialogInterface. If location is selected jobs are listed based on the distance of the office from the user. Listing the closet locations first. Similarly if filtering by skills is selected, jobs are suggested based on the skills the user has and the number of the user's skills that match the required job skills. The user must enter his/her skills in their profile for this feature to work. If the user selects general as the filter option the values that are set in the spinners by the user are used to filter the jobs. For example if the company spinner is set to "Google" only jobs at google are displayed. 
 
-##### Profile page: allows users to update their details such as name, email, photo, skills etc. The skills entered here are used to suggest jobs when filtering by skills is selected. The name entered here is the name that is displayed when you write a post.
+##### Profile page: 
+Allows users to update their details such as name, email, photo, skills etc. The skills entered here are used to suggest jobs when filtering by skills is selected. The name entered here is the name that is displayed when you write a post.
 
 
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2Fl3.PNG?alt=media&token=62ca19d1-3b37-480a-bb8f-c3d8973e7d4c)
-##### Post Page: When you click on a job in the filter Page the app redirects to the Post Page. At the moment this page is static. This is beacause of a lack of data and the scope of this project was to work with static data. In the future this can be made dynamic. This guide can also be book marked using the bookmark button. This allows users to view the guide later though the Bookmarks page
+##### Post Page: 
+When you click on a job in the filter Page the app redirects to the Post Page. At the moment this page is static. This is beacause of a lack of data and the scope of this project was to work with static data. In the future this can be made dynamic. This guide can also be book marked using the bookmark button. This allows users to view the guide later though the Bookmarks page
 
-##### Comments Page: This is the page where users can comment about their experiences and their thoughts about the prepartion guide provided
+##### Comments Page: 
+This is the page where users can comment about their experiences and their thoughts about the prepartion guide provided
 
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2Fl4.PNG?alt=media&token=fc18719d-0567-4523-bccb-e8b7162f42c9)
-##### Help Page: This page provides users with information on how to use the app and how to overcome some issues
+##### Help Page: 
+This page provides users with information on how to use the app and how to overcome some issues
 
-##### Bookmarks Page: displays a list of bookmarked guides. These guides can be viewed by clicking them. There is a button that can be clicked to remove a guide from the bookmarks page.
+##### Bookmarks Page: 
+Displays a list of bookmarked guides. These guides can be viewed by clicking them. There is a button that can be clicked to remove a guide from the bookmarks page.
 
 
 ## References
