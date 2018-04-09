@@ -19,8 +19,8 @@ This project zip file can be downloaded and unzipped after which it can be opene
 The [apk file](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/release-apk%2Fapp-release.apk?alt=media&token=f1f2c20e-f896-468e-81a5-9e038e4b3af3) can be downloaded and installed onto an android phone.
 
 ## Libraries
-- picasso:  Picasso allows for hassle-free image loading in your application—often in one line of code! [here](http://square.github.io/picasso/)
-- hdodenhof/CircleImageView: A fast circular ImageView based on RoundedImageView from Vince Mi which itself is based on techniques recommended by Romain Guy.[here](https://github.com/hdodenhof/CircleImageView)
+- **picasso:**  Picasso allows for hassle-free image loading in your application—often in one line of code! [here](http://square.github.io/picasso/)
+- **hdodenhof/CircleImageView:** A fast circular ImageView based on RoundedImageView from Vince Mi which itself is based on techniques recommended by Romain Guy.[here](https://github.com/hdodenhof/CircleImageView)
 
 ## Code Examples
 
