@@ -1,48 +1,47 @@
- <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="400dp"
+    android:layout_height="match_parent"
     android:fillViewport="true"
-     android:orientation="vertical">
+    android:orientation="vertical">
     <!--tools:context=".MainActivity">-->
 
-     <Button
-         android:id="@+id/btnBookmark"
-         android:layout_width="match_parent"
-         android:layout_height="40dp"
-         android:text="Bookmark this job"
-         android:textAllCaps="false"
-         android:background="@drawable/transparent_color"
-         android:textColor="@color/colorBlue"
-         android:textSize="15dp"/>
+    <Button
+        android:id="@+id/btnBookmark"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/transparent_color"
+        android:text="Bookmark this job"
+        android:textAllCaps="false"
+        android:textColor="@color/colorBlue"
+        android:textSize="15dp" />
 
-     <ScrollView
-         android:layout_width="match_parent"
-         android:layout_height="match_parent"
-         android:layout_marginLeft="10dp"
-         android:layout_marginRight="10dp"
-         android:layout_weight="0.8">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_weight="0.8">
 
-         <TextView
-             android:id="@+id/textView"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:autoLink="all"
-             android:clickable="true"
-             android:textSize="20dp" />
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoLink="all"
+            android:clickable="true"
+            android:textSize="20dp" />
 
-     </ScrollView>
+    </ScrollView>
 
-     <TextView
-         android:id="@+id/textView10"
-         android:layout_width="match_parent"
-         android:layout_height="40dp"
-         android:paddingLeft="10dp"
-         android:text="TextView"
-         android:textColor="@color/colorAccent"
-         android:textSize="20dp"
-         android:textStyle="bold" />
-
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:paddingLeft="10dp"
+        android:text="TextView"
+        android:textColor="@color/colorAccent"
+        android:textSize="20dp"
+        android:textStyle="bold" />
 
 
 </LinearLayout>
