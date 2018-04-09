@@ -19,8 +19,8 @@ This project zip file can be downloaded and unzipped after which it can be opene
 The [apk file](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/release-apk%2Fapp-release.apk?alt=media&token=f1f2c20e-f896-468e-81a5-9e038e4b3af3) can be downloaded and installed onto an android phone.
 
 ## Libraries
-##### picasso:  Picasso allows for hassle-free image loading in your application—often in one line of code! [here](http://square.github.io/picasso/)
-##### hdodenhof/CircleImageView: A fast circular ImageView based on RoundedImageView from Vince Mi which itself is based on techniques recommended by Romain Guy.[here](https://github.com/hdodenhof/CircleImageView)
+- picasso:  Picasso allows for hassle-free image loading in your application—often in one line of code! [here](http://square.github.io/picasso/)
+- hdodenhof/CircleImageView: A fast circular ImageView based on RoundedImageView from Vince Mi which itself is based on techniques recommended by Romain Guy.[here](https://github.com/hdodenhof/CircleImageView)
 
 ## Code Examples
 
@@ -214,7 +214,9 @@ Below are the screenshots of various screens in the application
 
 ##### [17] "Transparent divider in a listview", Stackoverflow.com, 2018. [Online]. [Available](https://stackoverflow.com/questions/8162457/transparent-divider-in-a-listview). [Accessed: 08- Apr- 2018].
 
-##### [18] "'Metro UI Icon Set' by Dakirby309", Iconfinder, 2018. [Online]. [Available](https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128). [Accessed: 08- Apr- 2018].
+##### [18] "Android - Facebook Login - Documentation - Facebook for Developers", Facebook for Developers, 2018. [Online]. [Available](https://developers.facebook.com/docs/facebook-login/android). [Accessed: 09- Apr- 2018].
+
+##### [19] "'Metro UI Icon Set' by Dakirby309", Iconfinder, 2018. [Online]. [Available](https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128). [Accessed: 08- Apr- 2018].
 
 Logo Images from:
 https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128
