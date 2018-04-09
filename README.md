@@ -145,6 +145,9 @@ We have complete with the development of the application with all functionalitie
  - Email the people who bookmarked for a job (Not implemented)
 
 ## Firebase Data Model
+
+Below are the screenshots which describes our database schema
+
 ##### Model
 ![Image of Model](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FDbStruct.PNG?alt=media&token=822ba35e-fd2d-48ac-b967-5353ea6f25fc)
 
@@ -157,10 +160,9 @@ We have complete with the development of the application with all functionalitie
 ##### Users Model
 ![Image of Users Model](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FUserModelCapture.PNG?alt=media&token=6c2276f6-a96d-40fc-a7ad-f91db86908b3)
 
-## Credits
-- [Moksh Mohindra](https://www.linkedin.com/in/moksh-mohindra-331b70144) - Our classmate for designing us the application icon
-
 ## Screenshots
+
+Below are the screenshots of various screens in the application 
 
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FLogin.PNG?alt=media&token=7ef128a6-b27d-427d-ab44-90fd3b5b2a05)
 
@@ -170,6 +172,8 @@ We have complete with the development of the application with all functionalitie
 
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2Fl4.PNG?alt=media&token=fc18719d-0567-4523-bccb-e8b7162f42c9)
 
+## Credits
+- [Moksh Mohindra](https://www.linkedin.com/in/moksh-mohindra-331b70144) - Our classmate for designing us the application icon
 
 ## References
 
