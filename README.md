@@ -1,10 +1,10 @@
 # CS-PrepGuide
 
-We aim to create a platform that provides information about the different disciplines in Computer Science and the jobs or positions available within each discipline in a particular company in which
-they want to get placed. This valuable information in the form of guide provided in our app will help users to make and plan their career path. Once the users have made this decision the users can
+In this project we have implemented an app that provides users with a platform where they can explore the different jobs available in the field of Computer Science. For each job listed on this application the required skills and the job preparation guides are posted. Our app also allows user to filter jobs based on variables such as: office location, company, stream of computer science etc. This valuable information in the form of job preparation guides can help users plan their career path. Once the users have made this decision the users can
 browse through job preparation guides that help the user achieve the skills they require to qualify for the best jobs at companies ranging from the top companies to smaller passionate companies.
 This will be useful to fresh Computer Science graduates as well as professionals considering a career change to join the booming IT industries.
 Key features included are: login/logout using social media, fingerprint login, filtering of the jobs, setting up the user skill profile, posts and comments.
+For a more detailed description of this application please see the screen shots section of this document.
 
 #### Team Members
  - Faraaz Nizar Dhuka  (B00784039)
@@ -136,24 +136,32 @@ List all the main features of your application with a brief description of each 
 
 - Sign-up/Sign-in:
   User credentials to access the application, new user can register
+- Fingure print Sign-in
+  User can use fingure print to Sign-in
+- Social Media Sign-in
+  User can use facebook or google account to Sign-in. User does not need to Sign-up for this app in this case.
 - Filters Page
-  To filter areas in Computer Science, Companies and their Job Positions available
+  To filter areas in Computer Science, Companies and their Job Positions available. Jobs can be filltered based on the number of required job skills that the user has as well as by office locations that are closest to the user
 - Guides Page
   User can choose a guide where there is a post, links and comments section.
 - Logout
   User can log out from the app
 - Profile Page
-  Lets user to make changes in their profile like adding their skills etc.
+  Lets user to make changes in their profile like adding their skills, photo, name, email etc.
+- Help Page
+  Provides user information on how to use the app
+
 
 
 ## Final Project Status
-We have complete with the development of the application with all functionalities working properly in the app. For now, we have implemented login, user profile, filtering jobs, and job guide view and navigation between various screens. The breakdown of the functionalities and the breakdown is given below.
+We have completed the development of the application with all functionalities working properly in the app. For now, we have implemented login, user profile, filtering jobs, and job guide view and navigation between various screens. The future of this application would be to use dynamic data that would be populated by companies who want to post their job preparation guides. More functionalities would have to be added to allow these companies to post and edit their job guides. The breakdown of the functionalities we aimed to achieved and their status is given below.
 
 #### Minimum Functionality
  - Sign up/Sign in  (Completed)
  - Profile Page     (Completed)
  - Guides Page      (Completed)
  - Filters Page     (Completed)
+ - Help Page        (Completed)
 
 #### Expected Functionality
  - Job Suggestion (Completed)
@@ -188,11 +196,24 @@ We have complete with the development of the application with all functionalitie
 
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FLogin.PNG?alt=media&token=7ef128a6-b27d-427d-ab44-90fd3b5b2a05)
 
+##### Login Screen: allows users to login though facebook, google, CS-prepGuide account or by using their fingure print.
+
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2Fl2.PNG?alt=media&token=923d6170-2d3c-46cf-a024-a15e2104744f)
 
+##### Job Filter Page: allows users to select job filtering either by location, skills or general. The option selection is done on a pop up dialogInterface. If location is selected jobs are listed based on the distance of the office from the user. Listing the closet locations first. Similarly if filtering by skills is selected, jobs are suggested based on the skills the user has and the number of the user's skills that match the required job skills. The user must enter his/her skills in their profile for this feature to work. If the user selects general as the filter option the values that are set in the spinners by the user are used to filter the jobs. For example if the company spinner is set to "Google" only jobs at google are displayed. 
+
+##### Profile page: allows users to update their details such as name, email, photo, skills etc. The skills entered here are used to suggest jobs when filtering by skills is selected. The name entered here is the name that is displayed when you write a post.
+
+
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2Fl3.PNG?alt=media&token=62ca19d1-3b37-480a-bb8f-c3d8973e7d4c)
+##### Post Page: When you click on a job in the filter Page the app redirects to the Post Page. At the moment this page is static. This is beacause of a lack of data and the scope of this project was to work with static data. In the future this can be made dynamic. This guide can also be book marked using the bookmark button. This allows users to view the guide later though the Bookmarks page
+
+##### Comments Page: This is the page where users can comment about their experiences and their thoughts about the prepartion guide provided
 
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2Fl4.PNG?alt=media&token=fc18719d-0567-4523-bccb-e8b7162f42c9)
+##### Help Page: This page provides users with information on how to use the app and how to overcome some issues
+
+##### Bookmarks Page: displays a list of bookmarked guides. These guides can be viewed by clicking them. There is a button that can be clicked to remove a guide from the bookmarks page.
 
 
 ## References
@@ -232,6 +253,16 @@ We have complete with the development of the application with all functionalitie
 
 ##### [17] "'Metro UI Icon Set' by Dakirby309", Iconfinder, 2018. [Online]. [Available](https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128). [Accessed: 08- Apr- 2018].
 
+##### [20] “Android: Create spinner programmatically from array - Stack Overflow.” [Online]. Available: https://stackoverflow.com/questions/2784081/android-create-spinner-programmatically-from-array/12880688?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa. [Accessed: 08-Apr-2018].
+
+##### [21]	“Firebase Realtime Database Tutorial for Android - YouTube - YouTube.” [Online]. Available: https://www.youtube.com/playlist?list=PLk7v1Z2rk4hj6SDHf_YybDeVhUT9MXaj1. [Accessed: 08-Apr-2018].
+
 Logo Images from:
-https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128
-https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128
+
+##### [22] “Facebook, square icon | Icon search engine.” [Online]. Available: https://www.iconfinder.com/icons/107117/facebook_square_icon#size=256. [Accessed: 08-Apr-2018].
+
+##### [23] “Logo, microsoft, new icon | Icon search engine.” [Online]. Available: https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128. [Accessed: 08-Apr-2018].
+
+##### [24] “Chat, communication, google icon | Icon search engine.” [Online]. Available: https://www.iconfinder.com/icons/1775164/chat_communication_google_icon#size=256. [Accessed: 08-Apr-2018].
+
+
