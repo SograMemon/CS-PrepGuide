@@ -196,7 +196,8 @@ We have completed the development of the application with all functionalities wo
 
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FLogin.PNG?alt=media&token=7ef128a6-b27d-427d-ab44-90fd3b5b2a05)
 
-##### Login Screen: allows users to login though Facebook, google, CS-prepGuide account or by using their finger print.
+##### Login Screen: 
+Allows users to login through Facebook, google, CS-prepGuide account or by using their finger print.
 
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2Fl2.PNG?alt=media&token=923d6170-2d3c-46cf-a024-a15e2104744f)
 
