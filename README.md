@@ -136,12 +136,12 @@ List all the main features of your application with a brief description of each 
 
 - Sign-up/Sign-in:
   User credentials to access the application, new user can register
-- Fingure print Sign-in
-  User can use fingure print to Sign-in
+- Finger print Sign-in
+  User can use finger print to Sign-in
 - Social Media Sign-in
   User can use facebook or google account to Sign-in. User does not need to Sign-up for this app in this case.
 - Filters Page
-  To filter areas in Computer Science, Companies and their Job Positions available. Jobs can be filltered based on the number of required job skills that the user has as well as by office locations that are closest to the user
+  To filter areas in Computer Science, Companies and their Job Positions available. Jobs can be filtered based on the number of required job skills that the user has as well as by office locations that are closest to the user
 - Guides Page
   User can choose a guide where there is a post, links and comments section.
 - Logout
@@ -196,7 +196,7 @@ We have completed the development of the application with all functionalities wo
 
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FLogin.PNG?alt=media&token=7ef128a6-b27d-427d-ab44-90fd3b5b2a05)
 
-##### Login Screen: allows users to login though facebook, google, CS-prepGuide account or by using their fingure print.
+##### Login Screen: allows users to login though Facebook, google, CS-prepGuide account or by using their finger print.
 
 ![Image of Login Screen](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2Fl2.PNG?alt=media&token=923d6170-2d3c-46cf-a024-a15e2104744f)
 
@@ -220,6 +220,22 @@ This page provides users with information on how to use the app and how to overc
 
 ##### Bookmarks Page: 
 Displays a list of bookmarked guides. These guides can be viewed by clicking them. There is a button that can be clicked to remove a guide from the bookmarks page.
+
+All these pages can also be navigated through the navigation bar.
+
+## Known Issues
+
+##### Posts Page:
+
+The posts page is static because we had mentioned in our project praposal that we will be working with static data as it would be time consuming to generate all the job preparation guides.
+
+##### Facebook Login:
+
+Due to the privacy settings of the Facebook API, Facebook accounts and the devices need to be given the developer key to allow users to use the Facebook login feature when the app is in the development stage. Since our app is in the developer stage the Facebook login will not work until we permit you Facebook account to use the Facebook sign-in feature. So please contact us if you have any issues with Facebook sign-in.
+
+##### Finger Print Sign-in
+
+The Finger Print Sign-in feature only works for users who have not logged in with their social media accounts and have signed-up with our app. This is because we are using a static database which means that we can store the users finger print on their device alone.  
 
 
 ## References
