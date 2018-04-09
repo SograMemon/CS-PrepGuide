@@ -220,7 +220,7 @@ Due to the privacy settings of the Facebook API, Facebook accounts and the devic
 
 The Finger Print Sign-in feature only works for users who have not logged in with their social media accounts and have signed-up with our app. 
 
--## Credits
+## Credits
  -- [Moksh Mohindra](https://www.linkedin.com/in/moksh-mohindra-331b70144) - Our classmate for designing us the application icon
   
 
