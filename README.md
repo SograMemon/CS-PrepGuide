@@ -16,6 +16,8 @@ For a more detailed description of this application please see the screen shots 
 ## Installation Notes
 This project zip file can be downloaded and unzipped after which it can be opened in Android studio to be able to test and run the application.
 
+-The [apk file](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/release-apk%2Fapp-release.apk?alt=media&token=f1f2c20e-f896-468e-81a5-9e038e4b3af3) can be downloaded and installed onto an android phone.
+
 ## Libraries
 ##### Picasso:  Picasso allows for hassle-free image loading in your application—often in one line of code! [here](http://square.github.io/picasso/)
 ##### hdodenhof/CircleImageView: A fast circular ImageView based on RoundedImageView from Vince Mi which itself is based on techniques recommended by Romain Guy.[here](https://github.com/hdodenhof/CircleImageView)
@@ -58,78 +60,58 @@ Firebase makes the process easy for login implementation, Below is a code exampl
 
 **Problem 2: We tried using Firebase RealtimeDB to store the data**
 
-Below is a code example which can be used to update email address to a user account using Firebase
++Below is a code example which can be used to update email address to a user account using Firebase
 
 ```java
-    private void addUserToFireBaseDB(){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // Name, email address, and profile photo Url
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-            //Uri photoUrl = user.getPhotoUrl();
+    public void getPostDetailsFromFirebase(String postId) {
+        final PostSingleTon postSingleToninstance = PostSingleTon.getInstance(getContext());
 
-            // Check if user's email is verified
-            boolean emailVerified = user.isEmailVerified();
+        // Forming the reference
+        String currentPostId = "Posts/".concat(postId);
+        Log.d(TAG, "reference" + currentPostId);
 
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getToken() instead.
-            String uid = user.getUid();
+        final Post[] currentPost = new Post[1];
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference();
-            myRef.child("users").child(uid).child("email").setValue(email);
-        }
-    }
-```
+        myRef1 = FirebaseDatabase.getInstance().getReference(currentPostId);
+        myRef1.addListenerForSingleValueEvent(new ValueEventListener() {
 
-**Problem 3: We used fragments in NavigationActivity to allow users to navigate between the screens**
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
-Below is a code example which shows the initial implementation
+                currentPost[0] = dataSnapshot.getValue(Post.class);
+                if (currentPost[0] != null) {
+                    Log.d(TAG, "Current Post is: " + currentPost[0].toString());
+                    if (currentPost[0].getComments() == null) {
+                        currentPost[0].setComments(new ArrayList<Comment>());
+                    }
 
-```java
-public class NavigationActivityCS extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        filterFragment.OnFragmentInteractionListener,
-        guideFragment.OnFragmentInteractionListener,profileFragment.OnFragmentInteractionListener {
+                    postSingleToninstance.setPost(currentPost[0]);
+                    String postdetails = currentPost[0].getPostContent();
+                    
+                    String postlink = currentPost[0].getPostLink();
 
-    FragmentManager fmg = null;
+                    // Setting the retrieved details in UI
+                    mValueView.setText(Html.fromHtml(postdetails));
+                    nvalueView.setText(Html.fromHtml(postlink));
+                    nvalueView.setMovementMethod(LinkMovementMethod.getInstance());
+                    Log.d(TAG, "Post Value After creating singleton instance is: " + postSingleToninstance.getPost().toString());
+                }
+                mProgress.dismiss();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        fmg = getSupportFragmentManager();
-
-        setContentView(R.layout.activity_navigation_cs);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        // Check whether the activity is using the layout version with
-        // the fragment_container FrameLayout. If so, we must add the first fragment
-        if (findViewById(R.id.fragment_container) != null) {
-
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
-                return;
             }
 
-            displaySelectedScreen(R.id.nav_filter_jobs);
-        }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                mProgress.dismiss();
+                // Failed to read value
+                Toast.makeText(getContext(), "Error with Firebase database. please try later", Toast.LENGTH_SHORT).show();
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+
+        });
     }
 ```
+
 
 ## Feature Section
 List all the main features of your application with a brief description of each feature.
@@ -238,6 +220,10 @@ Due to the privacy settings of the Facebook API, Facebook accounts and the devic
 
 The Finger Print Sign-in feature only works for users who have not logged in with their social media accounts and have signed-up with our app. 
 
+-## Credits
+ -- [Moksh Mohindra](https://www.linkedin.com/in/moksh-mohindra-331b70144) - Our classmate for designing us the application icon
+  
+
 ## References
 
 ##### [1] stackoverflow.com. "Image capture with camera & upload to Firebase (Uri in onActivityResult() is null)". [Online]. [Available](https://stackoverflow.com/questions/40710599/image-capture-withhttps://jbt.github.io/markdown-editor/emoji/smirk.png-camera-upload-to-firebase-uri-in-onactivityresult-is-nul).[Accessed on: 17th March 2018].
@@ -273,7 +259,11 @@ The Finger Print Sign-in feature only works for users who have not logged in wit
 
 ##### [16] "Get listview item position on button click", Stackoverflow.com, 2018. [Online]. [Available](https://stackoverflow.com/questions/20541821/get-listview-item-position-on-button-click). [Accessed: 08- Apr- 2018].
 
-##### [17] "'Metro UI Icon Set' by Dakirby309", Iconfinder, 2018. [Online]. [Available](https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128). [Accessed: 08- Apr- 2018].
+-##### [17] "Transparent divider in a listview", Stackoverflow.com, 2018. [Online]. [Available](https://stackoverflow.com/questions/8162457/transparent-divider-in-a-listview). [Accessed: 08- Apr- 2018].
+ -
+ -##### [18] "Android - Facebook Login - Documentation - Facebook for Developers", Facebook for Developers, 2018. [Online]. [Available](https://developers.facebook.com/docs/facebook-login/android). [Accessed: 09- Apr- 2018].
+ -
+ -##### [19] "'Metro UI Icon Set' by Dakirby309", Iconfinder, 2018. [Online]. [Available](https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128). [Accessed: 08- Apr- 2018].
 
 ##### [20] “Android: Create spinner programmatically from array - Stack Overflow.” [Online]. Available: https://stackoverflow.com/questions/2784081/android-create-spinner-programmatically-from-array/12880688?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa. [Accessed: 08-Apr-2018].
 
