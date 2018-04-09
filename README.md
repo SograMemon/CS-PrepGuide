@@ -227,7 +227,7 @@ All these pages can also be navigated through the navigation bar.
 
 ##### Posts Page:
 
-The posts page is static because we had mentioned in our project praposal that we will be working with static data as it would be time consuming to generate all the job preparation guides.
+The posts page is static because we had mentioned in our project proposal that we will be working with static data as it would be time consuming to generate all the job preparation guides.
 
 ##### Facebook Login:
 
@@ -235,8 +235,7 @@ Due to the privacy settings of the Facebook API, Facebook accounts and the devic
 
 ##### Finger Print Sign-in
 
-The Finger Print Sign-in feature only works for users who have not logged in with their social media accounts and have signed-up with our app. This is because we are using a static database which means that we can store the users finger print on their device alone.  
-
+The Finger Print Sign-in feature only works for users who have not logged in with their social media accounts and have signed-up with our app. 
 
 ## References
 
