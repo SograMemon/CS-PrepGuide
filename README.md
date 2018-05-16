@@ -171,8 +171,6 @@ We have completed the development of the application with all functionalities wo
 ##### Users Model
 ![Image of Users Model](https://firebasestorage.googleapis.com/v0/b/cs-prepguide.appspot.com/o/Screenshots%2FUserModelCapture.PNG?alt=media&token=6c2276f6-a96d-40fc-a7ad-f91db86908b3)
 
-## Credits
-- [Moksh Mohindra](https://www.linkedin.com/in/moksh-mohindra-331b70144) - Our classmate for designing us the application icon
 
 ## Screenshots
 
@@ -221,7 +219,7 @@ Due to the privacy settings of the Facebook API, Facebook accounts and the devic
 The Finger Print Sign-in feature only works for users who have not logged in with their social media accounts and have signed-up with our app. 
 
 ## Credits
- -- [Moksh Mohindra](https://www.linkedin.com/in/moksh-mohindra-331b70144) - Our classmate for designing us the application icon
+- [Moksh Mohindra](https://www.linkedin.com/in/moksh-mohindra-331b70144) - Our classmate for designing us the application icon
   
 
 ## References
@@ -265,16 +263,17 @@ The Finger Print Sign-in feature only works for users who have not logged in wit
 
 ##### [19] "'Metro UI Icon Set' by Dakirby309", Iconfinder, 2018. [Online]. [Available](https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128). [Accessed: 08- Apr- 2018].
 
-##### [20] “Android: Create spinner programmatically from array - Stack Overflow.” [Online]. Available: https://stackoverflow.com/questions/2784081/android-create-spinner-programmatically-from-array/12880688?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa. [Accessed: 08-Apr-2018].
+##### [20] “Android: Create spinner programmatically from array - Stack Overflow.” [Online]. [Available]( https://stackoverflow.com/questions/2784081/android-create-spinner-programmatically-from-array/12880688?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa). [Accessed: 08-Apr-2018].
 
-##### [21]	“Firebase Realtime Database Tutorial for Android - YouTube - YouTube.” [Online]. Available: https://www.youtube.com/playlist?list=PLk7v1Z2rk4hj6SDHf_YybDeVhUT9MXaj1. [Accessed: 08-Apr-2018].
+##### [21]  “Firebase Realtime Database Tutorial for Android - YouTube - YouTube.” [Online]. [Available]( https://www.youtube.com/playlist?list=PLk7v1Z2rk4hj6SDHf_YybDeVhUT9MXaj1). [Accessed: 08-Apr-2018].
 
 Logo Images from:
 
-##### [22] “Facebook, square icon | Icon search engine.” [Online]. Available: https://www.iconfinder.com/icons/107117/facebook_square_icon#size=256. [Accessed: 08-Apr-2018].
+##### [22] “Facebook, square icon | Icon search engine.” [Online]. [Available]( https://www.iconfinder.com/icons/107117/facebook_square_icon#size=256). [Accessed: 08-Apr-2018].
 
-##### [23] “Logo, microsoft, new icon | Icon search engine.” [Online]. Available: https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128. [Accessed: 08-Apr-2018].
+##### [23] “Logo, microsoft, new icon | Icon search engine.” [Online]. [Available]( https://www.iconfinder.com/icons/98785/logo_microsoft_new_icon#size=128). [Accessed: 08-Apr-2018].
 
-##### [24] “Chat, communication, google icon | Icon search engine.” [Online]. Available: https://www.iconfinder.com/icons/1775164/chat_communication_google_icon#size=256. [Accessed: 08-Apr-2018].
+##### [24] “Chat, communication, google icon | Icon search engine.” [Online]. [Available]( https://www.iconfinder.com/icons/1775164/chat_communication_google_icon#size=256). [Accessed: 08-Apr-2018].
+
 
 
